@@ -14,19 +14,24 @@ const palettes = [
     ['#9a3412', '#1c1916'],
     ['#854d0e', '#1c1916'],
     ['#1d4ed8', '#1c1916'],
-];
+] as const;
+
+export const avatarColorOptions = palettes.map(([color]) => color);
 
 export function UserAvatar({
     seed,
     name,
     size = 32,
+    color,
 }: {
     seed: string;
     name: string;
     size?: number;
+    color?: string | null;
 }) {
     const hash = hashSeed(seed || name);
-    const [fg, bg] = palettes[hash % palettes.length];
+    const palette = palettes[hash % palettes.length];
+    const [fg, bg] = color ? [color, '#1c1916'] : palette;
     const initials = name
         .split(/\s+/)
         .filter(Boolean)

@@ -98,6 +98,11 @@ export interface PanelAccount {
     scope: string;
     role: string;
     avatar_seed: string;
+    avatar_color?: string | null;
+}
+
+export interface PanelProfile extends PanelAccount {
+    avatar_color: string | null;
 }
 
 export interface PanelServerSftp {
@@ -171,9 +176,41 @@ export interface PanelTicket {
 
 export interface PanelDocPage {
     id: string;
+    section: string;
     title: string;
     blurb: string;
     body: string;
+}
+
+export interface PanelNotification {
+    id: string;
+    title: string;
+    body: string;
+    channel: 'email' | 'push' | 'webhook';
+    time: string;
+    read: boolean;
+}
+
+export interface PanelNotificationChannel {
+    key: 'email' | 'push' | 'webhook';
+    label: string;
+    description: string;
+    enabled: boolean;
+}
+
+export interface PanelChatMessage {
+    id: string;
+    author: string;
+    time: string;
+    body: string;
+}
+
+export interface PanelChatChannel {
+    id: string;
+    label: string;
+    kind: 'team' | 'group' | 'support';
+    unread: number;
+    messages: PanelChatMessage[];
 }
 
 export interface PanelBackup {
@@ -333,6 +370,10 @@ export interface PanelConcept {
     security: PanelSecurity;
     tickets: PanelTicket[];
     docs: PanelDocPage[];
+    notifications: PanelNotification[];
+    notification_channels: PanelNotificationChannel[];
+    notification_webhook: string;
+    chat_channels: PanelChatChannel[];
     settings: PanelSetting[];
     settings_toggles: PanelSettingToggle[];
     uptime: PanelUptime;

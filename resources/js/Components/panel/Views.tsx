@@ -11,7 +11,7 @@ import {
     Binary,
 } from 'lucide-react';
 import { Fragment, useMemo, useState } from 'react';
-import { UserAvatar } from '@/Components/panel/avatar';
+import { UserAvatar, avatarColorOptions } from '@/Components/panel/avatar';
 import { ServerTypeIcon } from '@/Components/panel/icons';
 import {
     KindBadge,
@@ -24,7 +24,7 @@ import {
     UptimeChalks,
 } from '@/Components/panel/ui';
 import type { PanelSimulation, ServerFilter } from '@/Components/panel/usePanelSimulation';
-import type { PanelConcept, PanelLocation, PanelServer, PanelUser } from '@/types';
+import type { PanelConcept, PanelLocation, PanelProfile, PanelServer, PanelUser } from '@/types';
 
 export function OverviewView({
     panel,
@@ -1044,49 +1044,72 @@ export function DocsView({ docs }: { docs: PanelConcept['docs'] }) {
         }
         return docs.filter(
             (doc) =>
+                doc.section.toLowerCase().includes(q) ||
                 doc.title.toLowerCase().includes(q) ||
                 doc.blurb.toLowerCase().includes(q) ||
                 doc.body.toLowerCase().includes(q),
         );
     }, [docs, query]);
-    const active = filtered.find((doc) => doc.id === activeId) ?? filtered[0] ?? docs[0];
+
+    const sections = useMemo(() => {
+        const grouped = new Map<string, PanelConcept['docs']>();
+        for (const doc of filtered) {
+            const current = grouped.get(doc.section) ?? [];
+            current.push(doc);
+            grouped.set(doc.section, current);
+        }
+        return [...grouped.entries()];
+    }, [filtered]);
+
+    const active = filtered.find((doc) => doc.id === activeId) ?? filtered[0] ?? docs[0] ?? null;
 
     return (
-        <div className="panel-docs-layout">
-            <aside className="panel-docs-nav">
-                <input
-                    className="panel-search"
-                    type="search"
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Search docs"
-                    aria-label="Search documentation"
-                />
-                <nav className="panel-docs-list" aria-label="Documentation">
-                    {filtered.map((doc) => (
-                        <button
-                            key={doc.id}
-                            type="button"
-                            className={`panel-doc-item${active?.id === doc.id ? ' is-active' : ''}`}
-                            onClick={() => setActiveId(doc.id)}
-                        >
-                            <p className="panel-doc__title">{doc.title}</p>
-                            <p className="panel-doc__blurb">{doc.blurb}</p>
-                        </button>
+        <div className="panel-docs-shell">
+            <aside className="panel-docs-sidebar">
+                <div className="panel-docs-sidebar__head">
+                    <p className="panel-docs-sidebar__title">Documentation</p>
+                    <input
+                        className="panel-search"
+                        type="search"
+                        value={query}
+                        onChange={(event) => setQuery(event.target.value)}
+                        placeholder="Search docs"
+                        aria-label="Search documentation"
+                    />
+                </div>
+                <nav className="panel-docs-sidebar__nav" aria-label="Documentation">
+                    {sections.map(([section, pages]) => (
+                        <div key={section} className="panel-docs-section">
+                            <p className="panel-docs-section__title">{section}</p>
+                            <ul className="panel-docs-section__list">
+                                {pages.map((doc) => (
+                                    <li key={doc.id}>
+                                        <button
+                                            type="button"
+                                            className={`panel-docs-link${active?.id === doc.id ? ' is-active' : ''}`}
+                                            onClick={() => setActiveId(doc.id)}
+                                        >
+                                            {doc.title}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     ))}
-                    {filtered.length === 0 ? (
+                    {sections.length === 0 ? (
                         <p className="panel-app__muted">No docs match that search.</p>
                     ) : null}
                 </nav>
             </aside>
-            <article className="panel-docs-content">
-                <PanelCard title={active?.title ?? 'Doc'} meta={active?.blurb}>
-                    <div className="panel-doc-body">
-                        {(active?.body ?? '').split('\n').map((line, index) => (
-                            <p key={`${index}-${line}`}>{line || '\u00a0'}</p>
-                        ))}
-                    </div>
-                </PanelCard>
+            <article className="panel-docs-article">
+                <p className="panel-docs-article__eyebrow">{active?.section}</p>
+                <h3 className="panel-docs-article__title">{active?.title ?? 'Documentation'}</h3>
+                <p className="panel-docs-article__lede">{active?.blurb}</p>
+                <div className="panel-docs-article__body">
+                    {(active?.body ?? '').split('\n').map((line, index) => (
+                        <p key={`${index}-${line}`}>{line || '\u00a0'}</p>
+                    ))}
+                </div>
             </article>
         </div>
     );
@@ -1327,16 +1350,22 @@ export function AdminView({
 }
 
 export function ProfileView({
+    profile,
     panel,
     security,
     sessions,
+    onUpdateProfile,
+    onSaveProfile,
     onToggleSecurity,
     onRevokeSession,
     onToast,
 }: {
+    profile: PanelProfile;
     panel: PanelConcept;
     security: PanelSimulation['security'];
     sessions: PanelSimulation['sessions'];
+    onUpdateProfile: PanelSimulation['updateProfile'];
+    onSaveProfile: PanelSimulation['saveProfile'];
     onToggleSecurity: PanelSimulation['toggleSecurity'];
     onRevokeSession: PanelSimulation['revokeSession'];
     onToast: (message: string) => void;
@@ -1381,18 +1410,70 @@ export function ProfileView({
     return (
         <div className="panel-stack">
             <PanelCard title="Profile">
-                <div className="panel-user-cell" style={{ marginBottom: '1rem' }}>
+                <div className="panel-profile-edit">
                     <UserAvatar
-                        seed={panel.account.avatar_seed}
-                        name={panel.account.name}
-                        size={48}
+                        seed={profile.avatar_seed}
+                        name={profile.name}
+                        size={56}
+                        color={profile.avatar_color}
                     />
-                    <div>
-                        <p>{panel.account.name}</p>
-                        <p className="panel-mono panel-app__muted">{panel.account.email}</p>
+                    <div className="panel-profile-edit__fields">
+                        <label className="panel-profile-field">
+                            <span className="panel-setting__label">Display name</span>
+                            <input
+                                className="panel-search"
+                                value={profile.name}
+                                onChange={(event) => onUpdateProfile({ name: event.target.value })}
+                            />
+                        </label>
+                        <label className="panel-profile-field">
+                            <span className="panel-setting__label">Email</span>
+                            <input
+                                className="panel-search"
+                                type="email"
+                                value={profile.email}
+                                onChange={(event) => onUpdateProfile({ email: event.target.value })}
+                            />
+                        </label>
+                        <label className="panel-profile-field">
+                            <span className="panel-setting__label">Avatar seed</span>
+                            <input
+                                className="panel-search"
+                                value={profile.avatar_seed}
+                                onChange={(event) =>
+                                    onUpdateProfile({ avatar_seed: event.target.value })
+                                }
+                            />
+                        </label>
+                        <div className="panel-profile-field">
+                            <span className="panel-setting__label">Avatar color</span>
+                            <div className="panel-avatar-swatches">
+                                <button
+                                    type="button"
+                                    className={`panel-avatar-swatch${profile.avatar_color === null ? ' is-active' : ''}`}
+                                    aria-label="Use generated avatar color"
+                                    onClick={() => onUpdateProfile({ avatar_color: null })}
+                                >
+                                    Auto
+                                </button>
+                                {avatarColorOptions.map((color) => (
+                                    <button
+                                        key={color}
+                                        type="button"
+                                        className={`panel-avatar-swatch panel-avatar-swatch--color${profile.avatar_color === color ? ' is-active' : ''}`}
+                                        style={{ background: color }}
+                                        aria-label={`Use avatar color ${color}`}
+                                        onClick={() => onUpdateProfile({ avatar_color: color })}
+                                    />
+                                ))}
+                            </div>
+                        </div>
                         <p className="panel-app__muted">
-                            {panel.account.role} · {panel.account.org}
+                            {profile.role} · {profile.org} · {profile.plan}
                         </p>
+                        <button type="button" className="panel-mini-btn" onClick={onSaveProfile}>
+                            Save profile
+                        </button>
                     </div>
                 </div>
                 <form

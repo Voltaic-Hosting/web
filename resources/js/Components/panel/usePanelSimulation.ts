@@ -3,8 +3,11 @@ import type {
     PanelApiKey,
     PanelAuditEntry,
     PanelBackup,
+    PanelChatMessage,
     PanelConcept,
     PanelFirewallRule,
+    PanelNotificationChannel,
+    PanelProfile,
     PanelServer,
     PanelSettingToggle,
     PanelTicket,
@@ -26,6 +29,15 @@ export function usePanelSimulation(panel: PanelConcept) {
     const [sessions, setSessions] = useState(panel.sessions);
     const [audit, setAudit] = useState(panel.audit);
     const [security, setSecurity] = useState(panel.security);
+    const [profile, setProfile] = useState<PanelProfile>({
+        ...panel.account,
+        avatar_color: panel.account.avatar_color ?? null,
+    });
+    const [notifications, setNotifications] = useState(panel.notifications);
+    const [notificationChannels, setNotificationChannels] = useState(panel.notification_channels);
+    const [webhookUrl, setWebhookUrl] = useState(panel.notification_webhook);
+    const [chatChannels, setChatChannels] = useState(panel.chat_channels);
+    const [activeChatId, setActiveChatId] = useState(panel.chat_channels[0]?.id ?? '');
     const [busy, setBusy] = useState<Record<string, boolean>>({});
     const [toasts, setToasts] = useState<Array<{ id: string; message: string }>>([]);
     const [clock, setClock] = useState(() => new Date());
@@ -394,6 +406,75 @@ export function usePanelSimulation(panel: PanelConcept) {
         [pushToast],
     );
 
+    const updateProfile = useCallback((patch: Partial<PanelProfile>) => {
+        setProfile((current) => ({ ...current, ...patch }));
+    }, []);
+
+    const saveProfile = useCallback(() => {
+        pushToast('Profile updated (concept)');
+    }, [pushToast]);
+
+    const markNotificationRead = useCallback((id: string) => {
+        setNotifications((current) =>
+            current.map((item) => (item.id === id ? { ...item, read: true } : item)),
+        );
+    }, []);
+
+    const markAllNotificationsRead = useCallback(() => {
+        setNotifications((current) => current.map((item) => ({ ...item, read: true })));
+        pushToast('All notifications marked read');
+    }, [pushToast]);
+
+    const toggleNotificationChannel = useCallback(
+        (key: PanelNotificationChannel['key']) => {
+            setNotificationChannels((current) =>
+                current.map((channel) =>
+                    channel.key === key ? { ...channel, enabled: !channel.enabled } : channel,
+                ),
+            );
+            pushToast('Notification channel updated');
+        },
+        [pushToast],
+    );
+
+    const testWebhook = useCallback(() => {
+        if (!webhookUrl.trim()) {
+            pushToast('Enter a webhook URL first');
+            return;
+        }
+        pushToast('Test webhook sent (concept)');
+    }, [pushToast, webhookUrl]);
+
+    const sendChatMessage = useCallback(
+        (channelId: string, body: string) => {
+            const trimmed = body.trim();
+            if (!trimmed) {
+                return;
+            }
+            const message: PanelChatMessage = {
+                id: `m-${Date.now()}`,
+                author: profile.name,
+                time: new Date().toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                }),
+                body: trimmed,
+            };
+            setChatChannels((current) =>
+                current.map((channel) =>
+                    channel.id === channelId
+                        ? { ...channel, messages: [...channel.messages, message], unread: 0 }
+                        : channel,
+                ),
+            );
+        },
+        [profile.name],
+    );
+
+    const unreadNotifications = notifications.filter((item) => !item.read).length;
+    const unreadChat = chatChannels.reduce((sum, channel) => sum + channel.unread, 0);
+
     return {
         servers,
         monitors,
@@ -406,13 +487,30 @@ export function usePanelSimulation(panel: PanelConcept) {
         sessions,
         audit,
         security,
+        profile,
+        notifications,
+        notificationChannels,
+        webhookUrl,
+        chatChannels,
+        activeChatId,
+        unreadNotifications,
+        unreadChat,
         busy,
         toasts,
         clock,
         filter,
         setFilter,
+        setWebhookUrl,
+        setActiveChatId,
         dismissToast,
         pushToast,
+        updateProfile,
+        saveProfile,
+        markNotificationRead,
+        markAllNotificationsRead,
+        toggleNotificationChannel,
+        testWebhook,
+        sendChatMessage,
         startServer,
         stopServer,
         pauseServer,

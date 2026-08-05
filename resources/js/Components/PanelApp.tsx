@@ -6,6 +6,8 @@ import UptimeView from '@/Components/panel/UptimeView';
 import { usePanelSimulation } from '@/Components/panel/usePanelSimulation';
 import { useTimezone } from '@/Components/panel/useTimezone';
 import { ToastStack } from '@/Components/panel/ui';
+import { PanelTopbarTools } from '@/Components/panel/PanelTopbarTools';
+import { NotificationsView } from '@/Components/panel/NotificationsView';
 import {
     AdminView,
     ApiView,
@@ -30,7 +32,7 @@ interface PanelAppProps {
 }
 
 function navAllowedForUser(user: PanelUser): Set<string> {
-    const allowed = new Set(['overview', 'docs', 'settings']);
+    const allowed = new Set(['overview', 'docs', 'settings', 'notifications']);
     if (user.perms.includes('servers')) {
         for (const id of ['servers', 'backups', 'locations', 'uptime', 'logs']) {
             allowed.add(id);
@@ -143,10 +145,11 @@ export default function PanelApp({
               email: viewAsUser.email,
               role: viewAsUser.role,
               avatar_seed: viewAsUser.avatar_seed,
+              avatar_color: null,
               org: panel.account.org,
               plan: panel.account.plan,
           }
-        : panel.account;
+        : sim.profile;
 
     const selectedServer = sim.servers.find((server) => server.id === selectedServerId) ?? null;
 
@@ -220,6 +223,7 @@ export default function PanelApp({
                         seed={activeAccount.avatar_seed}
                         name={activeAccount.name}
                         size={32}
+                        color={activeAccount.avatar_color}
                     />
                 </button>
             </div>
@@ -267,6 +271,7 @@ export default function PanelApp({
                             seed={activeAccount.avatar_seed}
                             name={activeAccount.name}
                             size={34}
+                            color={activeAccount.avatar_color}
                         />
                         <span>
                             <span className="panel-profile-btn__name">{activeAccount.name}</span>
@@ -298,51 +303,27 @@ export default function PanelApp({
                         <h2 className="panel-app__heading">{heading}</h2>
                     </div>
                     <div className="panel-app__topbar-actions">
-                        <details className="panel-clock-menu">
-                            <summary
-                                className="panel-app__clock panel-mono"
-                                aria-label={`Current time in ${timezone}. Open to change timezone.`}
-                            >
-                                {sim.clock.toLocaleTimeString('en-US', {
-                                    hour12: false,
-                                    timeZone: timezone,
-                                })}
-                            </summary>
-                            <div
-                                className="panel-clock-menu__panel"
-                                role="listbox"
-                                aria-label="Timezone"
-                            >
-                                {panel.timezones.map((zone) => (
-                                    <button
-                                        key={zone}
-                                        type="button"
-                                        role="option"
-                                        aria-selected={timezone === zone}
-                                        className={`panel-clock-menu__zone${timezone === zone ? ' is-active' : ''}`}
-                                        onClick={(event) => {
-                                            setTimezone(zone);
-                                            const details = event.currentTarget.closest('details');
-                                            if (details) {
-                                                details.open = false;
-                                            }
-                                        }}
-                                    >
-                                        <span>{zone}</span>
-                                        <span className="panel-clock-menu__zone-time">
-                                            {sim.clock.toLocaleTimeString('en-US', {
-                                                hour12: false,
-                                                timeZone: zone,
-                                            })}
-                                        </span>
-                                    </button>
-                                ))}
-                            </div>
-                        </details>
+                        <PanelTopbarTools
+                            clock={sim.clock}
+                            timezone={timezone}
+                            timezones={panel.timezones}
+                            onTimezoneChange={setTimezone}
+                            notifications={sim.notifications}
+                            unreadNotifications={sim.unreadNotifications}
+                            onMarkRead={sim.markNotificationRead}
+                            onOpenNotifications={() => navigate('notifications')}
+                            chatChannels={sim.chatChannels}
+                            activeChatId={sim.activeChatId}
+                            unreadChat={sim.unreadChat}
+                            onChatChannelChange={sim.setActiveChatId}
+                            onSendChat={sim.sendChatMessage}
+                        />
                     </div>
                 </header>
 
-                <div className="panel-app__content">
+                <div
+                    className={`panel-app__content${contentView === 'docs' ? ' panel-app__content--flush' : ''}`}
+                >
                     {contentView === 'overview' ? (
                         <OverviewView
                             panel={panel}
@@ -449,6 +430,20 @@ export default function PanelApp({
 
                     {contentView === 'docs' ? <DocsView docs={panel.docs} /> : null}
 
+                    {contentView === 'notifications' ? (
+                        <NotificationsView
+                            notifications={sim.notifications}
+                            channels={sim.notificationChannels}
+                            webhookUrl={sim.webhookUrl}
+                            onWebhookUrlChange={sim.setWebhookUrl}
+                            onToggleChannel={sim.toggleNotificationChannel}
+                            onMarkRead={sim.markNotificationRead}
+                            onMarkAllRead={sim.markAllNotificationsRead}
+                            onTestWebhook={sim.testWebhook}
+                            onToast={sim.pushToast}
+                        />
+                    ) : null}
+
                     {contentView === 'admin' ? (
                         <AdminView
                             audit={sim.audit}
@@ -470,9 +465,12 @@ export default function PanelApp({
 
                     {contentView === 'profile' ? (
                         <ProfileView
+                            profile={sim.profile}
                             panel={panel}
                             security={sim.security}
                             sessions={sim.sessions}
+                            onUpdateProfile={sim.updateProfile}
+                            onSaveProfile={sim.saveProfile}
                             onToggleSecurity={sim.toggleSecurity}
                             onRevokeSession={sim.revokeSession}
                             onToast={sim.pushToast}
