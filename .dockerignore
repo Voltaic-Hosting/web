@@ -54,7 +54,6 @@ AGENTS.md
 LICENSE
 .editorconfig
 .gitattributes
-.npmrc
 .prettierignore
 .prettierrc.json
 eslint.config.js

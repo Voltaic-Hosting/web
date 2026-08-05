@@ -15,6 +15,7 @@ class PublicRoutesTest extends TestCase
         return [
             'home' => ['home'],
             'about' => ['about'],
+            'faq' => ['faq'],
             'contact' => ['contact'],
             'branding' => ['branding'],
             'panel' => ['panel'],
@@ -36,7 +37,8 @@ class PublicRoutesTest extends TestCase
             ->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
             ->assertSee('<urlset', false)
             ->assertSee('https://voltaic.host/', false)
-            ->assertSee('https://voltaic.host/branding', false);
+            ->assertSee('https://voltaic.host/branding', false)
+            ->assertSee('https://voltaic.host/faq', false);
     }
 
     public function test_unknown_route_renders_not_found_page(): void

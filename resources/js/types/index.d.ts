@@ -59,6 +59,21 @@ export interface AboutContent {
     sections: AboutSection[];
 }
 
+export interface FaqItem {
+    question: string;
+    answer: string[];
+}
+
+export interface FaqGroup {
+    title: string;
+    items: FaqItem[];
+}
+
+export interface FaqContent {
+    intro: string;
+    groups: FaqGroup[];
+}
+
 export interface BrandingAsset {
     key: string;
     label: string;

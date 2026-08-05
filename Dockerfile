@@ -52,13 +52,16 @@ FROM ${NODE_IMAGE} AS frontend
 
 WORKDIR /app
 
-ENV npm_config_update_notifier=false \
-    npm_config_fund=false \
-    npm_config_audit=false
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
+    PNPM_HOME=/pnpm \
+    PATH="/pnpm:$PATH"
 
-COPY package.json package-lock.json ./
+RUN corepack enable \
+    && corepack prepare pnpm@11.20.0 --activate
 
-RUN npm ci --no-audit --no-fund
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+
+RUN pnpm install --frozen-lockfile
 
 COPY vite.config.js tsconfig.json ./
 COPY resources ./resources
@@ -66,8 +69,7 @@ COPY public ./public
 
 ENV NODE_ENV=production
 
-RUN npm run build \
-    && npm cache clean --force \
+RUN pnpm run build \
     && rm -rf node_modules
 
 # -----------------------------------------------------------------------------

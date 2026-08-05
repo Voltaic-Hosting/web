@@ -5,6 +5,7 @@ module.exports = {
             url: [
                 'http://127.0.0.1:8765/',
                 'http://127.0.0.1:8765/about',
+                'http://127.0.0.1:8765/faq',
                 'http://127.0.0.1:8765/contact',
                 'http://127.0.0.1:8765/privacy',
                 'http://127.0.0.1:8765/terms',

@@ -55,3 +55,34 @@ export function webPageJsonLd(
         },
     };
 }
+
+export function faqPageJsonLd(
+    site: SiteConfig,
+    options: {
+        name: string;
+        path: string;
+        description: string;
+        items: Array<{ question: string; answer: string[] }>;
+    },
+): Record<string, unknown> {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        name: options.name,
+        url: absoluteUrl(site.domain, options.path),
+        description: options.description,
+        mainEntity: options.items.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: item.answer.join(' '),
+            },
+        })),
+        isPartOf: {
+            '@type': 'WebSite',
+            name: site.name,
+            url: site.domain,
+        },
+    };
+}

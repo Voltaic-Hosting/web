@@ -38,12 +38,12 @@
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate",
-            "npm install --ignore-scripts",
-            "npm run build"
+            "pnpm install --frozen-lockfile",
+            "pnpm run build"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#fb7185\" \"php artisan serve\" \"npm run dev\" --names=server,vite --kill-others"
+            "pnpm exec concurrently -c \"#93c5fd,#fb7185\" \"php artisan serve\" \"pnpm run dev\" --names=server,vite --kill-others"
         ],
         "format": [
             "@php vendor/bin/pint"

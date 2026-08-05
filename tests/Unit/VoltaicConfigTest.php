@@ -55,7 +55,7 @@ class VoltaicConfigTest extends TestCase
 
     public function test_nav_items_reference_known_routes(): void
     {
-        $knownRoutes = ['home', 'about', 'contact', 'branding', 'panel', 'privacy', 'terms'];
+        $knownRoutes = ['home', 'about', 'faq', 'contact', 'branding', 'panel', 'privacy', 'terms'];
 
         foreach ([...config('voltaic.nav'), ...config('voltaic.footer_nav')] as $item) {
             $this->assertContains($item['route'], $knownRoutes);
@@ -134,5 +134,51 @@ class VoltaicConfigTest extends TestCase
         $this->assertStringContainsString('United States', $body);
         $this->assertStringContainsString('Monero', $body);
         $this->assertStringContainsString('30-day refund', $body);
+    }
+
+    public function test_about_states_panel_open_source_strategy(): void
+    {
+        $panel = collect(config('voltaic.about.sections'))
+            ->firstWhere('title', 'Panel and daemon');
+
+        $this->assertIsArray($panel);
+
+        $body = implode(' ', $panel['paragraphs']);
+
+        $this->assertStringContainsString('Older major versions', $body);
+        $this->assertStringContainsString('open source', $body);
+        $this->assertStringContainsString('bug fixes and security updates only', $body);
+        $this->assertStringContainsString('newest major versions are closed source', $body);
+        $this->assertStringContainsString('daemon', $body);
+    }
+
+    public function test_faq_covers_billing_panel_and_privacy(): void
+    {
+        $groups = collect(config('voltaic.faq.groups'));
+        $titles = $groups->pluck('title')->all();
+
+        $this->assertContains('Billing and exit', $titles);
+        $this->assertContains('Panel and software', $titles);
+        $this->assertContains('Privacy and security', $titles);
+
+        $questions = $groups
+            ->pluck('items')
+            ->flatten(1)
+            ->pluck('question')
+            ->implode(' ');
+
+        $this->assertStringContainsString('cancel', strtolower($questions));
+        $this->assertStringContainsString('open source', strtolower($questions));
+        $this->assertStringContainsString('track', strtolower($questions));
+
+        foreach ($groups as $group) {
+            $this->assertNotEmpty($group['items']);
+
+            foreach ($group['items'] as $item) {
+                $this->assertNotSame('', $item['question']);
+                $this->assertIsArray($item['answer']);
+                $this->assertNotEmpty($item['answer']);
+            }
+        }
     }
 }

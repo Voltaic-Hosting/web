@@ -30,6 +30,16 @@ class InertiaPagesTest extends TestCase
                 ->has('about.sections', count(config('voltaic.about.sections'))));
     }
 
+    public function test_faq_page_renders_expected_inertia_payload(): void
+    {
+        $this->get(route('faq'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Faq')
+                ->where('faq.intro', config('voltaic.faq.intro'))
+                ->has('faq.groups', count(config('voltaic.faq.groups'))));
+    }
+
     public function test_contact_page_renders_expected_inertia_payload(): void
     {
         $this->get(route('contact'))

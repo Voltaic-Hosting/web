@@ -4,6 +4,8 @@ export function routeFor(name: string): string {
             return '/';
         case 'about':
             return '/about';
+        case 'faq':
+            return '/faq';
         case 'contact':
             return '/contact';
         case 'branding':

@@ -10,6 +10,7 @@ Stack: Laravel 13, Inertia.js, React, TypeScript, Tailwind CSS 4, Vite.
 | --- | --- |
 | `/` | Home, panel showcase, services, operating principles |
 | `/about` | Company background and contact details |
+| `/faq` | Billing, panel, privacy, hosting, and support answers |
 | `/contact` | Email and service list |
 | `/branding` | Logo downloads and usage notes |
 | `/panel` | Voltaic Panel concept UI |
@@ -26,8 +27,8 @@ Site copy and navigation live in `config/voltaic.php`. React pages live under `r
 composer install
 cp .env.example .env
 php artisan key:generate
-npm install
-npm run build
+pnpm install
+pnpm run build
 php artisan serve
 ```
 
@@ -39,6 +40,8 @@ composer dev
 
 That runs the Laravel server and Vite together. Open http://127.0.0.1:8000 in your browser. Port 5173 is the Vite dev server only, not the site.
 
+Requires Node.js 22+ and pnpm 11+ (`packageManager` in `package.json`).
+
 ## Commands
 
 ```bash
@@ -46,9 +49,10 @@ composer format      # PHP style (Pint)
 composer lint        # Pint check + PHPStan
 composer test        # PHPUnit
 
-npm run format       # Prettier (TS/CSS/JS config)
-npm run lint         # Prettier check, TypeScript, ESLint
-npm run build        # Production assets
+pnpm run format      # Prettier (TS/CSS/JS config)
+pnpm run lint        # Prettier check, TypeScript, ESLint
+pnpm run build       # Production assets
+pnpm audit           # Production dependency audit
 ```
 
 CI runs on push and pull requests via GitHub Actions (PHP 8.3/8.4 matrix, frontend lint/build, CodeQL, dependency review). See `AGENTS.md` for workflow details.

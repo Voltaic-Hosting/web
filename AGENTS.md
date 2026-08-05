@@ -14,6 +14,7 @@ Stack: Laravel 13 + Inertia.js + React + TypeScript + Tailwind CSS 4 + Vite.
 | --- | --- | --- |
 | Home | `/` | Services, panel showcase, values from config |
 | About | `/about` | Company and operating principles |
+| FAQ | `/faq` | Billing, panel, privacy, hosting, and support answers |
 | Contact | `/contact` | Email and service list, no form yet |
 | Branding | `/branding` | Logo downloads and usage notes |
 | Panel | `/panel` | Voltaic Panel concept UI (noindex) |
@@ -36,20 +37,20 @@ Stack: Laravel 13 + Inertia.js + React + TypeScript + Tailwind CSS 4 + Vite.
 
 ```bash
 composer install
-npm install
-npm run build
+pnpm install
+pnpm run build
 composer format
-npm run format
+pnpm run format
 composer lint
-npm run lint
+pnpm run lint
 composer test
 php artisan serve
-npm run lighthouse:ci
+pnpm run lighthouse:ci
 ```
 
 PHP: Pint + Larastan (`composer format` / `composer lint`).
 
-Frontend: Prettier, TypeScript, ESLint (`npm run format` / `npm run lint`).
+Frontend: pnpm 11+, Prettier, TypeScript, ESLint (`pnpm run format` / `pnpm run lint`).
 
 ## Writing rules for site copy
 
@@ -68,16 +69,16 @@ Reference: [no_ai_slop_writing_rules](https://github.com/realrossmanngroup/no_ai
 - Match existing Laravel and Inertia conventions in the repo
 - Keep controllers thin. Put content in `config/voltaic.php`
 - Run `composer lint` and `composer test` after PHP changes
-- Run `npm run lint` and `npm run build` after frontend changes
+- Run `pnpm run lint` and `pnpm run build` after frontend changes
 - Do not commit `.env`, credentials, or build artifacts ignored by `.gitignore`
 
 ## CI/CD
 
-GitHub Actions workflows live in `.github/workflows/`. Actions are pinned to full commit SHAs. Dependabot opens update PRs for Composer, npm, and Actions.
+GitHub Actions workflows live in `.github/workflows/`. Actions are pinned to full commit SHAs. Dependabot opens update PRs for Composer, npm (pnpm lockfile), and Actions.
 
 | Workflow | Purpose |
 | --- | --- |
-| `ci.yml` | PHP matrix (8.3, 8.4), Pint, PHPStan, PHPUnit, frontend lint, Vite build |
+| `ci.yml` | PHP matrix (8.3, 8.4), Pint, PHPStan, PHPUnit, pnpm lint/audit/build |
 | `lighthouse.yml` | Lighthouse CI (performance, accessibility, best practices, SEO) on public pages |
 | `codeql.yml` | CodeQL for JavaScript/TypeScript and workflow files |
 | `dependency-review.yml` | Blocks PRs that add moderate+ severity dependency issues |

@@ -12,19 +12,17 @@ Thumbs.db
 /.nova
 /.vscode
 /.zed
-*.swp
-*.swo
-*~
 
 .phpactor.json
 .phpunit.result.cache
 /.phpunit.cache
 .lighthouseci
-/.lighthouseci/
 
 /auth.json
 /node_modules
 /vendor
+package-lock.json
+npm-shrinkwrap.json
 
 /public/build
 /public/hot
@@ -33,7 +31,6 @@ Thumbs.db
 
 /storage/*.key
 /storage/pail
-/storage/inertia-devtools
 
 /bootstrap/cache/*
 !/bootstrap/cache/.gitignore
@@ -41,10 +38,7 @@ Thumbs.db
 /coverage
 /.eslintcache
 /.prettier-cache
-/.cache
 
 _ide_helper.php
-_ide_helper_models.php
-.phpstorm.meta.php
 Homestead.json
 Homestead.yaml
