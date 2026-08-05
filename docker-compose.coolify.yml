@@ -1,7 +1,9 @@
 # Coolify compose for Voltaic Hosting website.
 # Use this file as the Coolify Docker Compose build pack.
 # Proxy via SERVICE_URL_WEB_8080 (web listens on 8080). No host port publish.
-# Set APP_KEY (full base64:... value) before deploy.
+# Required Coolify environment variables:
+#   APP_KEY — output of `php artisan key:generate --show` (must include the base64: prefix)
+#   APP_URL — public site URL without :8080, e.g. https://voltaic.host
 # Assign the domain ONLY to the web service (not app). Example: https://voltaic.host:8080
 # Do not define custom networks. Coolify creates one per stack and attaches its proxy to it.
 
@@ -35,7 +37,7 @@ services:
       APP_ENV: production
       APP_KEY: ${APP_KEY:?}
       APP_DEBUG: ${APP_DEBUG:-false}
-      APP_URL: ${APP_URL:-${SERVICE_URL_WEB_8080}}
+      APP_URL: ${APP_URL:?}
       LOG_CHANNEL: stderr
       LOG_LEVEL: ${LOG_LEVEL:-warning}
       DB_CONNECTION: sqlite
