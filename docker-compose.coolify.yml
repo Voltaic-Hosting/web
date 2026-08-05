@@ -1,12 +1,11 @@
-# Coolify Docker Compose deployment
-# Docs: https://coolify.io/docs/knowledge-base/docker/compose
-#
-# In Coolify, set the Compose file to docker-compose.coolify.yml
-# Assign a domain to the web service (container port 8080).
-# Set required APP_KEY in the Coolify environment UI (base64:...).
-#
-# No host port mappings. Coolify's proxy reaches web on 8080 via
-# SERVICE_URL_WEB_8080. The app service stays private (no domain, no ports).
+# Coolify compose for Voltaic Hosting website.
+# Use this file as the Coolify Docker Compose build pack.
+# Proxy via SERVICE_URL_WEB_8080 (web listens on 8080). No host port publish.
+# Set APP_KEY (full base64:... value) before deploy.
+# Assign the domain ONLY to the web service (not app). Example: https://voltaic.host:8080
+# Do not define custom networks. Coolify creates one per stack and attaches its proxy to it.
+
+name: voltaic-website
 
 services:
   app:
@@ -32,22 +31,22 @@ services:
       - /var/www/html/storage:uid=82,gid=82,mode=0755,size=64m
       - /var/www/html/bootstrap/cache:uid=82,gid=82,mode=0755,size=16m
     environment:
-      - APP_KEY=${APP_KEY:?}
-      - APP_URL=${SERVICE_URL_WEB}
-      - LOG_LEVEL=${LOG_LEVEL:-warning}
-      - APP_NAME=Voltaic Hosting
-      - APP_ENV=production
-      - APP_DEBUG=false
-      - LOG_CHANNEL=stderr
-      - DB_CONNECTION=sqlite
-      - DB_DATABASE=/var/www/html/storage/database.sqlite
-      - SESSION_DRIVER=file
-      - CACHE_STORE=file
-      - QUEUE_CONNECTION=sync
-      - FILESYSTEM_DISK=local
-      - BROADCAST_CONNECTION=log
-      - MAIL_MAILER=log
-      - INERTIA_SSR_ENABLED=false
+      APP_NAME: "Voltaic Hosting"
+      APP_ENV: production
+      APP_KEY: ${APP_KEY:?}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      APP_URL: ${APP_URL:-${SERVICE_URL_WEB_8080}}
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: ${LOG_LEVEL:-warning}
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/storage/database.sqlite
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      FILESYSTEM_DISK: local
+      BROADCAST_CONNECTION: log
+      MAIL_MAILER: log
+      INERTIA_SSR_ENABLED: "false"
     expose:
       - "9000"
     healthcheck:
@@ -97,10 +96,10 @@ services:
       - /tmp:uid=101,gid=101,mode=1777,size=16m
       - /var/cache/nginx:uid=101,gid=101,mode=0755,size=32m
       - /var/run:uid=101,gid=101,mode=0755,size=16m
-    environment:
-      - SERVICE_URL_WEB_8080
     expose:
       - "8080"
+    environment:
+      SERVICE_URL_WEB_8080: ${SERVICE_URL_WEB_8080}
     depends_on:
       app:
         condition: service_healthy
