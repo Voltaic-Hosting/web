@@ -3,7 +3,7 @@
 # Voltaic Hosting website
 # Multi-stage, rootless, digest-pinned images
 
-ARG PHP_IMAGE=php:8.4-fpm-alpine@sha256:5992f8b7433fe7fa96dfbf67746c86d6c41bc91e686eac38fe531c72a02e40e4
+ARG PHP_IMAGE=php:8.5-fpm-alpine@sha256:9dc81f4086ea5402227a6bcc489b04b4baba12394624d9621faa92ed812fb8ee
 ARG COMPOSER_IMAGE=composer:2@sha256:4d71c3c2109c61d5415544264b59ad4087e4c5b7244481723664138fd36d5040
 ARG NODE_IMAGE=node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
 ARG NGINX_IMAGE=nginxinc/nginx-unprivileged:1.27-alpine@sha256:65e3e85dbaed8ba248841d9d58a899b6197106c23cb0ff1a132b7bfe0547e4c0
@@ -61,9 +61,6 @@ RUN corepack enable \
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
-# Older Corepack rejects packageManager integrity hashes.
-RUN node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('package.json','utf8')); p.packageManager='pnpm@11.20.0'; fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\n');"
-
 RUN pnpm install --frozen-lockfile
 
 COPY vite.config.js tsconfig.json ./
@@ -93,7 +90,7 @@ LABEL org.opencontainers.image.title="Voltaic Hosting Website" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.revision="${VCS_REF}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.base.name="php:8.4-fpm-alpine" \
+      org.opencontainers.image.base.name="php:8.5-fpm-alpine" \
       org.opencontainers.image.base.digest="sha256:5992f8b7433fe7fa96dfbf67746c86d6c41bc91e686eac38fe531c72a02e40e4"
 
 WORKDIR /var/www/html

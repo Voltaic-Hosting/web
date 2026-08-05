@@ -55,7 +55,7 @@ pnpm run build       # Production assets
 pnpm audit           # Production dependency audit
 ```
 
-CI runs on push and pull requests via GitHub Actions (PHP 8.3/8.4 matrix, frontend lint/build, CodeQL, dependency review). See `AGENTS.md` for workflow details.
+CI runs on push and pull requests via GitHub Actions (PHP 8.5, frontend lint/build, CodeQL, dependency review). See `AGENTS.md` for workflow details.
 
 ## Layout
 

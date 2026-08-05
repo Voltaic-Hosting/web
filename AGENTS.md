@@ -78,7 +78,7 @@ GitHub Actions workflows live in `.github/workflows/`. Actions are pinned to ful
 
 | Workflow | Purpose |
 | --- | --- |
-| `ci.yml` | PHP matrix (8.3, 8.4), Pint, PHPStan, PHPUnit, pnpm lint/audit/build |
+| `ci.yml` | PHP 8.5, Pint, PHPStan, PHPUnit, pnpm lint/audit/build |
 | `lighthouse.yml` | Lighthouse CI (performance, accessibility, best practices, SEO) on public pages |
 | `codeql.yml` | CodeQL for JavaScript/TypeScript and workflow files |
 | `dependency-review.yml` | Blocks PRs that add moderate+ severity dependency issues |
