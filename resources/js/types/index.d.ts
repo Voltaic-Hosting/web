@@ -74,12 +74,13 @@ export interface FaqContent {
     groups: FaqGroup[];
 }
 
+export type BrandingFormat = 'png' | 'jpg' | 'webp';
+
 export interface BrandingAsset {
     key: string;
     label: string;
     description: string;
-    path: string;
-    format: string;
+    formats: Record<BrandingFormat, string>;
     dimensions: string;
     preview: 'light' | 'dark';
 }

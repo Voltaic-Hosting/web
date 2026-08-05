@@ -365,6 +365,10 @@
         justify-content: center;
     }
 
+    .page-hero--compact {
+        padding-bottom: clamp(0.75rem, 2vw, 1.25rem);
+    }
+
     .legal-doc {
         text-align: center;
     }
@@ -395,6 +399,14 @@
 
     .section--tight {
         padding-top: clamp(1rem, 3vw, 1.75rem);
+    }
+
+    .section--flush-top {
+        padding-top: 0.25rem;
+    }
+
+    .section__intro--compact {
+        margin-bottom: clamp(0.75rem, 2vw, 1rem);
     }
 
     .section__intro {
@@ -839,6 +851,46 @@
         font-family: var(--font-mono);
         font-size: 0.75rem;
         letter-spacing: 0.03em;
+    }
+
+    .branding-format {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+
+    .branding-format__btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2rem;
+        padding: 0.35rem 0.7rem;
+        border: 1px solid var(--color-line);
+        border-radius: 0.3rem;
+        background: transparent;
+        color: var(--color-frost);
+        font: inherit;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition:
+            background-color 150ms ease,
+            border-color 150ms ease,
+            color 150ms ease;
+    }
+
+    .branding-format__btn:hover {
+        border-color: var(--color-accent-muted);
+        color: var(--color-snow);
+    }
+
+    .branding-format__btn.is-active {
+        border-color: var(--color-accent-deep);
+        background: color-mix(in oklab, var(--color-accent) 18%, transparent);
+        color: var(--color-snow);
     }
 
     .branding-card__download {

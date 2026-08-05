@@ -66,8 +66,9 @@ class VoltaicConfigTest extends TestCase
     public function test_branding_assets_exist_on_disk(): void
     {
         foreach (config('voltaic.branding.assets') as $asset) {
-            $relative = ltrim((string) $asset['path'], '/');
-            $this->assertFileExists(public_path($relative));
+            foreach ($asset['formats'] as $path) {
+                $this->assertFileExists(public_path(ltrim((string) $path, '/')));
+            }
         }
     }
 

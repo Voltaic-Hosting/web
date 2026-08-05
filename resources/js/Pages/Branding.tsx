@@ -1,3 +1,4 @@
+import BrandingAssetCard from '@/Components/BrandingAssetCard';
 import Layout from '@/Components/Layout';
 import PageHero from '@/Components/PageHero';
 import SectionAnchor from '@/Components/SectionAnchor';
@@ -29,11 +30,11 @@ export default function Branding({ branding, site }: BrandingProps) {
                 }}
             />
 
-            <PageHero id="branding" title="Branding" lede={branding.intro} />
+            <PageHero id="branding" title="Branding" lede={branding.intro} compact />
 
-            <section className="section section--tight" id="assets">
+            <section className="section section--tight section--flush-top" id="assets">
                 <div className="site-container">
-                    <div className="section__intro">
+                    <div className="section__intro section__intro--compact">
                         <h2 className="section__title">
                             <span className="section__heading">
                                 <SectionAnchor id="assets" label="Assets" />
@@ -43,35 +44,7 @@ export default function Branding({ branding, site }: BrandingProps) {
                     </div>
                     <div className="branding-grid">
                         {branding.assets.map((asset) => (
-                            <article key={asset.key} className="branding-card">
-                                <div
-                                    className={`branding-card__preview branding-card__preview--${asset.preview}`}
-                                >
-                                    <img
-                                        src={asset.path}
-                                        alt=""
-                                        className="branding-card__image"
-                                        loading="lazy"
-                                        decoding="async"
-                                    />
-                                </div>
-                                <div className="branding-card__body">
-                                    <h2 className="branding-card__title">{asset.label}</h2>
-                                    <p className="branding-card__description">
-                                        {asset.description}
-                                    </p>
-                                    <p className="branding-card__meta">
-                                        {asset.format} · {asset.dimensions}
-                                    </p>
-                                    <a
-                                        href={asset.path}
-                                        className="btn btn--ghost branding-card__download"
-                                        download
-                                    >
-                                        Download
-                                    </a>
-                                </div>
-                            </article>
+                            <BrandingAssetCard key={asset.key} asset={asset} />
                         ))}
                     </div>
                 </div>

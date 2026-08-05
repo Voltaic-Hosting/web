@@ -7,6 +7,7 @@ interface PageHeroProps extends PropsWithChildren {
     title: string;
     lede?: string;
     align?: 'start' | 'center';
+    compact?: boolean;
 }
 
 export default function PageHero({
@@ -15,9 +16,16 @@ export default function PageHero({
     title,
     lede,
     align = 'start',
+    compact = false,
     children,
 }: PageHeroProps) {
-    const className = align === 'center' ? 'page-hero page-hero--center' : 'page-hero';
+    const className = [
+        'page-hero',
+        align === 'center' ? 'page-hero--center' : '',
+        compact ? 'page-hero--compact' : '',
+    ]
+        .filter(Boolean)
+        .join(' ');
     const anchorId = id ?? undefined;
 
     return (
