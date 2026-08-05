@@ -80,7 +80,9 @@ GitHub Actions workflows live in `.github/workflows/`. Actions are pinned to ful
 | --- | --- |
 | `ci.yml` | PHP 8.5, Pint, PHPStan, PHPUnit, pnpm lint/audit/build |
 | `lighthouse.yml` | Lighthouse CI (performance, accessibility, best practices, SEO) on public pages |
-| `codeql.yml` | CodeQL for JavaScript/TypeScript and workflow files |
+| `codeql.yml` | CodeQL for JavaScript/TypeScript and workflow files (advanced setup) |
 | `dependency-review.yml` | Blocks PRs that add moderate+ severity dependency issues |
 
 Workflow defaults follow GitHub's [secure use](https://docs.github.com/en/actions/reference/security/secure-use) guidance: least-privilege `permissions`, concurrency groups, and pinned third-party actions.
+
+Do not enable GitHub CodeQL default setup on this repo while `codeql.yml` is present. Default setup blocks SARIF uploads from the advanced workflow.
