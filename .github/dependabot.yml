@@ -1,0 +1,45 @@
+version: 2
+updates:
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      laravel:
+        patterns:
+          - laravel/*
+      phpunit:
+        patterns:
+          - phpunit/*
+          - sebastian/*
+          - phar-io/*
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      vite:
+        patterns:
+          - vite
+          - laravel-vite-plugin
+          - '@tailwindcss/*'
+          - tailwindcss
+          - '@vitejs/*'
+      react:
+        patterns:
+          - react
+          - react-dom
+          - '@inertiajs/*'
+          - '@types/react*'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10

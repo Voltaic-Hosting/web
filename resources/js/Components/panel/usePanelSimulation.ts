@@ -1,0 +1,498 @@
+import { useCallback, useEffect, useState } from 'react';
+import type {
+    PanelApiKey,
+    PanelAuditEntry,
+    PanelBackup,
+    PanelConcept,
+    PanelFirewallRule,
+    PanelServer,
+    PanelSettingToggle,
+    PanelTicket,
+    PanelUptimeMonitor,
+    PanelUser,
+} from '@/types';
+
+export type ServerFilter = 'all' | 'Bare metal' | 'Container' | 'MicroVM' | 'Game Servers';
+
+export function usePanelSimulation(panel: PanelConcept) {
+    const [servers, setServers] = useState(panel.servers);
+    const [monitors, setMonitors] = useState(panel.uptime.monitors);
+    const [toggles, setToggles] = useState(panel.settings_toggles);
+    const [firewall, setFirewall] = useState(panel.firewall);
+    const [backups, setBackups] = useState(panel.backups);
+    const [users, setUsers] = useState(panel.users);
+    const [tickets, setTickets] = useState(panel.tickets);
+    const [apiKeys, setApiKeys] = useState(panel.api_keys);
+    const [sessions, setSessions] = useState(panel.sessions);
+    const [audit, setAudit] = useState(panel.audit);
+    const [security, setSecurity] = useState(panel.security);
+    const [busy, setBusy] = useState<Record<string, boolean>>({});
+    const [toasts, setToasts] = useState<Array<{ id: string; message: string }>>([]);
+    const [clock, setClock] = useState(() => new Date());
+    const [filter, setFilter] = useState<ServerFilter>('all');
+
+    const pushToast = useCallback((message: string) => {
+        const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+        setToasts((current) => [...current.slice(-4), { id, message }]);
+        window.setTimeout(() => {
+            setToasts((current) => current.filter((toast) => toast.id !== id));
+        }, 4200);
+    }, []);
+
+    const dismissToast = useCallback((id: string) => {
+        setToasts((current) => current.filter((toast) => toast.id !== id));
+    }, []);
+
+    const pushAudit = useCallback((entry: Omit<PanelAuditEntry, 'time'> & { time?: string }) => {
+        const stamp = entry.time ?? new Date().toISOString().slice(11, 19);
+        setAudit((current) =>
+            [
+                {
+                    time: stamp,
+                    actor: entry.actor,
+                    action: entry.action,
+                    target: entry.target,
+                    ip: entry.ip,
+                },
+                ...current,
+            ].slice(0, 40),
+        );
+    }, []);
+
+    useEffect(() => {
+        const tick = window.setInterval(() => {
+            setClock(new Date());
+            setServers((current) =>
+                current.map((server) =>
+                    server.status === 'stopped' || server.status === 'paused'
+                        ? server
+                        : advanceServer(server),
+                ),
+            );
+            setMonitors((current) =>
+                current.map((monitor) => ({
+                    ...monitor,
+                    latency_ms: jitterLatency(monitor.latency_ms, monitor.status),
+                    last_check: `${2 + Math.floor(Math.random() * 12)}s ago`,
+                })),
+            );
+        }, 2400);
+
+        return () => window.clearInterval(tick);
+    }, []);
+
+    const runAction = useCallback(
+        (key: string, message: string, work: () => void, delay = 900) => {
+            if (busy[key]) {
+                return;
+            }
+            setBusy((current) => ({ ...current, [key]: true }));
+            window.setTimeout(() => {
+                work();
+                setBusy((current) => {
+                    const next = { ...current };
+                    delete next[key];
+                    return next;
+                });
+                pushToast(message);
+            }, delay);
+        },
+        [busy, pushToast],
+    );
+
+    const setServerStatus = useCallback(
+        (server: PanelServer, status: string, message: string) => {
+            runAction(
+                `${server.id}-${status}`,
+                message,
+                () => {
+                    setServers((current) =>
+                        current.map((item) => {
+                            if (item.id !== server.id) {
+                                return item;
+                            }
+                            const next: PanelServer = {
+                                ...item,
+                                status,
+                                chalks: pushChalk(
+                                    item.chalks,
+                                    status === 'online'
+                                        ? 'up'
+                                        : status === 'maintenance' || status === 'paused'
+                                          ? 'maintenance'
+                                          : 'down',
+                                ),
+                            };
+                            if (item.type === 'Game' || item.type === 'Game Servers') {
+                                next.players =
+                                    status === 'online'
+                                        ? Math.max(1, Math.floor((item.slots ?? 10) * 0.15))
+                                        : 0;
+                                if (status === 'online') {
+                                    next.cpu = Math.max(18, item.cpu || 30);
+                                    next.ram = Math.max(22, item.ram || 35);
+                                } else {
+                                    next.cpu = 0;
+                                    next.ram = 0;
+                                }
+                            }
+                            return next;
+                        }),
+                    );
+                    pushAudit({
+                        actor: panel.account.email,
+                        action: `server.${status}`,
+                        target: server.name,
+                        ip: '198.51.100.24',
+                    });
+                },
+                status === 'online' ? 1100 : 700,
+            );
+        },
+        [panel.account.email, pushAudit, runAction],
+    );
+
+    const startServer = useCallback(
+        (server: PanelServer) => setServerStatus(server, 'online', `${server.name} started`),
+        [setServerStatus],
+    );
+
+    const stopServer = useCallback(
+        (server: PanelServer) => setServerStatus(server, 'stopped', `${server.name} stopped`),
+        [setServerStatus],
+    );
+
+    const pauseServer = useCallback(
+        (server: PanelServer) => setServerStatus(server, 'paused', `${server.name} paused`),
+        [setServerStatus],
+    );
+
+    const restartServer = useCallback(
+        (server: PanelServer) => {
+            runAction(
+                `${server.id}-restart`,
+                `${server.name} restarted`,
+                () => {
+                    setServers((current) =>
+                        current.map((item) =>
+                            item.id === server.id
+                                ? {
+                                      ...item,
+                                      status: 'online',
+                                      cpu: 14,
+                                      ram: Math.max(18, item.ram - 6),
+                                      chalks: pushChalk(item.chalks, 'up'),
+                                  }
+                                : item,
+                        ),
+                    );
+                    pushAudit({
+                        actor: panel.account.email,
+                        action: 'server.restart',
+                        target: server.name,
+                        ip: '198.51.100.24',
+                    });
+                },
+                1300,
+            );
+        },
+        [panel.account.email, pushAudit, runAction],
+    );
+
+    const checkNow = useCallback(
+        (monitor: PanelUptimeMonitor) => {
+            runAction(
+                `check-${monitor.id}`,
+                `Check finished for ${monitor.name}`,
+                () => {
+                    setMonitors((current) =>
+                        current.map((entry) =>
+                            entry.id === monitor.id
+                                ? {
+                                      ...entry,
+                                      last_check: 'just now',
+                                      latency_ms: jitterLatency(entry.latency_ms, entry.status),
+                                      status: entry.status === 'degraded' ? 'up' : entry.status,
+                                  }
+                                : entry,
+                        ),
+                    );
+                },
+                1000,
+            );
+        },
+        [runAction],
+    );
+
+    const toggleSetting = useCallback(
+        (item: PanelSettingToggle) => {
+            setToggles((current) =>
+                current.map((entry) =>
+                    entry.key === item.key ? { ...entry, enabled: !entry.enabled } : entry,
+                ),
+            );
+            pushToast(`${item.label}: ${item.enabled ? 'off' : 'on'}`);
+        },
+        [pushToast],
+    );
+
+    const addFirewallRule = useCallback(
+        (rule: Omit<PanelFirewallRule, 'id'>) => {
+            const id = `fw-${Date.now()}`;
+            setFirewall((current) => [{ ...rule, id }, ...current]);
+            pushAudit({
+                actor: panel.account.email,
+                action: 'firewall.rule.create',
+                target: rule.server_id,
+                ip: '198.51.100.24',
+            });
+            pushToast('Firewall rule added');
+        },
+        [panel.account.email, pushAudit, pushToast],
+    );
+
+    const removeFirewallRule = useCallback(
+        (id: string) => {
+            setFirewall((current) => current.filter((rule) => rule.id !== id));
+            pushToast('Firewall rule removed');
+        },
+        [pushToast],
+    );
+
+    const createBackup = useCallback(
+        (server: PanelServer) => {
+            runAction(
+                `backup-${server.id}`,
+                `Backup started for ${server.name}`,
+                () => {
+                    const entry: PanelBackup = {
+                        id: `bk-${Date.now()}`,
+                        server_id: server.id,
+                        name: `${server.name}-manual`,
+                        size: '—',
+                        created: 'just now',
+                        status: 'ready',
+                    };
+                    setBackups((current) => [entry, ...current]);
+                    pushAudit({
+                        actor: panel.account.email,
+                        action: 'backup.create',
+                        target: server.name,
+                        ip: '198.51.100.24',
+                    });
+                },
+                1200,
+            );
+        },
+        [panel.account.email, pushAudit, runAction],
+    );
+
+    const addUser = useCallback(
+        (user: Omit<PanelUser, 'id' | 'avatar_seed' | 'status'> & { status?: string }) => {
+            const entry: PanelUser = {
+                id: `u-${Date.now()}`,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                status: user.status ?? 'invited',
+                avatar_seed: user.email,
+                perms: user.perms,
+            };
+            setUsers((current) => [...current, entry]);
+            pushAudit({
+                actor: panel.account.email,
+                action: 'user.invite',
+                target: user.email,
+                ip: '198.51.100.24',
+            });
+            pushToast(`Invite sent to ${user.email}`);
+        },
+        [panel.account.email, pushAudit, pushToast],
+    );
+
+    const updateUserPerms = useCallback(
+        (userId: string, perms: string[]) => {
+            setUsers((current) =>
+                current.map((user) => (user.id === userId ? { ...user, perms } : user)),
+            );
+            pushToast('Permissions updated');
+        },
+        [pushToast],
+    );
+
+    const createTicket = useCallback(
+        (subject: string, priority: string, body: string) => {
+            const entry: PanelTicket = {
+                id: String(1300 + tickets.length),
+                subject,
+                priority,
+                status: 'open',
+                updated: 'just now',
+                body,
+            };
+            setTickets((current) => [entry, ...current]);
+            pushToast(`Ticket #${entry.id} opened`);
+        },
+        [pushToast, tickets.length],
+    );
+
+    const closeTicket = useCallback(
+        (id: string) => {
+            setTickets((current) =>
+                current.map((ticket) =>
+                    ticket.id === id
+                        ? { ...ticket, status: 'resolved', updated: 'just now' }
+                        : ticket,
+                ),
+            );
+            pushToast(`Ticket #${id} closed`);
+        },
+        [pushToast],
+    );
+
+    const createApiKey = useCallback(
+        (name: string) => {
+            const entry: PanelApiKey = {
+                id: `key-${Date.now()}`,
+                name,
+                prefix: `vt_live_${Math.random().toString(36).slice(2, 6)}`,
+                created: new Date().toISOString().slice(0, 10),
+                last_used: 'never',
+                last_ip: '—',
+                scopes: ['servers:read'],
+            };
+            setApiKeys((current) => [entry, ...current]);
+            pushToast(`API key created: ${entry.prefix}…`);
+        },
+        [pushToast],
+    );
+
+    const revokeApiKey = useCallback(
+        (id: string) => {
+            setApiKeys((current) => current.filter((key) => key.id !== id));
+            pushToast('API key revoked');
+        },
+        [pushToast],
+    );
+
+    const revokeSession = useCallback(
+        (id: string) => {
+            setSessions((current) => current.filter((session) => session.id !== id));
+            pushToast('Session revoked');
+        },
+        [pushToast],
+    );
+
+    const toggleSecurity = useCallback(
+        (key: 'totp' | 'yubikey' | 'passkey') => {
+            setSecurity((current) => {
+                const next = { ...current, [key]: !current[key] };
+                pushToast(`${key} ${next[key] ? 'enabled' : 'disabled'}`);
+                return next;
+            });
+        },
+        [pushToast],
+    );
+
+    return {
+        servers,
+        monitors,
+        toggles,
+        firewall,
+        backups,
+        users,
+        tickets,
+        apiKeys,
+        sessions,
+        audit,
+        security,
+        busy,
+        toasts,
+        clock,
+        filter,
+        setFilter,
+        dismissToast,
+        pushToast,
+        startServer,
+        stopServer,
+        pauseServer,
+        restartServer,
+        checkNow,
+        toggleSetting,
+        addFirewallRule,
+        removeFirewallRule,
+        createBackup,
+        addUser,
+        updateUserPerms,
+        createTicket,
+        closeTicket,
+        createApiKey,
+        revokeApiKey,
+        revokeSession,
+        toggleSecurity,
+    };
+}
+
+function advanceServer(server: PanelServer): PanelServer {
+    if (server.status === 'maintenance') {
+        return {
+            ...server,
+            chalks: pushChalk(server.chalks, 'maintenance'),
+            cpu: jitter(server.cpu, 2, 4, 20),
+            ram: jitter(server.ram, 2, 10, 40),
+        };
+    }
+
+    const roll = Math.random();
+    let nextChalk = 'up';
+    let nextStatus = server.status;
+
+    if (roll > 0.97) {
+        nextChalk = 'down';
+        nextStatus = 'degraded';
+    } else if (roll > 0.94) {
+        nextChalk = 'maintenance';
+    } else if (server.status === 'degraded' && roll < 0.55) {
+        nextStatus = 'online';
+        nextChalk = 'up';
+    }
+
+    const next: PanelServer = {
+        ...server,
+        status: nextStatus,
+        chalks: pushChalk(server.chalks, nextChalk),
+        cpu: jitter(server.cpu, 5, 6, 95),
+        ram: jitter(server.ram, 4, 10, 96),
+        disk: jitter(server.disk, 2, 8, 90),
+    };
+
+    if (
+        (server.type === 'Game' || server.type === 'Game Servers') &&
+        server.status === 'online' &&
+        typeof server.players === 'number'
+    ) {
+        next.players = Math.max(
+            0,
+            Math.min(server.slots ?? 40, server.players + Math.floor(Math.random() * 3) - 1),
+        );
+    }
+
+    return next;
+}
+
+function pushChalk(chalks: string[], next: string): string[] {
+    return [...chalks.slice(-(8 - 1)), next].slice(-8);
+}
+
+function jitter(value: number, amount: number, min: number, max: number): number {
+    const next = value + (Math.random() * amount * 2 - amount);
+    return Math.max(min, Math.min(max, next));
+}
+
+function jitterLatency(value: number, status: string): number {
+    const base = status === 'degraded' ? Math.max(value, 140) : value;
+    const amount = status === 'degraded' ? 35 : 8;
+    return Math.max(6, Math.round(jitter(base, amount, 6, status === 'degraded' ? 420 : 160)));
+}
+
+export type PanelSimulation = ReturnType<typeof usePanelSimulation>;
