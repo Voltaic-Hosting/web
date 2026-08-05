@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\SiteUrl;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
@@ -16,7 +17,7 @@ class SitemapController extends Controller
                 $path = route($name, absolute: false);
 
                 return [
-                    'loc' => $domain.($path === '/' ? '/' : $path),
+                    'loc' => SiteUrl::resolve($domain, $path === '/' ? '/' : $path),
                     'changefreq' => $name === 'home' ? 'weekly' : 'monthly',
                     'priority' => $name === 'home' ? '1.0' : '0.7',
                 ];

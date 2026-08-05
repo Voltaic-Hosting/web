@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
-$uri = urldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+use Uri\Rfc3986\Uri;
+
+$uri = ($_SERVER['REQUEST_URI'] ?? '/')
+    |> Uri::parse(...)
+    |> (fn (Uri $parsed): string => urldecode($parsed->getPath()));
 $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? dirname(__DIR__).'/public';
 $path = $documentRoot.$uri;
 

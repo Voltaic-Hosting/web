@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Support\Voltaic;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -41,23 +42,14 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             /** @var array{title: string, description: string} $error */
-            $error = config('voltaic.errors.'.$status, config('voltaic.errors.default'));
+            $error = Voltaic::errorFor($status);
 
             try {
                 return Inertia::render('Error', [
                     'status' => $status,
                     'title' => $error['title'],
                     'description' => $error['description'],
-                    'site' => [
-                        'name' => config('voltaic.name'),
-                        'tagline' => config('voltaic.tagline'),
-                        'domain' => config('voltaic.domain'),
-                        'contact' => config('voltaic.contact'),
-                        'nav' => config('voltaic.nav'),
-                        'footerNav' => config('voltaic.footer_nav'),
-                        'privacyNote' => config('voltaic.privacy_note'),
-                        'seo' => config('voltaic.seo'),
-                    ],
+                    'site' => Voltaic::siteProps(),
                 ])
                     ->toResponse($request)
                     ->setStatusCode($status);

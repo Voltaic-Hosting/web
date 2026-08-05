@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Voltaic;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -37,16 +38,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            'site' => [
-                'name' => config('voltaic.name'),
-                'tagline' => config('voltaic.tagline'),
-                'domain' => config('voltaic.domain'),
-                'contact' => config('voltaic.contact'),
-                'nav' => config('voltaic.nav'),
-                'footerNav' => config('voltaic.footer_nav'),
-                'privacyNote' => config('voltaic.privacy_note'),
-                'seo' => config('voltaic.seo'),
-            ],
+            'site' => Voltaic::siteProps(),
         ];
     }
 }

@@ -21,8 +21,10 @@ class VoltaicConfigTest extends TestCase
 
     public function test_server_hardware_has_soon_badge(): void
     {
-        $hardware = collect(config('voltaic.services'))
-            ->firstWhere('slug', 'server-hardware');
+        $hardware = array_first(array_filter(
+            config('voltaic.services'),
+            fn (array $service): bool => $service['slug'] === 'server-hardware',
+        ));
 
         $this->assertIsArray($hardware);
         $this->assertSame('Soon', $hardware['badge']);
