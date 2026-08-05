@@ -15,7 +15,7 @@ export default function BrandMark({ site, href = '/', className = '', onClick }:
         <Link href={href} className={classes} onClick={onClick}>
             <img
                 className="brand-mark__img"
-                src="/branding/logo-dark.png"
+                src="/brand/logo-dark.png"
                 alt=""
                 width={40}
                 height={43}

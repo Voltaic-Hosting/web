@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Menu, X } from 'lucide-react';
 import { UserAvatar } from '@/Components/panel/avatar';
 import ServerDetail from '@/Components/panel/ServerDetail';
 import UptimeView from '@/Components/panel/UptimeView';
@@ -63,6 +64,7 @@ export default function PanelApp({
     const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
     const [firewallServerId, setFirewallServerId] = useState(panel.servers[0]?.id ?? '');
     const [viewAsUser, setViewAsUser] = useState<PanelUser | null>(null);
+    const [menuOpen, setMenuOpen] = useState(false);
     const sim = usePanelSimulation(panel);
     const { timezone, setTimezone } = useTimezone('UTC');
 
@@ -70,12 +72,42 @@ export default function PanelApp({
         setView(next);
         setSelectedServerId(null);
         setQuery('');
+        setMenuOpen(false);
     };
+
+    useEffect(() => {
+        if (!menuOpen) {
+            return;
+        }
+
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setMenuOpen(false);
+            }
+        };
+
+        window.addEventListener('keydown', onKeyDown);
+
+        if (compact) {
+            return () => {
+                window.removeEventListener('keydown', onKeyDown);
+            };
+        }
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+            window.removeEventListener('keydown', onKeyDown);
+        };
+    }, [compact, menuOpen]);
 
     const openServer = (server: PanelServer) => {
         setSelectedServerId(server.id);
         setView('servers');
         setQuery('');
+        setMenuOpen(false);
     };
 
     const startViewAs = (user: PanelUser) => {
@@ -143,9 +175,65 @@ export default function PanelApp({
               ? 'Profile'
               : (visibleNav.find((item) => item.id === view)?.label ?? 'Overview');
 
+    const navItemClass = (itemId: string) => {
+        const serversActive =
+            Boolean(selectedServerId) && itemId === 'servers' && view === 'servers';
+        const active = (!selectedServerId && view === itemId) || serversActive;
+        return `panel-app__nav-item${active ? ' is-active' : ''}`;
+    };
+
     return (
-        <div className={`panel-app${compact ? ' panel-app--compact' : ''}`}>
-            <aside className="panel-app__sidebar">
+        <div
+            className={`panel-app${compact ? ' panel-app--compact' : ''}${menuOpen ? ' is-menu-open' : ''}`}
+        >
+            <div className="panel-app__mobile-bar">
+                <button
+                    type="button"
+                    className="panel-app__menu-toggle"
+                    aria-expanded={menuOpen}
+                    aria-controls="panel-app-nav"
+                    aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+                    onClick={() => setMenuOpen((open) => !open)}
+                >
+                    {menuOpen ? (
+                        <X size={20} aria-hidden="true" />
+                    ) : (
+                        <Menu size={20} aria-hidden="true" />
+                    )}
+                </button>
+
+                <div className="panel-app__mobile-brand">
+                    <span className="panel-app__mark" aria-hidden="true" />
+                    <div>
+                        <p className="panel-app__brand-name">Voltaic Panel</p>
+                        <p className="panel-app__brand-meta">{heading}</p>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    className={`panel-app__mobile-profile${contentView === 'profile' ? ' is-active' : ''}`}
+                    aria-label={`Open profile for ${activeAccount.name}`}
+                    onClick={() => navigate('profile')}
+                >
+                    <UserAvatar
+                        seed={activeAccount.avatar_seed}
+                        name={activeAccount.name}
+                        size={32}
+                    />
+                </button>
+            </div>
+
+            {menuOpen ? (
+                <button
+                    type="button"
+                    className="panel-app__backdrop"
+                    aria-label="Close menu"
+                    onClick={() => setMenuOpen(false)}
+                />
+            ) : null}
+
+            <aside className="panel-app__sidebar" id="panel-app-nav">
                 <div className="panel-app__brand">
                     <span className="panel-app__mark" aria-hidden="true" />
                     <div>
@@ -161,7 +249,7 @@ export default function PanelApp({
                         <button
                             key={item.id}
                             type="button"
-                            className={`panel-app__nav-item${view === item.id && !selectedServerId ? ' is-active' : ''}${view === item.id && selectedServerId && item.id === 'servers' ? ' is-active' : ''}`}
+                            className={navItemClass(item.id)}
                             onClick={() => navigate(item.id)}
                         >
                             {item.label}

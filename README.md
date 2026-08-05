@@ -17,7 +17,7 @@ Stack: Laravel 13, Inertia.js, React, TypeScript, Tailwind CSS 4, Vite.
 | `/privacy` | Privacy policy |
 | `/terms` | Terms of use |
 | `/sitemap.xml` | Sitemap for crawlers |
-| unmatched URLs | Branded 404 and other error pages |
+| unmatched URLs | Branded 404 and other error pages (401, 403, 404, 419, 429, 500, 503) |
 
 Site copy and navigation live in `config/voltaic.php`. React pages live under `resources/js/Pages/`.
 

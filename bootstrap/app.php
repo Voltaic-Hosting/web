@@ -30,13 +30,41 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             $status = $response->getStatusCode();
+            $handled = [401, 403, 404, 419, 429, 500, 503];
 
-            if (! in_array($status, [403, 404, 500, 503], true)) {
+            if (! in_array($status, $handled, true)) {
                 return $response;
             }
 
-            return Inertia::render('Error', ['status' => $status])
-                ->toResponse($request)
-                ->setStatusCode($status);
+            if ($status === 500 && config('app.debug')) {
+                return $response;
+            }
+
+            /** @var array{title: string, description: string} $error */
+            $error = config('voltaic.errors.'.$status, config('voltaic.errors.default'));
+
+            try {
+                return Inertia::render('Error', [
+                    'status' => $status,
+                    'title' => $error['title'],
+                    'description' => $error['description'],
+                    'site' => [
+                        'name' => config('voltaic.name'),
+                        'tagline' => config('voltaic.tagline'),
+                        'domain' => config('voltaic.domain'),
+                        'contact' => config('voltaic.contact'),
+                        'nav' => config('voltaic.nav'),
+                        'footerNav' => config('voltaic.footer_nav'),
+                        'privacyNote' => config('voltaic.privacy_note'),
+                        'seo' => config('voltaic.seo'),
+                    ],
+                ])
+                    ->toResponse($request)
+                    ->setStatusCode($status);
+            } catch (Throwable) {
+                return response()->view('errors.'.$status, [
+                    'status' => $status,
+                ], $status);
+            }
         });
     })->create();

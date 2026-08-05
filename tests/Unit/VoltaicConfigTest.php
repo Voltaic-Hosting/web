@@ -181,4 +181,21 @@ class VoltaicConfigTest extends TestCase
             }
         }
     }
+
+    public function test_error_messages_cover_common_http_statuses(): void
+    {
+        foreach ([401, 403, 404, 419, 429, 500, 503] as $status) {
+            $error = config('voltaic.errors.'.$status);
+
+            $this->assertIsArray($error);
+            $this->assertNotSame('', $error['title']);
+            $this->assertNotSame('', $error['description']);
+        }
+
+        $default = config('voltaic.errors.default');
+
+        $this->assertIsArray($default);
+        $this->assertNotSame('', $default['title']);
+        $this->assertNotSame('', $default['description']);
+    }
 }

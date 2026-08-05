@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import { Menu, X } from 'lucide-react';
 import BrandMark from '@/Components/BrandMark';
 import { isActiveRoute, routeFor } from '@/lib/routes';
 import type { SiteConfig } from '@/types';
@@ -38,10 +39,14 @@ export default function Header({ site, menuOpen, onToggleMenu, onNavigate }: Hea
                     className="menu-toggle"
                     aria-expanded={menuOpen}
                     aria-controls="mobile-nav"
+                    aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                     onClick={onToggleMenu}
                 >
-                    <span className="sr-only">Menu</span>
-                    {menuOpen ? 'Close' : 'Menu'}
+                    {menuOpen ? (
+                        <X size={20} aria-hidden="true" />
+                    ) : (
+                        <Menu size={20} aria-hidden="true" />
+                    )}
                 </button>
             </div>
 

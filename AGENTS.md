@@ -21,7 +21,7 @@ Stack: Laravel 13 + Inertia.js + React + TypeScript + Tailwind CSS 4 + Vite.
 | Privacy | `/privacy` | No ads, tracking, or telemetry |
 | Terms | `/terms` | Website and service terms |
 | Sitemap | `/sitemap.xml` | Public URL list for crawlers |
-| Errors | unmatched routes | Inertia `Error` page for 403, 404, 500, 503 |
+| Errors | unmatched routes | Inertia `Error` page for 401, 403, 404, 419, 429, 500, 503 |
 
 ### Layout
 

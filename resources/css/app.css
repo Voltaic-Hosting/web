@@ -135,7 +135,7 @@
         top: 1rem;
     }
 
-    .site-header__cta {
+    .btn.site-header__cta {
         display: none;
     }
 
@@ -281,9 +281,11 @@
         min-height: 2.65rem;
         padding: 0.65rem 1.25rem;
         border-radius: 0.35rem;
+        font: inherit;
         font-size: 0.925rem;
         font-weight: 600;
         text-decoration: none;
+        cursor: pointer;
         transition:
             background-color 150ms ease,
             border-color 150ms ease,
@@ -948,6 +950,115 @@
         line-height: 1.65;
     }
 
+    .error-page {
+        position: relative;
+        padding-block: clamp(3rem, 8vw, 5.5rem) clamp(3rem, 7vw, 5rem);
+        overflow: hidden;
+    }
+
+    .error-page::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto auto 50%;
+        width: min(42rem, 90vw);
+        height: 18rem;
+        translate: -50% 0;
+        background: radial-gradient(
+            closest-side,
+            color-mix(in oklab, var(--color-accent) 14%, transparent),
+            transparent 72%
+        );
+        pointer-events: none;
+    }
+
+    .error-page .site-container {
+        position: relative;
+    }
+
+    .error-page__code {
+        margin-bottom: 0.35rem;
+        color: color-mix(in oklab, var(--color-accent) 55%, var(--color-line));
+        font-family: var(--font-mono);
+        font-size: clamp(4.5rem, 16vw, 8.5rem);
+        font-weight: 650;
+        letter-spacing: -0.06em;
+        line-height: 0.9;
+    }
+
+    .error-page__eyebrow {
+        margin-bottom: 0.75rem;
+        color: var(--color-accent-muted);
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .error-page__title {
+        max-width: 16ch;
+        font-size: clamp(2rem, 5vw, 3.25rem);
+        font-weight: 650;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+    }
+
+    .error-page__lede {
+        margin-top: 1.15rem;
+        max-width: 36rem;
+        color: var(--color-frost);
+        font-size: clamp(1.05rem, 2vw, 1.2rem);
+        line-height: 1.65;
+    }
+
+    .error-page__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.75rem;
+    }
+
+    .error-page__nav {
+        margin-top: 2.75rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-line-soft);
+    }
+
+    .error-page__nav-label {
+        margin-bottom: 0.75rem;
+        color: var(--color-accent-muted);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .error-page__nav-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem 1.15rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .error-page__nav-link {
+        color: var(--color-frost);
+        font-size: 0.95rem;
+        font-weight: 550;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition:
+            color 150ms ease,
+            border-color 150ms ease;
+    }
+
+    .error-page__nav-link:hover,
+    .error-page__nav-link:focus-visible {
+        color: var(--color-accent-soft);
+        border-bottom-color: color-mix(in oklab, var(--color-accent) 45%, transparent);
+        outline: none;
+    }
+
     .prose-block {
         display: grid;
         gap: 1.5rem;
@@ -992,7 +1103,7 @@
             display: flex;
         }
 
-        .site-header__cta {
+        .btn.site-header__cta {
             display: inline-flex;
         }
 

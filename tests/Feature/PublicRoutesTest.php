@@ -45,6 +45,10 @@ class PublicRoutesTest extends TestCase
     {
         $this->get('/does-not-exist')
             ->assertNotFound()
-            ->assertInertia(fn ($page) => $page->component('Error')->where('status', 404));
+            ->assertInertia(fn ($page) => $page
+                ->component('Error')
+                ->where('status', 404)
+                ->where('title', config('voltaic.errors.404.title'))
+                ->where('description', config('voltaic.errors.404.description')));
     }
 }

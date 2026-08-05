@@ -61,6 +61,9 @@ RUN corepack enable \
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
+# Older Corepack rejects packageManager integrity hashes.
+RUN node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('package.json','utf8')); p.packageManager='pnpm@11.20.0'; fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\n');"
+
 RUN pnpm install --frozen-lockfile
 
 COPY vite.config.js tsconfig.json ./
