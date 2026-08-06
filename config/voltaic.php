@@ -3,6 +3,7 @@
 return [
     'name' => 'Voltaic Hosting',
     'tagline' => 'Sustainable. Secure. Private.',
+    'home_hero_lede' => 'Hosting, colocation, and infrastructure with clear billing, strong privacy, and no lock-in.',
     'domain' => 'https://voltaic.host',
 
     'contact' => [

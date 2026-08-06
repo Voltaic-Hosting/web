@@ -16,7 +16,8 @@ class InertiaPagesTest extends TestCase
                 ->has('values', count(config('voltaic.values')))
                 ->has('panel.shots', count(config('voltaic.panel.shots')))
                 ->where('site.name', config('voltaic.name'))
-                ->where('site.tagline', config('voltaic.tagline')));
+                ->where('site.tagline', config('voltaic.tagline'))
+                ->where('hero_lede', config('voltaic.home_hero_lede')));
     }
 
     public function test_about_page_renders_expected_inertia_payload(): void

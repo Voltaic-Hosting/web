@@ -260,6 +260,10 @@
         display: none;
     }
 
+    .panel-app__mobile-tools {
+        display: none;
+    }
+
     .panel-app__menu-toggle,
     .panel-app__mobile-profile {
         display: inline-flex;
@@ -2381,11 +2385,34 @@
         .panel-app__mobile-bar {
             display: flex;
             align-items: center;
-            gap: 0.65rem;
+            gap: 0.5rem;
             padding: 0.7rem 0.75rem;
             border-bottom: 1px solid color-mix(in oklab, #c9bfb0 18%, transparent);
             background: color-mix(in oklab, #14110f 92%, #3a2f26);
             z-index: 30;
+            min-width: 0;
+        }
+
+        .panel-app__mobile-brand {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .panel-app__mobile-tools {
+            display: flex;
+            align-items: center;
+            flex: 0 1 auto;
+            min-width: 0;
+            gap: 0.35rem;
+        }
+
+        .panel-app__mobile-tools .panel-app__topbar-actions,
+        .panel-app__mobile-tools {
+            flex-wrap: nowrap;
+        }
+
+        .panel-app__mobile-profile {
+            flex: 0 0 auto;
         }
 
         .panel-app:not(.panel-app--compact) .panel-app__mobile-bar {
@@ -2447,6 +2474,18 @@
             display: grid;
         }
 
+        .panel-app--compact .panel-app__nav {
+            display: grid;
+            flex-wrap: unset;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .panel-app--compact .panel-app__nav-item {
+            width: 100%;
+            white-space: normal;
+        }
+
         .panel-app__backdrop {
             display: block;
             position: absolute;
@@ -2457,23 +2496,13 @@
             cursor: pointer;
         }
 
-        .panel-app__topbar .panel-app__eyebrow {
-            display: none;
-        }
-
-        .panel-app__topbar > div:first-child {
+        .panel-app__topbar {
             display: none;
         }
 
         .panel-app__main {
             min-width: 0;
             overflow: hidden;
-        }
-
-        .panel-app__topbar {
-            flex-wrap: wrap;
-            gap: 0.65rem;
-            padding: 0.85rem 0.85rem 0.65rem;
         }
 
         .panel-app__content {
@@ -2502,10 +2531,62 @@
             margin-left: auto;
         }
 
+        .panel-popover__panel,
+        .panel-popover__panel--chat {
+            position: fixed;
+            top: auto;
+            bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+            left: 0.75rem;
+            right: 0.75rem;
+            width: auto;
+            max-height: min(72dvh, 28rem);
+            overflow: auto;
+        }
+
         .panel-clock-menu__panel {
-            right: 0;
-            left: auto;
-            max-width: min(16rem, calc(100vw - 1.5rem));
+            position: fixed;
+            top: auto;
+            bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+            right: 0.75rem;
+            left: 0.75rem;
+            width: auto;
+            max-width: none;
+            max-height: min(60dvh, 20rem);
+            overflow: auto;
+        }
+
+        .panel-stat-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .panel-detail-meters,
+        .panel-perm-grid,
+        .panel-uptime-detail__grid {
+            grid-template-columns: 1fr;
+        }
+
+        .panel-detail-head__side {
+            width: 100%;
+        }
+
+        .panel-chat-compose {
+            grid-template-columns: 1fr;
+        }
+
+        .panel-api-key__summary {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .panel-card__head {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .panel-viewas-banner {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.65rem;
         }
 
         .panel-stat-grid,
@@ -2620,12 +2701,35 @@
             justify-content: center;
         }
 
+        .panel-app__mobile-bar {
+            padding-inline: 0.65rem;
+            gap: 0.4rem;
+        }
+
+        .panel-app__mobile-brand .panel-app__brand-name {
+            font-size: 0.84rem;
+        }
+
+        .panel-app__mobile-brand .panel-app__brand-meta {
+            font-size: 0.72rem;
+        }
+
+        .panel-app__mobile-tools .panel-app__clock {
+            min-width: 0;
+            font-size: 0.72rem;
+            padding-inline: 0.45rem;
+        }
+
         .panel-app__heading {
             font-size: 1.05rem;
         }
 
-        .panel-app__mobile-bar {
-            padding-inline: 0.65rem;
+        .panel-stat-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .panel-stat__value {
+            font-size: 1.35rem;
         }
 
         .panel-card {
@@ -2634,6 +2738,14 @@
 
         .panel-mini-btn {
             min-height: 2.4rem;
+        }
+
+        .panel-popover__panel,
+        .panel-popover__panel--chat,
+        .panel-clock-menu__panel {
+            left: 0.5rem;
+            right: 0.5rem;
+            bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
         }
     }
 }

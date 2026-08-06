@@ -185,6 +185,22 @@ export default function PanelApp({
         return `panel-app__nav-item${active ? ' is-active' : ''}`;
     };
 
+    const topbarToolsProps = {
+        clock: sim.clock,
+        timezone,
+        timezones: panel.timezones,
+        onTimezoneChange: setTimezone,
+        notifications: sim.notifications,
+        unreadNotifications: sim.unreadNotifications,
+        onMarkRead: sim.markNotificationRead,
+        onOpenNotifications: () => navigate('notifications'),
+        chatChannels: sim.chatChannels,
+        activeChatId: sim.activeChatId,
+        unreadChat: sim.unreadChat,
+        onChatChannelChange: sim.setActiveChatId,
+        onSendChat: sim.sendChatMessage,
+    };
+
     return (
         <div
             className={`panel-app${compact ? ' panel-app--compact' : ''}${menuOpen ? ' is-menu-open' : ''}`}
@@ -211,6 +227,10 @@ export default function PanelApp({
                         <p className="panel-app__brand-name">Voltaic Panel</p>
                         <p className="panel-app__brand-meta">{heading}</p>
                     </div>
+                </div>
+
+                <div className="panel-app__mobile-tools">
+                    <PanelTopbarTools {...topbarToolsProps} />
                 </div>
 
                 <button
@@ -303,21 +323,7 @@ export default function PanelApp({
                         <h2 className="panel-app__heading">{heading}</h2>
                     </div>
                     <div className="panel-app__topbar-actions">
-                        <PanelTopbarTools
-                            clock={sim.clock}
-                            timezone={timezone}
-                            timezones={panel.timezones}
-                            onTimezoneChange={setTimezone}
-                            notifications={sim.notifications}
-                            unreadNotifications={sim.unreadNotifications}
-                            onMarkRead={sim.markNotificationRead}
-                            onOpenNotifications={() => navigate('notifications')}
-                            chatChannels={sim.chatChannels}
-                            activeChatId={sim.activeChatId}
-                            unreadChat={sim.unreadChat}
-                            onChatChannelChange={sim.setActiveChatId}
-                            onSendChat={sim.sendChatMessage}
-                        />
+                        <PanelTopbarTools {...topbarToolsProps} />
                     </div>
                 </header>
 

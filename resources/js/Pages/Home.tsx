@@ -11,12 +11,13 @@ import { organizationJsonLd, websiteJsonLd } from '@/lib/seo';
 import type { PageProps, PanelConcept, Service, Value } from '@/types';
 
 interface HomeProps extends PageProps {
+    hero_lede: string;
     services: Service[];
     values: Value[];
     panel: PanelConcept;
 }
 
-export default function Home({ services, values, panel, site }: HomeProps) {
+export default function Home({ hero_lede, services, values, panel, site }: HomeProps) {
     return (
         <Layout>
             <SeoHead path="/" jsonLd={[organizationJsonLd(site), websiteJsonLd(site)]} />
@@ -29,10 +30,7 @@ export default function Home({ services, values, panel, site }: HomeProps) {
                             {site.tagline}
                         </span>
                     </h1>
-                    <p className="home-hero__lede">
-                        Hosting, colocation, and infrastructure. One-click services and game
-                        servers. Deploy websites from any Git repository.
-                    </p>
+                    <p className="home-hero__lede">{hero_lede}</p>
                     <div className="page-hero__actions">
                         <Button href="/contact">Contact</Button>
                         <Button href="/about" variant="ghost">
