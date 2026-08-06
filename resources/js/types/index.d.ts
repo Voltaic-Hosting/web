@@ -91,6 +91,7 @@ export interface BrandingContent {
 }
 
 export interface PanelAccount {
+    id: string;
     name: string;
     email: string;
     org: string;
@@ -103,6 +104,7 @@ export interface PanelAccount {
 
 export interface PanelProfile extends PanelAccount {
     avatar_color: string | null;
+    avatar_image?: string | null;
 }
 
 export interface PanelServerSftp {
@@ -198,9 +200,16 @@ export interface PanelNotificationChannel {
     enabled: boolean;
 }
 
+export interface PanelChatMember {
+    id: string;
+    name: string;
+    avatar_seed: string;
+    avatar_color?: string | null;
+}
+
 export interface PanelChatMessage {
     id: string;
-    author: string;
+    author_id: string;
     time: string;
     body: string;
 }
@@ -208,8 +217,11 @@ export interface PanelChatMessage {
 export interface PanelChatChannel {
     id: string;
     label: string;
-    kind: 'team' | 'group' | 'support';
+    kind: 'dm' | 'group' | 'team' | 'support';
     unread: number;
+    members: PanelChatMember[];
+    preview: string;
+    updated: string;
     messages: PanelChatMessage[];
 }
 

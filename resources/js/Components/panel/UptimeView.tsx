@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import type { PanelUptime, PanelUptimeMonitor } from '@/types';
 import { PanelCard, StatusDot } from '@/Components/panel/ui';
 
@@ -210,10 +210,49 @@ export default function UptimeView({ uptime, monitors, busy, onCheckNow }: Uptim
 
 function HistoryBar({ history, large = false }: { history: string; large?: boolean }) {
     const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+    const [tipStyle, setTipStyle] = useState<CSSProperties>({});
+    const tickRefs = useRef<Array<HTMLSpanElement | null>>([]);
     const slots = history.split('');
     const downTotal = slots.filter((slot) => slot === 'd').length;
     const degradedTotal = slots.filter((slot) => slot === 'w').length;
     const upTotal = slots.length - downTotal - degradedTotal;
+
+    useLayoutEffect(() => {
+        if (hoverIndex === null) {
+            return;
+        }
+
+        const tick = tickRefs.current[hoverIndex];
+        if (!tick) {
+            return;
+        }
+
+        const rect = tick.getBoundingClientRect();
+        const tipWidth = 220;
+        const tipHeight = 88;
+        const margin = 10;
+        let left = rect.left + rect.width / 2;
+        left = Math.min(
+            window.innerWidth - margin - tipWidth / 2,
+            Math.max(margin + tipWidth / 2, left),
+        );
+
+        let top = rect.top - margin;
+        let transform = 'translate(-50%, -100%)';
+
+        if (top - tipHeight < margin) {
+            top = rect.bottom + margin;
+            transform = 'translate(-50%, 0)';
+        }
+
+        setTipStyle({
+            position: 'fixed',
+            left,
+            top,
+            transform,
+            zIndex: 80,
+        });
+    }, [hoverIndex, large]);
 
     return (
         <div
@@ -227,11 +266,14 @@ function HistoryBar({ history, large = false }: { history: string; large?: boole
                 return (
                     <span
                         key={`${slot}-${index}`}
+                        ref={(element) => {
+                            tickRefs.current[index] = element;
+                        }}
                         className={`panel-history__tick panel-history__tick--${kind}`}
                         onMouseEnter={() => setHoverIndex(index)}
                     >
                         {showTip ? (
-                            <span className="panel-history__tip" role="tooltip">
+                            <span className="panel-history__tip" role="tooltip" style={tipStyle}>
                                 <strong>
                                     Day -{day} · {kind}
                                 </strong>

@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Bell, MessageSquare } from 'lucide-react';
-import type { PanelChatChannel, PanelNotification } from '@/types';
+import { Bell } from 'lucide-react';
+import { PanelChatPopover } from '@/Components/panel/PanelChatPopover';
+import type { PanelChatChannel, PanelNotification, PanelProfile, PanelUser } from '@/types';
 
 interface PanelTopbarToolsProps {
     clock: Date;
@@ -11,11 +11,15 @@ interface PanelTopbarToolsProps {
     unreadNotifications: number;
     onMarkRead: (id: string) => void;
     onOpenNotifications: () => void;
+    profile: PanelProfile;
+    users: PanelUser[];
     chatChannels: PanelChatChannel[];
     activeChatId: string;
     unreadChat: number;
     onChatChannelChange: (id: string) => void;
     onSendChat: (channelId: string, body: string) => void;
+    onCreateDirectMessage: (user: PanelUser) => void;
+    onCreateGroup: (name: string, memberIds: string[]) => void;
 }
 
 export function PanelTopbarTools({
@@ -27,16 +31,16 @@ export function PanelTopbarTools({
     unreadNotifications,
     onMarkRead,
     onOpenNotifications,
+    profile,
+    users,
     chatChannels,
     activeChatId,
     unreadChat,
     onChatChannelChange,
     onSendChat,
+    onCreateDirectMessage,
+    onCreateGroup,
 }: PanelTopbarToolsProps) {
-    const [chatDraft, setChatDraft] = useState('');
-    const activeChat =
-        chatChannels.find((channel) => channel.id === activeChatId) ?? chatChannels[0] ?? null;
-
     return (
         <>
             <details className="panel-clock-menu">
@@ -77,70 +81,17 @@ export function PanelTopbarTools({
                 </div>
             </details>
 
-            <details className="panel-popover">
-                <summary className="panel-icon-btn" aria-label="Open chat">
-                    <MessageSquare size={18} aria-hidden="true" />
-                    {unreadChat > 0 ? (
-                        <span className="panel-icon-btn__badge">{unreadChat}</span>
-                    ) : null}
-                </summary>
-                <div className="panel-popover__panel panel-popover__panel--chat">
-                    <div className="panel-popover__head">
-                        <p className="panel-popover__title">Chat</p>
-                        <p className="panel-app__muted">Teams, groups, and support</p>
-                    </div>
-                    <div className="panel-chat-tabs" role="tablist" aria-label="Chat channels">
-                        {chatChannels.map((channel) => (
-                            <button
-                                key={channel.id}
-                                type="button"
-                                role="tab"
-                                aria-selected={activeChat?.id === channel.id}
-                                className={`panel-chat-tab${activeChat?.id === channel.id ? ' is-active' : ''}`}
-                                onClick={() => onChatChannelChange(channel.id)}
-                            >
-                                <span>{channel.label}</span>
-                                {channel.unread > 0 ? (
-                                    <span className="panel-chat-tab__badge">{channel.unread}</span>
-                                ) : null}
-                            </button>
-                        ))}
-                    </div>
-                    <div className="panel-chat-messages" aria-live="polite">
-                        {activeChat?.messages.map((message) => (
-                            <article key={message.id} className="panel-chat-message">
-                                <p className="panel-chat-message__meta">
-                                    <span>{message.author}</span>
-                                    <span className="panel-mono">{message.time}</span>
-                                </p>
-                                <p>{message.body}</p>
-                            </article>
-                        ))}
-                    </div>
-                    <form
-                        className="panel-chat-compose"
-                        onSubmit={(event) => {
-                            event.preventDefault();
-                            if (!activeChat) {
-                                return;
-                            }
-                            onSendChat(activeChat.id, chatDraft);
-                            setChatDraft('');
-                        }}
-                    >
-                        <input
-                            className="panel-search"
-                            value={chatDraft}
-                            onChange={(event) => setChatDraft(event.target.value)}
-                            placeholder={`Message ${activeChat?.label ?? 'channel'}`}
-                            aria-label="Chat message"
-                        />
-                        <button type="submit" className="panel-mini-btn">
-                            Send
-                        </button>
-                    </form>
-                </div>
-            </details>
+            <PanelChatPopover
+                profile={profile}
+                users={users}
+                channels={chatChannels}
+                activeChatId={activeChatId}
+                unreadChat={unreadChat}
+                onChannelChange={onChatChannelChange}
+                onSendChat={onSendChat}
+                onCreateDirectMessage={onCreateDirectMessage}
+                onCreateGroup={onCreateGroup}
+            />
 
             <details className="panel-popover">
                 <summary className="panel-icon-btn" aria-label="Open notifications">

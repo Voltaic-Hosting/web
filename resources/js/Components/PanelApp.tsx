@@ -194,11 +194,15 @@ export default function PanelApp({
         unreadNotifications: sim.unreadNotifications,
         onMarkRead: sim.markNotificationRead,
         onOpenNotifications: () => navigate('notifications'),
+        profile: sim.profile,
+        users: sim.users,
         chatChannels: sim.chatChannels,
         activeChatId: sim.activeChatId,
         unreadChat: sim.unreadChat,
         onChatChannelChange: sim.setActiveChatId,
         onSendChat: sim.sendChatMessage,
+        onCreateDirectMessage: sim.createDirectMessage,
+        onCreateGroup: sim.createGroupChat,
     };
 
     return (
@@ -244,6 +248,9 @@ export default function PanelApp({
                         name={activeAccount.name}
                         size={32}
                         color={activeAccount.avatar_color}
+                        imageUrl={
+                            'avatar_image' in activeAccount ? activeAccount.avatar_image : null
+                        }
                     />
                 </button>
             </div>
@@ -292,6 +299,9 @@ export default function PanelApp({
                             name={activeAccount.name}
                             size={34}
                             color={activeAccount.avatar_color}
+                            imageUrl={
+                                'avatar_image' in activeAccount ? activeAccount.avatar_image : null
+                            }
                         />
                         <span>
                             <span className="panel-profile-btn__name">{activeAccount.name}</span>
@@ -371,6 +381,8 @@ export default function PanelApp({
                             servers={sim.servers}
                             busy={sim.busy}
                             onCreate={sim.createBackup}
+                            onDownload={sim.downloadBackup}
+                            onRestore={sim.restoreBackup}
                         />
                     ) : null}
 
@@ -381,6 +393,7 @@ export default function PanelApp({
                             selectedId={firewallServerId}
                             onSelect={setFirewallServerId}
                             onAdd={sim.addFirewallRule}
+                            onUpdate={sim.updateFirewallRule}
                             onRemove={sim.removeFirewallRule}
                         />
                     ) : null}
@@ -445,6 +458,7 @@ export default function PanelApp({
                             onToggleChannel={sim.toggleNotificationChannel}
                             onMarkRead={sim.markNotificationRead}
                             onMarkAllRead={sim.markAllNotificationsRead}
+                            onClearAll={sim.clearNotifications}
                             onTestWebhook={sim.testWebhook}
                             onToast={sim.pushToast}
                         />
@@ -466,6 +480,7 @@ export default function PanelApp({
                             settings={panel.settings}
                             toggles={sim.toggles}
                             onToggle={sim.toggleSetting}
+                            onResetDefaults={sim.resetSettingsDefaults}
                         />
                     ) : null}
 
@@ -476,7 +491,8 @@ export default function PanelApp({
                             security={sim.security}
                             sessions={sim.sessions}
                             onUpdateProfile={sim.updateProfile}
-                            onSaveProfile={sim.saveProfile}
+                            onUploadAvatar={sim.uploadAvatarImage}
+                            onResetAvatar={sim.resetAvatar}
                             onToggleSecurity={sim.toggleSecurity}
                             onRevokeSession={sim.revokeSession}
                             onToast={sim.pushToast}

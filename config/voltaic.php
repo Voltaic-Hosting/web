@@ -369,7 +369,7 @@ return [
             [
                 'key' => 'favicon-32',
                 'label' => 'Favicon 32',
-                'description' => 'Browser tab icon on a dark field. Same art as the site favicon.',
+                'description' => 'Browser tab icon with a transparent background. Same mark as the source logo.',
                 'formats' => [
                     'png' => '/brand/favicon-32.png',
                     'jpg' => '/brand/favicon-32.jpg',

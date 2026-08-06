@@ -23,11 +23,13 @@ export function UserAvatar({
     name,
     size = 32,
     color,
+    imageUrl,
 }: {
     seed: string;
     name: string;
     size?: number;
     color?: string | null;
+    imageUrl?: string | null;
 }) {
     const hash = hashSeed(seed || name);
     const palette = palettes[hash % palettes.length];
@@ -38,6 +40,19 @@ export function UserAvatar({
         .slice(0, 2)
         .map((part) => part[0]?.toUpperCase() ?? '')
         .join('');
+
+    if (imageUrl) {
+        return (
+            <span
+                className="panel-avatar panel-avatar--image"
+                style={{ width: size, height: size }}
+                aria-hidden="true"
+                title={name}
+            >
+                <img src={imageUrl} alt="" width={size} height={size} />
+            </span>
+        );
+    }
 
     return (
         <span

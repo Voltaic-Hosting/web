@@ -323,6 +323,29 @@
         color: #8f8174;
     }
 
+    .panel-search--wide {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+    }
+
+    .panel-search--cell {
+        width: 100%;
+        min-width: 6rem;
+    }
+
+    .panel-select--compact {
+        min-width: 5.5rem;
+    }
+
+    .panel-table--fw tr.is-editing {
+        background: color-mix(in oklab, #b45309 8%, transparent);
+    }
+
+    .panel-table--fw tr.is-editing td {
+        vertical-align: middle;
+    }
+
     .panel-action-row {
         display: flex;
         flex-wrap: wrap;
@@ -821,6 +844,15 @@
         color: #fff7ed;
         font-weight: 700;
         letter-spacing: 0.02em;
+        overflow: hidden;
+    }
+
+    .panel-avatar--image img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: inherit;
     }
 
     .panel-type-icon {
@@ -868,6 +900,19 @@
     .panel-icon-btn:hover {
         border-color: color-mix(in oklab, #b45309 55%, transparent);
         color: #ffd7b0;
+    }
+
+    .panel-icon-btn--danger:hover {
+        border-color: color-mix(in oklab, #ef4444 45%, transparent);
+        color: #fecaca;
+        background: color-mix(in oklab, #ef4444 10%, transparent);
+    }
+
+    .panel-table-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.35rem;
     }
 
     .panel-select-wrap {
@@ -1008,6 +1053,12 @@
         flex-wrap: wrap;
         gap: 0.5rem;
         margin-bottom: 0.85rem;
+        align-items: center;
+    }
+
+    .panel-user-form {
+        display: grid;
+        width: 100%;
     }
 
     .panel-raw-log {
@@ -1728,7 +1779,333 @@
     }
 
     .panel-popover__panel--chat {
-        width: min(24rem, calc(100vw - 2rem));
+        width: min(42rem, calc(100vw - 2rem));
+        max-height: min(32rem, calc(100dvh - 6rem));
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .panel-chat {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        flex: 1;
+    }
+
+    .panel-chat__head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.85rem 0.95rem 0.75rem;
+        border-bottom: 1px solid color-mix(in oklab, #c9bfb0 12%, transparent);
+    }
+
+    .panel-chat__head-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .panel-chat__head-actions .panel-mini-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .panel-chat__layout {
+        display: grid;
+        grid-template-columns: minmax(11.5rem, 0.95fr) minmax(0, 1.45fr);
+        flex: 1;
+        min-height: 14rem;
+        min-width: 0;
+    }
+
+    .panel-chat__inbox {
+        min-height: 0;
+        border-right: 1px solid color-mix(in oklab, #c9bfb0 12%, transparent);
+        overflow: auto;
+    }
+
+    .panel-chat__inbox-list,
+    .panel-chat__picker,
+    .panel-chat__member-list {
+        display: grid;
+        gap: 0.15rem;
+        list-style: none;
+        margin: 0;
+        padding: 0.45rem;
+    }
+
+    .panel-chat-convo {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.65rem;
+        width: 100%;
+        padding: 0.65rem 0.7rem;
+        border: 0;
+        border-radius: 0.45rem;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .panel-chat-convo:hover,
+    .panel-chat-convo.is-active {
+        background: color-mix(in oklab, #b45309 12%, transparent);
+    }
+
+    .panel-chat-convo__body {
+        display: grid;
+        gap: 0.2rem;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .panel-chat-convo__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.45rem;
+        min-width: 0;
+    }
+
+    .panel-chat-convo__title {
+        font-size: 0.86rem;
+        font-weight: 650;
+    }
+
+    .panel-chat-convo__time {
+        color: #9f9284;
+        font-size: 0.68rem;
+        white-space: nowrap;
+    }
+
+    .panel-chat-convo__preview {
+        overflow: hidden;
+        color: #b7a99a;
+        font-size: 0.78rem;
+        line-height: 1.35;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .panel-chat-convo__badge {
+        min-width: 1.1rem;
+        height: 1.1rem;
+        padding-inline: 0.25rem;
+        border-radius: 999px;
+        background: #b45309;
+        color: #fff;
+        font-family: var(--font-mono);
+        font-size: 0.62rem;
+        font-weight: 700;
+        line-height: 1.1rem;
+        text-align: center;
+    }
+
+    .panel-chat-convo__kind {
+        color: #9f9284;
+        font-size: 0.68rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .panel-chat__thread {
+        display: grid;
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
+        min-height: 0;
+        min-width: 0;
+    }
+
+    .panel-chat__thread-head {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.75rem 0.85rem 0.55rem;
+        border-bottom: 1px solid color-mix(in oklab, #c9bfb0 10%, transparent);
+    }
+
+    .panel-chat__back {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border: 1px solid color-mix(in oklab, #c9bfb0 18%, transparent);
+        border-radius: 0.35rem;
+        background: color-mix(in oklab, #fff 4%, transparent);
+        color: #efe8df;
+        cursor: pointer;
+    }
+
+    .panel-chat__thread-title {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        min-width: 0;
+    }
+
+    .panel-chat__thread-name {
+        font-size: 0.92rem;
+        font-weight: 650;
+    }
+
+    .panel-chat__members {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        padding: 0.55rem 0.85rem;
+        border-bottom: 1px solid color-mix(in oklab, #c9bfb0 8%, transparent);
+    }
+
+    .panel-chat__member {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.2rem 0.45rem 0.2rem 0.2rem;
+        border-radius: 999px;
+        background: color-mix(in oklab, #fff 4%, transparent);
+        color: #d5c9bb;
+        font-size: 0.72rem;
+    }
+
+    .panel-chat__messages {
+        display: grid;
+        gap: 0.75rem;
+        min-height: 0;
+        overflow: auto;
+        padding: 0.85rem;
+    }
+
+    .panel-chat-bubble {
+        display: flex;
+        align-items: flex-end;
+        gap: 0.55rem;
+        max-width: 100%;
+    }
+
+    .panel-chat-bubble--self {
+        justify-content: flex-end;
+    }
+
+    .panel-chat-bubble__content {
+        max-width: min(100%, 18rem);
+        padding: 0.6rem 0.75rem;
+        border-radius: 0.75rem;
+        background: color-mix(in oklab, #fff 5%, transparent);
+    }
+
+    .panel-chat-bubble--self .panel-chat-bubble__content {
+        background: color-mix(in oklab, #b45309 22%, transparent);
+    }
+
+    .panel-chat-bubble__author {
+        margin-bottom: 0.2rem;
+        color: #f0d2b0;
+        font-size: 0.74rem;
+        font-weight: 650;
+    }
+
+    .panel-chat-bubble__content p {
+        line-height: 1.45;
+        font-size: 0.86rem;
+    }
+
+    .panel-chat-bubble__time {
+        margin-top: 0.3rem;
+        color: #9f9284;
+        font-size: 0.66rem;
+        text-align: right;
+    }
+
+    .panel-chat-compose {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.45rem;
+        padding: 0.75rem;
+        border-top: 1px solid color-mix(in oklab, #c9bfb0 12%, transparent);
+    }
+
+    .panel-chat__composer {
+        display: grid;
+        gap: 0.75rem;
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 0.75rem;
+    }
+
+    .panel-chat__composer-head {
+        display: grid;
+        gap: 0.35rem;
+    }
+
+    .panel-chat__composer-title {
+        font-size: 0.9rem;
+        font-weight: 650;
+    }
+
+    .panel-chat__picker-item,
+    .panel-chat__member-option {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        width: 100%;
+        padding: 0.65rem 0.7rem;
+        border: 1px solid color-mix(in oklab, #c9bfb0 12%, transparent);
+        border-radius: 0.45rem;
+        background: color-mix(in oklab, #fff 2%, transparent);
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .panel-chat__picker-item:hover {
+        border-color: color-mix(in oklab, #b45309 35%, transparent);
+        background: color-mix(in oklab, #b45309 10%, transparent);
+    }
+
+    .panel-chat__picker-name {
+        display: block;
+        font-size: 0.86rem;
+        font-weight: 650;
+    }
+
+    .panel-chat__group-form {
+        display: grid;
+        gap: 0.85rem;
+    }
+
+    .panel-chat__member-fieldset {
+        display: grid;
+        gap: 0.55rem;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    .panel-chat__member-fieldset legend {
+        margin-bottom: 0.15rem;
+        color: #b7a99a;
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    .panel-chat__member-option input {
+        flex: 0 0 auto;
+    }
+
+    .panel-chat__empty {
+        padding: 1rem 0.85rem;
+        color: #b7a99a;
+        font-size: 0.84rem;
+        line-height: 1.45;
     }
 
     .panel-popover__head {
@@ -1814,82 +2191,58 @@
         margin-top: 0.85rem;
     }
 
-    .panel-chat-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.35rem;
-        padding: 0.65rem 0.75rem 0;
-    }
-
-    .panel-chat-tab {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        min-height: 2rem;
-        padding: 0.35rem 0.6rem;
-        border: 1px solid color-mix(in oklab, #c9bfb0 16%, transparent);
-        border-radius: 999px;
-        background: transparent;
-        color: #d5c9bb;
-        font: inherit;
-        font-size: 0.76rem;
-        cursor: pointer;
-    }
-
-    .panel-chat-tab.is-active {
-        border-color: color-mix(in oklab, #b45309 45%, transparent);
-        background: color-mix(in oklab, #b45309 14%, transparent);
-        color: #fff;
-    }
-
-    .panel-chat-tab__badge {
-        min-width: 1rem;
-        height: 1rem;
-        padding-inline: 0.2rem;
-        border-radius: 999px;
-        background: #b45309;
-        color: #fff;
-        font-family: var(--font-mono);
-        font-size: 0.62rem;
-        line-height: 1rem;
-        text-align: center;
-    }
-
-    .panel-chat-messages {
-        display: grid;
-        gap: 0.65rem;
-        max-height: 14rem;
-        overflow: auto;
-        padding: 0.75rem;
-    }
-
-    .panel-chat-message {
-        padding: 0.65rem 0.7rem;
-        border-radius: 0.4rem;
-        background: color-mix(in oklab, #fff 3%, transparent);
-    }
-
-    .panel-chat-message__meta {
-        display: flex;
-        justify-content: space-between;
-        gap: 0.5rem;
-        margin-bottom: 0.25rem;
-        color: #b7a99a;
-        font-size: 0.76rem;
-    }
-
-    .panel-chat-compose {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 0.45rem;
-        padding: 0.75rem;
-        border-top: 1px solid color-mix(in oklab, #c9bfb0 12%, transparent);
-    }
-
     .panel-profile-edit {
         display: grid;
-        gap: 1rem;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 1rem 1.25rem;
+        align-items: start;
         margin-bottom: 1rem;
+    }
+
+    .panel-avatar-upload {
+        display: grid;
+        justify-items: start;
+        gap: 0.45rem;
+    }
+
+    .panel-avatar-upload__input {
+        display: none;
+    }
+
+    .panel-avatar-upload__trigger {
+        position: relative;
+        padding: 0;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .panel-avatar-upload__overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: inherit;
+        background: color-mix(in oklab, #000 55%, transparent);
+        color: #fff7ed;
+        font-size: 0.72rem;
+        font-weight: 650;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .panel-avatar-upload__trigger:hover .panel-avatar-upload__overlay,
+    .panel-avatar-upload__trigger:focus-visible .panel-avatar-upload__overlay {
+        opacity: 1;
+    }
+
+    .panel-avatar-upload__reset {
+        justify-self: start;
     }
 
     .panel-profile-edit__fields {
@@ -1900,6 +2253,12 @@
     .panel-profile-field {
         display: grid;
         gap: 0.35rem;
+    }
+
+    .panel-file-input {
+        width: 100%;
+        font-size: 0.82rem;
+        color: #d5c9bb;
     }
 
     .panel-avatar-swatches {
@@ -2038,11 +2397,8 @@
     }
 
     .panel-history__tip {
-        position: absolute;
-        bottom: calc(100% + 0.45rem);
-        left: 50%;
-        z-index: 50;
         min-width: 11rem;
+        max-width: min(16rem, calc(100vw - 1.5rem));
         padding: 0.45rem 0.55rem;
         border: 1px solid color-mix(in oklab, #c9bfb0 22%, transparent);
         border-radius: 0.35rem;
@@ -2050,8 +2406,7 @@
         color: #efe8df;
         font-size: 0.74rem;
         line-height: 1.4;
-        white-space: nowrap;
-        transform: translateX(-50%);
+        white-space: normal;
         pointer-events: none;
         box-shadow: 0 8px 20px color-mix(in oklab, #000 40%, transparent);
     }
@@ -2114,6 +2469,32 @@
     .panel-server.is-selected {
         border-color: color-mix(in oklab, #b45309 50%, transparent);
         background: color-mix(in oklab, #b45309 10%, transparent);
+    }
+
+    .panel-server--clickable {
+        cursor: pointer;
+        transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .panel-server--clickable:hover,
+    .panel-server--clickable:focus-visible {
+        border-color: color-mix(in oklab, #b45309 40%, transparent);
+        background: color-mix(in oklab, #b45309 8%, transparent);
+        outline: none;
+    }
+
+    .panel-row-link--static {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.65rem;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        pointer-events: none;
     }
 
     .panel-file-link.is-active {
@@ -2539,8 +2920,10 @@
             left: 0.75rem;
             right: 0.75rem;
             width: auto;
-            max-height: min(72dvh, 28rem);
-            overflow: auto;
+            max-height: min(78dvh, 32rem);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .panel-clock-menu__panel {
@@ -2569,7 +2952,35 @@
             width: 100%;
         }
 
+        .panel-popover__panel--chat {
+            width: auto;
+        }
+
+        .panel-chat__layout {
+            grid-template-columns: 1fr;
+        }
+
+        .panel-chat__layout:not(.is-thread-open) .panel-chat__thread {
+            display: none;
+        }
+
+        .panel-chat__layout.is-thread-open .panel-chat__inbox {
+            display: none;
+        }
+
+        .panel-chat__back {
+            display: inline-flex;
+        }
+
+        .panel-chat__head-actions .panel-mini-btn span {
+            display: none;
+        }
+
         .panel-chat-compose {
+            grid-template-columns: 1fr;
+        }
+
+        .panel-profile-edit {
             grid-template-columns: 1fr;
         }
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import { PanelCard, ToggleSwitch } from '@/Components/panel/ui';
 import type { PanelNotification, PanelNotificationChannel } from '@/types';
 
@@ -10,6 +11,7 @@ interface NotificationsViewProps {
     onToggleChannel: (key: PanelNotificationChannel['key']) => void;
     onMarkRead: (id: string) => void;
     onMarkAllRead: () => void;
+    onClearAll: () => void;
     onTestWebhook: () => void;
     onToast: (message: string) => void;
 }
@@ -22,6 +24,7 @@ export function NotificationsView({
     onToggleChannel,
     onMarkRead,
     onMarkAllRead,
+    onClearAll,
     onTestWebhook,
     onToast,
 }: NotificationsViewProps) {
@@ -83,7 +86,7 @@ export function NotificationsView({
                         }}
                     >
                         <input
-                            className="panel-search"
+                            className="panel-search panel-search--wide"
                             value={webhookUrl}
                             onChange={(event) => onWebhookUrlChange(event.target.value)}
                             placeholder="https://hooks.example.com/voltaic/events"
@@ -114,7 +117,21 @@ export function NotificationsView({
                 </PanelCard>
             </div>
 
-            <PanelCard title="Recent notifications" meta={`${notifications.length} events`}>
+            <PanelCard
+                title="Recent notifications"
+                meta={`${notifications.length} events`}
+                actions={
+                    <button
+                        type="button"
+                        className="panel-icon-btn panel-icon-btn--danger"
+                        aria-label="Clear all notifications"
+                        onClick={onClearAll}
+                        disabled={notifications.length === 0}
+                    >
+                        <Trash2 size={16} aria-hidden="true" />
+                    </button>
+                }
+            >
                 <ul className="panel-notif-feed">
                     {notifications.map((item) => (
                         <li key={item.id}>

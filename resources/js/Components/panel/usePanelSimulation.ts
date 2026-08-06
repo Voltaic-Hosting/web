@@ -1,8 +1,17 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+    clearAvatarImage,
+    loadAvatarImage,
+    loadProfileDraft,
+    readImageFile,
+    saveAvatarImage,
+    saveProfileDraft,
+} from '@/Components/panel/avatarStorage';
 import type {
     PanelApiKey,
     PanelAuditEntry,
     PanelBackup,
+    PanelChatChannel,
     PanelChatMessage,
     PanelConcept,
     PanelFirewallRule,
@@ -10,6 +19,7 @@ import type {
     PanelProfile,
     PanelServer,
     PanelSettingToggle,
+    PanelSubuser,
     PanelTicket,
     PanelUptimeMonitor,
     PanelUser,
@@ -23,6 +33,7 @@ export function usePanelSimulation(panel: PanelConcept) {
     const [toggles, setToggles] = useState(panel.settings_toggles);
     const [firewall, setFirewall] = useState(panel.firewall);
     const [backups, setBackups] = useState(panel.backups);
+    const [subusers, setSubusers] = useState(panel.subusers);
     const [users, setUsers] = useState(panel.users);
     const [tickets, setTickets] = useState(panel.tickets);
     const [apiKeys, setApiKeys] = useState(panel.api_keys);
@@ -32,7 +43,9 @@ export function usePanelSimulation(panel: PanelConcept) {
     const [profile, setProfile] = useState<PanelProfile>({
         ...panel.account,
         avatar_color: panel.account.avatar_color ?? null,
+        avatar_image: null,
     });
+    const profileLoaded = useRef(false);
     const [notifications, setNotifications] = useState(panel.notifications);
     const [notificationChannels, setNotificationChannels] = useState(panel.notification_channels);
     const [webhookUrl, setWebhookUrl] = useState(panel.notification_webhook);
@@ -70,6 +83,35 @@ export function usePanelSimulation(panel: PanelConcept) {
             ].slice(0, 40),
         );
     }, []);
+
+    useEffect(() => {
+        const draft = loadProfileDraft();
+        void loadAvatarImage().then((image) => {
+            setProfile((current) => ({
+                ...current,
+                ...(draft ?? {}),
+                avatar_image: image,
+            }));
+            profileLoaded.current = true;
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!profileLoaded.current) {
+            return;
+        }
+
+        const timer = window.setTimeout(() => {
+            saveProfileDraft({
+                name: profile.name,
+                email: profile.email,
+                avatar_seed: profile.avatar_seed,
+                avatar_color: profile.avatar_color,
+            });
+        }, 400);
+
+        return () => window.clearTimeout(timer);
+    }, [profile.name, profile.email, profile.avatar_seed, profile.avatar_color]);
 
     useEffect(() => {
         const tick = window.setInterval(() => {
@@ -271,6 +313,22 @@ export function usePanelSimulation(panel: PanelConcept) {
         [pushToast],
     );
 
+    const updateFirewallRule = useCallback(
+        (id: string, patch: Omit<PanelFirewallRule, 'id'>) => {
+            setFirewall((current) =>
+                current.map((rule) => (rule.id === id ? { ...rule, ...patch } : rule)),
+            );
+            pushAudit({
+                actor: panel.account.email,
+                action: 'firewall.rule.update',
+                target: patch.server_id,
+                ip: '198.51.100.24',
+            });
+            pushToast('Firewall rule updated');
+        },
+        [panel.account.email, pushAudit, pushToast],
+    );
+
     const createBackup = useCallback(
         (server: PanelServer) => {
             runAction(
@@ -297,6 +355,99 @@ export function usePanelSimulation(panel: PanelConcept) {
             );
         },
         [panel.account.email, pushAudit, runAction],
+    );
+
+    const downloadBackup = useCallback(
+        (backup: PanelBackup) => {
+            const server = panel.servers.find((item) => item.id === backup.server_id);
+            const body = [
+                'Voltaic Panel backup export (concept)',
+                `Name: ${backup.name}`,
+                `Server: ${server?.name ?? backup.server_id}`,
+                `Size: ${backup.size}`,
+                `Created: ${backup.created}`,
+                `Status: ${backup.status}`,
+            ].join('\n');
+            const blob = new Blob([body], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${backup.name}.txt`;
+            link.click();
+            URL.revokeObjectURL(url);
+            pushToast(`Downloading ${backup.name}`);
+        },
+        [panel.servers, pushToast],
+    );
+
+    const restoreBackup = useCallback(
+        (backup: PanelBackup) => {
+            runAction(
+                `restore-${backup.id}`,
+                `Restore queued for ${backup.name}`,
+                () => {
+                    pushAudit({
+                        actor: panel.account.email,
+                        action: 'backup.restore',
+                        target: backup.name,
+                        ip: '198.51.100.24',
+                    });
+                },
+                1400,
+            );
+        },
+        [panel.account.email, pushAudit, runAction],
+    );
+
+    const deleteBackup = useCallback(
+        (backup: PanelBackup) => {
+            setBackups((current) => current.filter((item) => item.id !== backup.id));
+            pushAudit({
+                actor: panel.account.email,
+                action: 'backup.delete',
+                target: backup.name,
+                ip: '198.51.100.24',
+            });
+            pushToast(`Deleted ${backup.name}`);
+        },
+        [panel.account.email, pushAudit, pushToast],
+    );
+
+    const addSubuser = useCallback(
+        (entry: Omit<PanelSubuser, 'id'>) => {
+            const subuser: PanelSubuser = {
+                id: `su-${Date.now()}`,
+                ...entry,
+            };
+            setSubusers((current) => [...current, subuser]);
+            pushAudit({
+                actor: panel.account.email,
+                action: 'subuser.create',
+                target: entry.email,
+                ip: '198.51.100.24',
+            });
+            pushToast(`Subuser added: ${entry.email}`);
+        },
+        [panel.account.email, pushAudit, pushToast],
+    );
+
+    const removeSubuser = useCallback(
+        (id: string) => {
+            setSubusers((current) => {
+                const target = current.find((item) => item.id === id);
+                if (target) {
+                    pushAudit({
+                        actor: panel.account.email,
+                        action: 'subuser.remove',
+                        target: target.email,
+                        ip: '198.51.100.24',
+                    });
+                    pushToast(`Removed ${target.email}`);
+                }
+                return current.filter((item) => item.id !== id);
+            });
+        },
+        [panel.account.email, pushAudit, pushToast],
     );
 
     const addUser = useCallback(
@@ -410,9 +561,46 @@ export function usePanelSimulation(panel: PanelConcept) {
         setProfile((current) => ({ ...current, ...patch }));
     }, []);
 
-    const saveProfile = useCallback(() => {
-        pushToast('Profile updated (concept)');
-    }, [pushToast]);
+    const uploadAvatarImage = useCallback(
+        (file: File) => {
+            if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+                pushToast('Use a PNG, JPG, or WEBP image');
+                return;
+            }
+
+            void readImageFile(file).then((dataUrl) => {
+                void saveAvatarImage(dataUrl).then(() => {
+                    setProfile((current) => ({ ...current, avatar_image: dataUrl }));
+                    pushToast('Profile photo updated');
+                });
+            });
+        },
+        [pushToast],
+    );
+
+    const resetAvatar = useCallback(() => {
+        void clearAvatarImage().then(() => {
+            setProfile((current) => ({
+                ...current,
+                avatar_image: null,
+                avatar_seed: panel.account.avatar_seed,
+                avatar_color: panel.account.avatar_color ?? null,
+            }));
+            pushToast('Avatar reset to defaults');
+        });
+    }, [panel.account.avatar_color, panel.account.avatar_seed, pushToast]);
+
+    const resetSettingsDefaults = useCallback(() => {
+        setToggles(panel.settings_toggles);
+        setNotificationChannels(panel.notification_channels);
+        setWebhookUrl(panel.notification_webhook);
+        pushToast('Settings reset to defaults');
+    }, [
+        panel.notification_channels,
+        panel.notification_webhook,
+        panel.settings_toggles,
+        pushToast,
+    ]);
 
     const markNotificationRead = useCallback((id: string) => {
         setNotifications((current) =>
@@ -423,6 +611,11 @@ export function usePanelSimulation(panel: PanelConcept) {
     const markAllNotificationsRead = useCallback(() => {
         setNotifications((current) => current.map((item) => ({ ...item, read: true })));
         pushToast('All notifications marked read');
+    }, [pushToast]);
+
+    const clearNotifications = useCallback(() => {
+        setNotifications([]);
+        pushToast('Notifications cleared');
     }, [pushToast]);
 
     const toggleNotificationChannel = useCallback(
@@ -453,7 +646,7 @@ export function usePanelSimulation(panel: PanelConcept) {
             }
             const message: PanelChatMessage = {
                 id: `m-${Date.now()}`,
-                author: profile.name,
+                author_id: profile.id,
                 time: new Date().toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit',
@@ -464,12 +657,131 @@ export function usePanelSimulation(panel: PanelConcept) {
             setChatChannels((current) =>
                 current.map((channel) =>
                     channel.id === channelId
-                        ? { ...channel, messages: [...channel.messages, message], unread: 0 }
+                        ? {
+                              ...channel,
+                              messages: [...channel.messages, message],
+                              preview: trimmed,
+                              updated: message.time,
+                              unread: 0,
+                          }
                         : channel,
                 ),
             );
         },
-        [profile.name],
+        [profile.id],
+    );
+
+    const selectChatChannel = useCallback((channelId: string) => {
+        setActiveChatId(channelId);
+        setChatChannels((current) =>
+            current.map((channel) =>
+                channel.id === channelId ? { ...channel, unread: 0 } : channel,
+            ),
+        );
+    }, []);
+
+    const createDirectMessage = useCallback(
+        (user: PanelUser) => {
+            const existing = chatChannels.find(
+                (channel) =>
+                    channel.kind === 'dm' &&
+                    channel.members.some((member) => member.id === user.id),
+            );
+            if (existing) {
+                selectChatChannel(existing.id);
+                return existing.id;
+            }
+
+            const channel: PanelChatChannel = {
+                id: `dm-${user.id}`,
+                label: user.name,
+                kind: 'dm',
+                unread: 0,
+                preview: 'Start a direct message',
+                updated: 'now',
+                members: [
+                    {
+                        id: profile.id,
+                        name: profile.name,
+                        avatar_seed: profile.avatar_seed,
+                        avatar_color: profile.avatar_color,
+                    },
+                    {
+                        id: user.id,
+                        name: user.name,
+                        avatar_seed: user.avatar_seed,
+                    },
+                ],
+                messages: [],
+            };
+
+            setChatChannels((current) => [channel, ...current]);
+            setActiveChatId(channel.id);
+            pushToast(`Opened DM with ${user.name}`);
+            return channel.id;
+        },
+        [
+            chatChannels,
+            profile.avatar_color,
+            profile.avatar_seed,
+            profile.id,
+            profile.name,
+            pushToast,
+            selectChatChannel,
+        ],
+    );
+
+    const createGroupChat = useCallback(
+        (name: string, memberIds: string[]) => {
+            const trimmed = name.trim();
+            if (!trimmed || memberIds.length === 0) {
+                pushToast('Pick a name and at least one member');
+                return null;
+            }
+
+            const selected = users.filter((user) => memberIds.includes(user.id));
+            const members = [
+                {
+                    id: profile.id,
+                    name: profile.name,
+                    avatar_seed: profile.avatar_seed,
+                    avatar_color: profile.avatar_color,
+                },
+                ...selected.map((user) => ({
+                    id: user.id,
+                    name: user.name,
+                    avatar_seed: user.avatar_seed,
+                })),
+            ];
+
+            const channel: PanelChatChannel = {
+                id: `group-${Date.now()}`,
+                label: trimmed,
+                kind: 'group',
+                unread: 0,
+                preview: 'Group created',
+                updated: 'now',
+                members,
+                messages: [
+                    {
+                        id: `m-${Date.now()}`,
+                        author_id: profile.id,
+                        time: new Date().toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false,
+                        }),
+                        body: `Created group "${trimmed}" with ${selected.map((user) => user.name).join(', ')}.`,
+                    },
+                ],
+            };
+
+            setChatChannels((current) => [channel, ...current]);
+            setActiveChatId(channel.id);
+            pushToast(`Created group ${trimmed}`);
+            return channel.id;
+        },
+        [profile.avatar_color, profile.avatar_seed, profile.id, profile.name, pushToast, users],
     );
 
     const unreadNotifications = notifications.filter((item) => !item.read).length;
@@ -481,6 +793,7 @@ export function usePanelSimulation(panel: PanelConcept) {
         toggles,
         firewall,
         backups,
+        subusers,
         users,
         tickets,
         apiKeys,
@@ -501,13 +814,18 @@ export function usePanelSimulation(panel: PanelConcept) {
         filter,
         setFilter,
         setWebhookUrl,
-        setActiveChatId,
+        setActiveChatId: selectChatChannel,
+        createDirectMessage,
+        createGroupChat,
         dismissToast,
         pushToast,
         updateProfile,
-        saveProfile,
+        uploadAvatarImage,
+        resetAvatar,
+        resetSettingsDefaults,
         markNotificationRead,
         markAllNotificationsRead,
+        clearNotifications,
         toggleNotificationChannel,
         testWebhook,
         sendChatMessage,
@@ -519,7 +837,13 @@ export function usePanelSimulation(panel: PanelConcept) {
         toggleSetting,
         addFirewallRule,
         removeFirewallRule,
+        updateFirewallRule,
         createBackup,
+        downloadBackup,
+        restoreBackup,
+        deleteBackup,
+        addSubuser,
+        removeSubuser,
         addUser,
         updateUserPerms,
         createTicket,

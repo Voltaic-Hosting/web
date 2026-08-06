@@ -1,5 +1,6 @@
-import { Download, Pause, Play, RotateCcw, Square } from 'lucide-react';
+import { Download, Pause, Play, RotateCcw, Square, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { FirewallRulesTable } from '@/Components/panel/FirewallRulesTable';
 import { ServerTypeIcon } from '@/Components/panel/icons';
 import {
     KindBadge,
@@ -26,10 +27,17 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
     const [logfile, setLogfile] = useState(server.logfiles[0] ?? 'console.log');
     const [filePath, setFilePath] = useState<string | null>(null);
     const [draft, setDraft] = useState('');
-    const [fwAction, setFwAction] = useState('Allow');
-    const [fwSource, setFwSource] = useState('');
-    const [fwDest, setFwDest] = useState('');
-    const [fwProto, setFwProto] = useState('TCP');
+    const [subuserEmail, setSubuserEmail] = useState('');
+    const [subuserPerms, setSubuserPerms] = useState<string[]>(['console']);
+
+    const subuserPermissionOptions = [
+        'console',
+        'files',
+        'start',
+        'stop',
+        'backups',
+        'sftp',
+    ] as const;
 
     const logs = useMemo(() => {
         return panel.logs
@@ -45,7 +53,7 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
     }, [logfile, panel.logs, server.name]);
 
     const serverBackups = sim.backups.filter((item) => item.server_id === server.id);
-    const subusers = panel.subusers.filter((item) => item.server_id === server.id);
+    const subusers = sim.subusers.filter((item) => item.server_id === server.id);
     const files = panel.files.filter((item) => item.server_id === server.id);
     const rules = sim.firewall.filter((item) => item.server_id === server.id);
     const online = server.status === 'online';
@@ -242,6 +250,7 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
                                     <th>Size</th>
                                     <th>Created</th>
                                     <th>Status</th>
+                                    <th />
                                 </tr>
                             </thead>
                             <tbody>
@@ -253,6 +262,37 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
                                         <td>
                                             <StatusText label={item.status} />
                                         </td>
+                                        <td>
+                                            <div className="panel-table-actions">
+                                                <button
+                                                    type="button"
+                                                    className="panel-icon-btn"
+                                                    aria-label={`Download ${item.name}`}
+                                                    onClick={() => sim.downloadBackup(item)}
+                                                >
+                                                    <Download size={15} aria-hidden="true" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="panel-icon-btn"
+                                                    aria-label={`Restore ${item.name}`}
+                                                    disabled={Boolean(
+                                                        sim.busy[`restore-${item.id}`],
+                                                    )}
+                                                    onClick={() => sim.restoreBackup(item)}
+                                                >
+                                                    <RotateCcw size={15} aria-hidden="true" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="panel-icon-btn panel-icon-btn--danger"
+                                                    aria-label={`Delete ${item.name}`}
+                                                    onClick={() => sim.deleteBackup(item)}
+                                                >
+                                                    <Trash2 size={15} aria-hidden="true" />
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -263,12 +303,66 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
 
             {tab === 'subusers' ? (
                 <PanelCard title="Subusers" meta={`${subusers.length} on this server`}>
+                    <form
+                        className="panel-user-form"
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            if (!subuserEmail.trim()) {
+                                return;
+                            }
+                            sim.addSubuser({
+                                server_id: server.id,
+                                email: subuserEmail.trim(),
+                                perms: subuserPerms,
+                            });
+                            setSubuserEmail('');
+                            setSubuserPerms(['console']);
+                        }}
+                    >
+                        <input
+                            className="panel-search panel-search--wide"
+                            type="email"
+                            value={subuserEmail}
+                            onChange={(event) => setSubuserEmail(event.target.value)}
+                            placeholder="subuser@example.com"
+                            aria-label="Subuser email"
+                        />
+                        <fieldset className="panel-chat__member-fieldset">
+                            <legend>Permissions</legend>
+                            <ul className="panel-chat__member-list">
+                                {subuserPermissionOptions.map((perm) => (
+                                    <li key={perm}>
+                                        <label className="panel-chat__member-option">
+                                            <input
+                                                type="checkbox"
+                                                checked={subuserPerms.includes(perm)}
+                                                onChange={(event) => {
+                                                    setSubuserPerms((current) =>
+                                                        event.target.checked
+                                                            ? [...current, perm]
+                                                            : current.filter(
+                                                                  (item) => item !== perm,
+                                                              ),
+                                                    );
+                                                }}
+                                            />
+                                            <span className="panel-chat__picker-name">{perm}</span>
+                                        </label>
+                                    </li>
+                                ))}
+                            </ul>
+                        </fieldset>
+                        <button type="submit" className="panel-mini-btn">
+                            Add subuser
+                        </button>
+                    </form>
                     <div className="panel-table-wrap">
                         <table className="panel-table">
                             <thead>
                                 <tr>
                                     <th>Email</th>
                                     <th>Permissions</th>
+                                    <th />
                                 </tr>
                             </thead>
                             <tbody>
@@ -276,11 +370,23 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
                                     <tr key={item.id}>
                                         <td className="panel-mono">{item.email}</td>
                                         <td>{item.perms.join(', ')}</td>
+                                        <td>
+                                            <div className="panel-table-actions">
+                                                <button
+                                                    type="button"
+                                                    className="panel-icon-btn panel-icon-btn--danger"
+                                                    aria-label={`Remove ${item.email}`}
+                                                    onClick={() => sim.removeSubuser(item.id)}
+                                                >
+                                                    <Trash2 size={15} aria-hidden="true" />
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))}
                                 {subusers.length === 0 ? (
                                     <tr>
-                                        <td colSpan={2}>No subusers on this server.</td>
+                                        <td colSpan={3}>No subusers on this server.</td>
                                     </tr>
                                 ) : null}
                             </tbody>
@@ -367,95 +473,13 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
 
             {tab === 'firewall' ? (
                 <PanelCard title="Server firewall" meta={`${rules.length} rules`}>
-                    <form
-                        className="panel-fw-form"
-                        onSubmit={(event) => {
-                            event.preventDefault();
-                            if (!fwSource.trim() || !fwDest.trim()) {
-                                return;
-                            }
-                            sim.addFirewallRule({
-                                server_id: server.id,
-                                action: fwAction,
-                                source: fwSource.trim(),
-                                dest: fwDest.trim(),
-                                proto: fwProto,
-                            });
-                            setFwSource('');
-                            setFwDest('');
-                        }}
-                    >
-                        <PanelSelect
-                            className="panel-select"
-                            value={fwAction}
-                            onChange={(event) => setFwAction(event.target.value)}
-                        >
-                            <option>Allow</option>
-                            <option>Deny</option>
-                        </PanelSelect>
-                        <input
-                            className="panel-search"
-                            placeholder="Source"
-                            value={fwSource}
-                            onChange={(event) => setFwSource(event.target.value)}
-                        />
-                        <input
-                            className="panel-search"
-                            placeholder="Dest port"
-                            value={fwDest}
-                            onChange={(event) => setFwDest(event.target.value)}
-                        />
-                        <PanelSelect
-                            className="panel-select"
-                            value={fwProto}
-                            onChange={(event) => setFwProto(event.target.value)}
-                        >
-                            <option>TCP</option>
-                            <option>UDP</option>
-                            <option>Any</option>
-                        </PanelSelect>
-                        <button type="submit" className="panel-mini-btn">
-                            Add rule
-                        </button>
-                    </form>
-                    <div className="panel-table-wrap">
-                        <table className="panel-table">
-                            <thead>
-                                <tr>
-                                    <th>Action</th>
-                                    <th>Source</th>
-                                    <th>Dest</th>
-                                    <th>Proto</th>
-                                    <th />
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {rules.map((rule) => (
-                                    <tr key={rule.id}>
-                                        <td>
-                                            <span
-                                                className={`panel-fw panel-fw--${rule.action.toLowerCase()}`}
-                                            >
-                                                {rule.action}
-                                            </span>
-                                        </td>
-                                        <td>{rule.source}</td>
-                                        <td className="panel-mono">{rule.dest}</td>
-                                        <td>{rule.proto}</td>
-                                        <td>
-                                            <button
-                                                type="button"
-                                                className="panel-mini-btn"
-                                                onClick={() => sim.removeFirewallRule(rule.id)}
-                                            >
-                                                Remove
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <FirewallRulesTable
+                        rules={rules}
+                        serverId={server.id}
+                        onAdd={sim.addFirewallRule}
+                        onUpdate={sim.updateFirewallRule}
+                        onRemove={sim.removeFirewallRule}
+                    />
                 </PanelCard>
             ) : null}
         </div>

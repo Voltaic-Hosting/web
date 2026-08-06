@@ -5,13 +5,13 @@ import {
     Play,
     Plus,
     RotateCcw,
-    Server as ServerIcon,
     Square,
     UserPlus,
     Binary,
 } from 'lucide-react';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useMemo, useRef, useState } from 'react';
 import { UserAvatar, avatarColorOptions } from '@/Components/panel/avatar';
+import { FirewallRulesTable } from '@/Components/panel/FirewallRulesTable';
 import { ServerTypeIcon } from '@/Components/panel/icons';
 import {
     KindBadge,
@@ -180,13 +180,21 @@ export function ServersView({
                 {servers.map((server) => {
                     const online = server.status === 'online';
                     return (
-                        <article key={server.id} className="panel-server">
+                        <article
+                            key={server.id}
+                            className="panel-server panel-server--clickable"
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => onOpen(server)}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter' || event.key === ' ') {
+                                    event.preventDefault();
+                                    onOpen(server);
+                                }
+                            }}
+                        >
                             <div className="panel-server__top">
-                                <button
-                                    type="button"
-                                    className="panel-row-link"
-                                    onClick={() => onOpen(server)}
-                                >
+                                <div className="panel-row-link panel-row-link--static">
                                     <span className="panel-type-icon" title={server.type}>
                                         <ServerTypeIcon type={server.type} />
                                     </span>
@@ -196,17 +204,9 @@ export function ServersView({
                                             {server.role} · {server.region}
                                         </p>
                                     </span>
-                                </button>
+                                </div>
                                 <div className="panel-server__badges">
                                     <KindBadge label={server.type} />
-                                    <button
-                                        type="button"
-                                        className="panel-icon-btn"
-                                        aria-label={`Open ${server.name}`}
-                                        onClick={() => onOpen(server)}
-                                    >
-                                        <ServerIcon size={16} />
-                                    </button>
                                 </div>
                             </div>
                             <UptimeChalks chalks={server.chalks} live />
@@ -226,7 +226,11 @@ export function ServersView({
                             <div className="panel-server__meta">
                                 <StatusText label={server.status} />
                             </div>
-                            <div className="panel-action-row">
+                            <div
+                                className="panel-action-row"
+                                onClick={(event) => event.stopPropagation()}
+                                onKeyDown={(event) => event.stopPropagation()}
+                            >
                                 <button
                                     type="button"
                                     className="panel-mini-btn"
@@ -269,6 +273,7 @@ export function FirewallView({
     selectedId,
     onSelect,
     onAdd,
+    onUpdate,
     onRemove,
 }: {
     servers: PanelServer[];
@@ -276,12 +281,9 @@ export function FirewallView({
     selectedId: string;
     onSelect: (id: string) => void;
     onAdd: PanelSimulation['addFirewallRule'];
+    onUpdate: PanelSimulation['updateFirewallRule'];
     onRemove: PanelSimulation['removeFirewallRule'];
 }) {
-    const [action, setAction] = useState('Allow');
-    const [source, setSource] = useState('');
-    const [dest, setDest] = useState('');
-    const [proto, setProto] = useState('TCP');
     const filtered = rules.filter((rule) => rule.server_id === selectedId);
     const selected = servers.find((server) => server.id === selectedId);
 
@@ -304,95 +306,13 @@ export function FirewallView({
                 </PanelSelect>
             }
         >
-            <form
-                className="panel-fw-form"
-                onSubmit={(event) => {
-                    event.preventDefault();
-                    if (!source.trim() || !dest.trim()) {
-                        return;
-                    }
-                    onAdd({
-                        server_id: selectedId,
-                        action,
-                        source: source.trim(),
-                        dest: dest.trim(),
-                        proto,
-                    });
-                    setSource('');
-                    setDest('');
-                }}
-            >
-                <PanelSelect
-                    className="panel-select"
-                    value={action}
-                    onChange={(event) => setAction(event.target.value)}
-                >
-                    <option>Allow</option>
-                    <option>Deny</option>
-                </PanelSelect>
-                <input
-                    className="panel-search"
-                    placeholder="Source"
-                    value={source}
-                    onChange={(event) => setSource(event.target.value)}
-                />
-                <input
-                    className="panel-search"
-                    placeholder="Dest port"
-                    value={dest}
-                    onChange={(event) => setDest(event.target.value)}
-                />
-                <PanelSelect
-                    className="panel-select"
-                    value={proto}
-                    onChange={(event) => setProto(event.target.value)}
-                >
-                    <option>TCP</option>
-                    <option>UDP</option>
-                    <option>Any</option>
-                </PanelSelect>
-                <button type="submit" className="panel-mini-btn">
-                    Add rule
-                </button>
-            </form>
-            <div className="panel-table-wrap">
-                <table className="panel-table">
-                    <thead>
-                        <tr>
-                            <th>Action</th>
-                            <th>Source</th>
-                            <th>Destination</th>
-                            <th>Protocol</th>
-                            <th />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filtered.map((rule) => (
-                            <tr key={rule.id}>
-                                <td>
-                                    <span
-                                        className={`panel-fw panel-fw--${rule.action.toLowerCase()}`}
-                                    >
-                                        {rule.action}
-                                    </span>
-                                </td>
-                                <td>{rule.source}</td>
-                                <td className="panel-mono">{rule.dest}</td>
-                                <td>{rule.proto}</td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        className="panel-mini-btn"
-                                        onClick={() => onRemove(rule.id)}
-                                    >
-                                        Remove
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <FirewallRulesTable
+                rules={filtered}
+                serverId={selectedId}
+                onAdd={onAdd}
+                onUpdate={onUpdate}
+                onRemove={onRemove}
+            />
         </PanelCard>
     );
 }
@@ -403,12 +323,16 @@ export function BackupsView({
     servers,
     busy,
     onCreate,
+    onDownload,
+    onRestore,
 }: {
     panel: PanelConcept;
     backups: PanelSimulation['backups'];
     servers: PanelServer[];
     busy: Record<string, boolean>;
     onCreate: (server: PanelServer) => void;
+    onDownload: PanelSimulation['downloadBackup'];
+    onRestore: PanelSimulation['restoreBackup'];
 }) {
     const [serverId, setServerId] = useState(servers[0]?.id ?? '');
     const server = servers.find((item) => item.id === serverId);
@@ -450,6 +374,7 @@ export function BackupsView({
                             <th>Size</th>
                             <th>Created</th>
                             <th>Status</th>
+                            <th />
                         </tr>
                     </thead>
                     <tbody>
@@ -465,6 +390,26 @@ export function BackupsView({
                                 <td>{item.created}</td>
                                 <td>
                                     <StatusText label={item.status} />
+                                </td>
+                                <td>
+                                    <div className="panel-table-actions">
+                                        <button
+                                            type="button"
+                                            className="panel-icon-btn"
+                                            aria-label={`Download ${item.name}`}
+                                            onClick={() => onDownload(item)}
+                                        >
+                                            <Download size={15} aria-hidden="true" />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="panel-mini-btn"
+                                            disabled={Boolean(busy[`restore-${item.id}`])}
+                                            onClick={() => onRestore(item)}
+                                        >
+                                            {busy[`restore-${item.id}`] ? 'Restoring…' : 'Restore'}
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -1355,7 +1300,8 @@ export function ProfileView({
     security,
     sessions,
     onUpdateProfile,
-    onSaveProfile,
+    onUploadAvatar,
+    onResetAvatar,
     onToggleSecurity,
     onRevokeSession,
     onToast,
@@ -1365,12 +1311,18 @@ export function ProfileView({
     security: PanelSimulation['security'];
     sessions: PanelSimulation['sessions'];
     onUpdateProfile: PanelSimulation['updateProfile'];
-    onSaveProfile: PanelSimulation['saveProfile'];
+    onUploadAvatar: PanelSimulation['uploadAvatarImage'];
+    onResetAvatar: PanelSimulation['resetAvatar'];
     onToggleSecurity: PanelSimulation['toggleSecurity'];
     onRevokeSession: PanelSimulation['revokeSession'];
     onToast: (message: string) => void;
 }) {
-    const [password, setPassword] = useState('');
+    const avatarInputRef = useRef<HTMLInputElement>(null);
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [authCode, setAuthCode] = useState('');
+    const [yubikeyVerified, setYubikeyVerified] = useState(false);
+    const [passkeyVerified, setPasskeyVerified] = useState(false);
     const [setup, setSetup] = useState<null | 'totp' | 'yubikey' | 'passkey'>(null);
     const [setupCode, setSetupCode] = useState('');
     const [uaOpen, setUaOpen] = useState<string | null>(null);
@@ -1407,16 +1359,83 @@ export function ProfileView({
         setSetupCode('');
     };
 
+    const passwordChecksPass =
+        currentPassword.trim().length > 0 &&
+        newPassword.trim().length > 0 &&
+        (!security.totp || authCode.trim().length >= 6) &&
+        (!security.yubikey || yubikeyVerified) &&
+        (!security.passkey || passkeyVerified);
+
+    const submitPasswordChange = () => {
+        if (!currentPassword.trim()) {
+            onToast('Enter your current password');
+            return;
+        }
+        if (!newPassword.trim()) {
+            onToast('Enter a new password');
+            return;
+        }
+        if (security.totp && authCode.trim().length < 6) {
+            onToast('Enter the 6-digit code from your authenticator');
+            return;
+        }
+        if (security.yubikey && !yubikeyVerified) {
+            onToast('Verify your YubiKey before changing the password');
+            return;
+        }
+        if (security.passkey && !passkeyVerified) {
+            onToast('Verify your passkey before changing the password');
+            return;
+        }
+        onToast('Password updated (concept)');
+        setCurrentPassword('');
+        setNewPassword('');
+        setAuthCode('');
+        setYubikeyVerified(false);
+        setPasskeyVerified(false);
+    };
+
     return (
         <div className="panel-stack">
             <PanelCard title="Profile">
                 <div className="panel-profile-edit">
-                    <UserAvatar
-                        seed={profile.avatar_seed}
-                        name={profile.name}
-                        size={56}
-                        color={profile.avatar_color}
-                    />
+                    <div className="panel-avatar-upload">
+                        <input
+                            ref={avatarInputRef}
+                            className="panel-avatar-upload__input"
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            onChange={(event) => {
+                                const file = event.target.files?.[0];
+                                if (file) {
+                                    onUploadAvatar(file);
+                                }
+                                event.currentTarget.value = '';
+                            }}
+                        />
+                        <button
+                            type="button"
+                            className="panel-avatar-upload__trigger"
+                            aria-label="Change profile photo"
+                            onClick={() => avatarInputRef.current?.click()}
+                        >
+                            <UserAvatar
+                                seed={profile.avatar_seed}
+                                name={profile.name}
+                                size={56}
+                                color={profile.avatar_color}
+                                imageUrl={profile.avatar_image}
+                            />
+                            <span className="panel-avatar-upload__overlay">Change</span>
+                        </button>
+                        <button
+                            type="button"
+                            className="panel-link-btn panel-avatar-upload__reset"
+                            onClick={onResetAvatar}
+                        >
+                            Reset avatar
+                        </button>
+                    </div>
                     <div className="panel-profile-edit__fields">
                         <label className="panel-profile-field">
                             <span className="panel-setting__label">Display name</span>
@@ -1471,30 +1490,71 @@ export function ProfileView({
                         <p className="panel-app__muted">
                             {profile.role} · {profile.org} · {profile.plan}
                         </p>
-                        <button type="button" className="panel-mini-btn" onClick={onSaveProfile}>
-                            Save profile
-                        </button>
+                        <p className="panel-app__muted">
+                            Changes save automatically in this browser.
+                        </p>
                     </div>
                 </div>
                 <form
                     className="panel-user-form"
                     onSubmit={(event) => {
                         event.preventDefault();
-                        onToast(password ? 'Password updated (concept)' : 'Enter a new password');
-                        setPassword('');
+                        submitPasswordChange();
                     }}
                 >
                     <p className="panel-setting__label">{panel.security.password_hint}</p>
                     <input
                         className="panel-search"
                         type="password"
+                        placeholder="Current password"
+                        value={currentPassword}
+                        onChange={(event) => setCurrentPassword(event.target.value)}
+                        autoComplete="current-password"
+                    />
+                    <input
+                        className="panel-search"
+                        type="password"
                         placeholder="New password"
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
+                        value={newPassword}
+                        onChange={(event) => setNewPassword(event.target.value)}
                         autoComplete="new-password"
                     />
-                    <PasswordStrength password={password} />
-                    <button type="submit" className="panel-mini-btn">
+                    <PasswordStrength password={newPassword} />
+                    {security.totp ? (
+                        <input
+                            className="panel-search"
+                            inputMode="numeric"
+                            placeholder="Authenticator code"
+                            value={authCode}
+                            onChange={(event) => setAuthCode(event.target.value)}
+                            aria-label="Authenticator code"
+                        />
+                    ) : null}
+                    {security.yubikey ? (
+                        <button
+                            type="button"
+                            className={`panel-mini-btn${yubikeyVerified ? ' is-active' : ''}`}
+                            onClick={() => {
+                                setYubikeyVerified(true);
+                                onToast('YubiKey verified (concept)');
+                            }}
+                        >
+                            {yubikeyVerified ? 'YubiKey verified' : 'Verify YubiKey'}
+                        </button>
+                    ) : null}
+                    {security.passkey ? (
+                        <button
+                            type="button"
+                            className={`panel-mini-btn${passkeyVerified ? ' is-active' : ''}`}
+                            onClick={() => {
+                                setPasskeyVerified(true);
+                                onToast('Passkey verified (concept)');
+                            }}
+                        >
+                            {passkeyVerified ? 'Passkey verified' : 'Verify passkey'}
+                        </button>
+                    ) : null}
+                    <button type="submit" className="panel-mini-btn" disabled={!passwordChecksPass}>
                         Change password
                     </button>
                 </form>
@@ -1641,10 +1701,12 @@ export function SettingsView({
     settings,
     toggles,
     onToggle,
+    onResetDefaults,
 }: {
     settings: PanelConcept['settings'];
     toggles: PanelSimulation['toggles'];
     onToggle: PanelSimulation['toggleSetting'];
+    onResetDefaults: PanelSimulation['resetSettingsDefaults'];
 }) {
     return (
         <div className="panel-stack">
@@ -1658,7 +1720,14 @@ export function SettingsView({
                     ))}
                 </div>
             </PanelCard>
-            <PanelCard title="Preferences">
+            <PanelCard
+                title="Preferences"
+                actions={
+                    <button type="button" className="panel-mini-btn" onClick={onResetDefaults}>
+                        Reset to defaults
+                    </button>
+                }
+            >
                 <div className="panel-toggle-list">
                     {toggles.map((item) => (
                         <ToggleSwitch
