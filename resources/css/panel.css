@@ -1957,21 +1957,76 @@
 
     .panel-chat__members {
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.35rem;
+        align-items: center;
         padding: 0.55rem 0.85rem;
         border-bottom: 1px solid color-mix(in oklab, #c9bfb0 8%, transparent);
     }
 
-    .panel-chat__member {
+    .panel-avatar-stack {
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
-        padding: 0.2rem 0.45rem 0.2rem 0.2rem;
+        min-height: 2rem;
+    }
+
+    .panel-avatar-stack__item {
+        position: relative;
+        display: inline-flex;
+        margin-left: -0.45rem;
+        border: 2px solid #1c1916;
         border-radius: 999px;
-        background: color-mix(in oklab, #fff 4%, transparent);
-        color: #d5c9bb;
+        background: #1c1916;
+    }
+
+    .panel-avatar-stack__item:first-child {
+        margin-left: 0;
+    }
+
+    .panel-avatar-stack__item:hover,
+    .panel-avatar-stack__item:focus-within {
+        z-index: 20 !important;
+    }
+
+    .panel-avatar-stack__tip {
+        position: absolute;
+        bottom: calc(100% + 0.35rem);
+        left: 50%;
+        z-index: 30;
+        min-width: max-content;
+        padding: 0.3rem 0.45rem;
+        border: 1px solid color-mix(in oklab, #c9bfb0 22%, transparent);
+        border-radius: 0.3rem;
+        background: #221e1a;
+        color: #efe8df;
         font-size: 0.72rem;
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 0;
+        transform: translate(-50%, 0.2rem);
+        transition:
+            opacity 0.15s ease,
+            transform 0.15s ease;
+        box-shadow: 0 8px 18px color-mix(in oklab, #000 35%, transparent);
+    }
+
+    .panel-avatar-stack__item:hover .panel-avatar-stack__tip,
+    .panel-avatar-stack__item:focus-within .panel-avatar-stack__tip {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+
+    .panel-avatar-stack__more {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 1.75rem;
+        height: 1.75rem;
+        margin-left: -0.35rem;
+        padding-inline: 0.35rem;
+        border: 2px solid #1c1916;
+        border-radius: 999px;
+        background: color-mix(in oklab, #fff 8%, transparent);
+        color: #d5c9bb;
+        font-size: 0.68rem;
     }
 
     .panel-chat__messages {
@@ -2071,6 +2126,17 @@
         background: color-mix(in oklab, #b45309 10%, transparent);
     }
 
+    .panel-chat__member-option:hover {
+        border-color: color-mix(in oklab, #b45309 35%, transparent);
+        background: color-mix(in oklab, #b45309 10%, transparent);
+    }
+
+    .panel-chat__member-option.is-selected {
+        border-color: color-mix(in oklab, #b45309 55%, transparent);
+        background: color-mix(in oklab, #b45309 14%, transparent);
+        box-shadow: inset 0 0 0 1px color-mix(in oklab, #b45309 25%, transparent);
+    }
+
     .panel-chat__picker-name {
         display: block;
         font-size: 0.86rem;
@@ -2120,6 +2186,29 @@
     .panel-popover__title {
         font-size: 0.92rem;
         font-weight: 650;
+    }
+
+    .panel-popover__footer {
+        display: flex;
+        justify-content: center;
+        padding: 0.55rem 0.95rem 0.75rem;
+        border-top: 1px solid color-mix(in oklab, #c9bfb0 10%, transparent);
+    }
+
+    .panel-link-btn--small {
+        font-size: 0.76rem;
+    }
+
+    .panel-toggle-list--compact {
+        gap: 0.35rem;
+    }
+
+    .panel-toggle-list--compact .panel-switch {
+        padding-block: 0.2rem;
+    }
+
+    .panel-labeled-meter__row .panel-mono {
+        font-size: 0.74rem;
     }
 
     .panel-link-btn {

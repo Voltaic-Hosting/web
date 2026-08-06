@@ -1,5 +1,13 @@
 import type { ReactNode, SelectHTMLAttributes } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { UserAvatar } from '@/Components/panel/avatar';
+import {
+    formatCpuUsage,
+    formatDiskUsage,
+    formatRamUsage,
+    serverResourceTotals,
+} from '@/Components/panel/serverResources';
+import type { PanelChatMember, PanelServer } from '@/types';
 
 export function Meter({ value }: { value: number }) {
     const clamped = Math.max(0, Math.min(100, Math.round(value)));
@@ -19,6 +27,72 @@ export function LabeledMeter({ label, value }: { label: string; value: number })
                 <span className="panel-mono">{Math.round(value)}%</span>
             </div>
             <Meter value={value} />
+        </div>
+    );
+}
+
+export function ServerResourceMeter({
+    server,
+    kind,
+}: {
+    server: PanelServer;
+    kind: 'cpu' | 'ram' | 'disk';
+}) {
+    const totals = serverResourceTotals(server);
+    const labels = { cpu: 'CPU', ram: 'RAM', disk: 'Storage' } as const;
+    const value = server[kind];
+    const detail =
+        kind === 'cpu'
+            ? formatCpuUsage(value, totals.cpu_cores)
+            : kind === 'ram'
+              ? formatRamUsage(value, totals.ram_gb)
+              : formatDiskUsage(value, totals.disk_gb);
+
+    return (
+        <div className="panel-labeled-meter">
+            <div className="panel-labeled-meter__row">
+                <span>{labels[kind]}</span>
+                <span className="panel-mono">{detail}</span>
+            </div>
+            <Meter value={value} />
+        </div>
+    );
+}
+
+export function AvatarStack({
+    members,
+    size = 28,
+    max = 5,
+}: {
+    members: PanelChatMember[];
+    size?: number;
+    max?: number;
+}) {
+    const visible = members.slice(0, max);
+    const overflow = members.length - visible.length;
+
+    return (
+        <div className="panel-avatar-stack" aria-label={`${members.length} members`}>
+            {visible.map((member, index) => (
+                <span
+                    key={member.id}
+                    className="panel-avatar-stack__item"
+                    style={{ zIndex: visible.length - index }}
+                >
+                    <UserAvatar
+                        seed={member.avatar_seed}
+                        name={member.name}
+                        size={size}
+                        color={member.avatar_color}
+                    />
+                    <span className="panel-avatar-stack__tip" role="tooltip">
+                        {member.name}
+                    </span>
+                </span>
+            ))}
+            {overflow > 0 ? (
+                <span className="panel-avatar-stack__more panel-mono">+{overflow}</span>
+            ) : null}
         </div>
     );
 }

@@ -124,6 +124,9 @@ export interface PanelServer {
     cpu: number;
     ram: number;
     disk: number;
+    cpu_cores?: number;
+    ram_gb?: number;
+    disk_gb?: number;
     chalks: string[];
     logfiles: string[];
     sftp: PanelServerSftp;

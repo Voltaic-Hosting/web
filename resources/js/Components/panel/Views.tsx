@@ -19,6 +19,7 @@ import {
     PanelCard,
     PanelSelect,
     PasswordStrength,
+    ServerResourceMeter,
     StatusText,
     ToggleSwitch,
     UptimeChalks,
@@ -211,9 +212,9 @@ export function ServersView({
                             </div>
                             <UptimeChalks chalks={server.chalks} live />
                             <div className="panel-server__meters">
-                                <LabeledMeter label="CPU" value={server.cpu} />
-                                <LabeledMeter label="RAM" value={server.ram} />
-                                <LabeledMeter label="Disk" value={server.disk} />
+                                <ServerResourceMeter server={server} kind="cpu" />
+                                <ServerResourceMeter server={server} kind="ram" />
+                                <ServerResourceMeter server={server} kind="disk" />
                             </div>
                             {server.type === 'Game' || server.type === 'Game Servers' ? (
                                 <p className="panel-app__muted">

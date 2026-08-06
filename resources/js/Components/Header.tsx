@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { Menu, X } from 'lucide-react';
 import BrandMark from '@/Components/BrandMark';
+import ThemeToggle from '@/Components/ThemeToggle';
 import { isActiveRoute, routeFor } from '@/lib/routes';
 import type { SiteConfig } from '@/types';
 
@@ -30,9 +31,12 @@ export default function Header({ site, menuOpen, onToggleMenu, onNavigate }: Hea
                     ))}
                 </nav>
 
-                <Link href="/contact" className="btn btn--ghost site-header__cta">
-                    Contact
-                </Link>
+                <div className="site-header__actions">
+                    <Link href="/contact" className="btn btn--ghost site-header__cta">
+                        Contact
+                    </Link>
+                    <ThemeToggle />
+                </div>
 
                 <button
                     type="button"
@@ -67,6 +71,10 @@ export default function Header({ site, menuOpen, onToggleMenu, onNavigate }: Hea
                 <Link href="/contact" className="nav-link" onClick={onNavigate}>
                     Contact
                 </Link>
+                <div className="mobile-nav__theme">
+                    <span className="mobile-nav__theme-label">Theme</span>
+                    <ThemeToggle />
+                </div>
             </nav>
         </header>
     );

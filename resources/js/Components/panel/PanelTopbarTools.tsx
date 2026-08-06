@@ -11,6 +11,7 @@ interface PanelTopbarToolsProps {
     unreadNotifications: number;
     onMarkRead: (id: string) => void;
     onOpenNotifications: () => void;
+    onClearNotifications: () => void;
     profile: PanelProfile;
     users: PanelUser[];
     chatChannels: PanelChatChannel[];
@@ -31,6 +32,7 @@ export function PanelTopbarTools({
     unreadNotifications,
     onMarkRead,
     onOpenNotifications,
+    onClearNotifications,
     profile,
     users,
     chatChannels,
@@ -128,6 +130,16 @@ export function PanelTopbarTools({
                             </li>
                         ))}
                     </ul>
+                    <div className="panel-popover__footer">
+                        <button
+                            type="button"
+                            className="panel-link-btn panel-link-btn--small"
+                            onClick={onClearNotifications}
+                            disabled={notifications.length === 0}
+                        >
+                            Clear all
+                        </button>
+                    </div>
                 </div>
             </details>
         </>

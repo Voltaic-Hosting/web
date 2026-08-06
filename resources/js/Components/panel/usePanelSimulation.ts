@@ -450,6 +450,22 @@ export function usePanelSimulation(panel: PanelConcept) {
         [panel.account.email, pushAudit, pushToast],
     );
 
+    const updateSubuser = useCallback(
+        (id: string, patch: Pick<PanelSubuser, 'email' | 'perms'>) => {
+            setSubusers((current) =>
+                current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+            );
+            pushAudit({
+                actor: panel.account.email,
+                action: 'subuser.update',
+                target: patch.email,
+                ip: '198.51.100.24',
+            });
+            pushToast(`Updated ${patch.email}`);
+        },
+        [panel.account.email, pushAudit, pushToast],
+    );
+
     const addUser = useCallback(
         (user: Omit<PanelUser, 'id' | 'avatar_seed' | 'status'> & { status?: string }) => {
             const entry: PanelUser = {
@@ -844,6 +860,7 @@ export function usePanelSimulation(panel: PanelConcept) {
         deleteBackup,
         addSubuser,
         removeSubuser,
+        updateSubuser,
         addUser,
         updateUserPerms,
         createTicket,

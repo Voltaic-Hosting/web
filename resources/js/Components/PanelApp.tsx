@@ -194,6 +194,7 @@ export default function PanelApp({
         unreadNotifications: sim.unreadNotifications,
         onMarkRead: sim.markNotificationRead,
         onOpenNotifications: () => navigate('notifications'),
+        onClearNotifications: sim.clearNotifications,
         profile: sim.profile,
         users: sim.users,
         chatChannels: sim.chatChannels,

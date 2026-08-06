@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, MessageSquare, MessageSquarePlus, Users } from 'lucide-react';
 import { UserAvatar } from '@/Components/panel/avatar';
+import { AvatarStack } from '@/Components/panel/ui';
 import type { PanelChatChannel, PanelChatMember, PanelProfile, PanelUser } from '@/types';
 
 interface PanelChatPopoverProps {
@@ -47,6 +48,10 @@ function channelAvatar(channel: PanelChatChannel, selfId: string): PanelChatMemb
     };
 }
 
+function isGroupLike(channel: PanelChatChannel): boolean {
+    return channel.kind !== 'dm';
+}
+
 export function PanelChatPopover({
     profile,
     users,
@@ -63,6 +68,7 @@ export function PanelChatPopover({
     const [composerMode, setComposerMode] = useState<'dm' | 'group' | null>(null);
     const [groupName, setGroupName] = useState('');
     const [groupMembers, setGroupMembers] = useState<string[]>([]);
+    const messagesRef = useRef<HTMLDivElement>(null);
 
     const activeChat =
         channels.find((channel) => channel.id === activeChatId) ?? channels[0] ?? null;
@@ -86,6 +92,18 @@ export function PanelChatPopover({
         [profile.id, users],
     );
 
+    const scrollMessagesToBottom = () => {
+        const node = messagesRef.current;
+        if (!node) {
+            return;
+        }
+        node.scrollTop = node.scrollHeight;
+    };
+
+    useEffect(() => {
+        scrollMessagesToBottom();
+    }, [activeChat?.id, activeChat?.messages.length, mobileThreadOpen]);
+
     const openChannel = (channelId: string) => {
         onChannelChange(channelId);
         setMobileThreadOpen(true);
@@ -96,6 +114,12 @@ export function PanelChatPopover({
         setComposerMode(null);
         setGroupName('');
         setGroupMembers([]);
+    };
+
+    const toggleGroupMember = (userId: string) => {
+        setGroupMembers((current) =>
+            current.includes(userId) ? current.filter((id) => id !== userId) : [...current, userId],
+        );
     };
 
     const submitGroup = () => {
@@ -220,20 +244,11 @@ export function PanelChatPopover({
                                     <ul className="panel-chat__member-list">
                                         {groupCandidates.map((user) => (
                                             <li key={user.id}>
-                                                <label className="panel-chat__member-option">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={groupMembers.includes(user.id)}
-                                                        onChange={(event) => {
-                                                            setGroupMembers((current) =>
-                                                                event.target.checked
-                                                                    ? [...current, user.id]
-                                                                    : current.filter(
-                                                                          (id) => id !== user.id,
-                                                                      ),
-                                                            );
-                                                        }}
-                                                    />
+                                                <button
+                                                    type="button"
+                                                    className={`panel-chat__member-option${groupMembers.includes(user.id) ? ' is-selected' : ''}`}
+                                                    onClick={() => toggleGroupMember(user.id)}
+                                                >
                                                     <UserAvatar
                                                         seed={user.avatar_seed}
                                                         name={user.name}
@@ -247,7 +262,7 @@ export function PanelChatPopover({
                                                             {user.role}
                                                         </span>
                                                     </span>
-                                                </label>
+                                                </button>
                                             </li>
                                         ))}
                                     </ul>
@@ -267,6 +282,7 @@ export function PanelChatPopover({
                                 {channels.map((channel) => {
                                     const avatar = channelAvatar(channel, profile.id);
                                     const isActive = channel.id === activeChat?.id;
+                                    const groupLike = isGroupLike(channel);
 
                                     return (
                                         <li key={channel.id}>
@@ -275,12 +291,20 @@ export function PanelChatPopover({
                                                 className={`panel-chat-convo${isActive ? ' is-active' : ''}`}
                                                 onClick={() => openChannel(channel.id)}
                                             >
-                                                <UserAvatar
-                                                    seed={avatar.avatar_seed}
-                                                    name={avatar.name}
-                                                    size={38}
-                                                    color={avatar.avatar_color}
-                                                />
+                                                {groupLike ? (
+                                                    <AvatarStack
+                                                        members={channel.members}
+                                                        size={30}
+                                                        max={4}
+                                                    />
+                                                ) : (
+                                                    <UserAvatar
+                                                        seed={avatar.avatar_seed}
+                                                        name={avatar.name}
+                                                        size={38}
+                                                        color={avatar.avatar_color}
+                                                    />
+                                                )}
                                                 <span className="panel-chat-convo__body">
                                                     <span className="panel-chat-convo__row">
                                                         <span className="panel-chat-convo__title">
@@ -324,18 +348,26 @@ export function PanelChatPopover({
                                             <ArrowLeft size={16} aria-hidden="true" />
                                         </button>
                                         <div className="panel-chat__thread-title">
-                                            <UserAvatar
-                                                seed={
-                                                    channelAvatar(activeChat, profile.id)
-                                                        .avatar_seed
-                                                }
-                                                name={activeChat.label}
-                                                size={34}
-                                                color={
-                                                    channelAvatar(activeChat, profile.id)
-                                                        .avatar_color
-                                                }
-                                            />
+                                            {isGroupLike(activeChat) ? (
+                                                <AvatarStack
+                                                    members={activeChat.members}
+                                                    size={34}
+                                                    max={5}
+                                                />
+                                            ) : (
+                                                <UserAvatar
+                                                    seed={
+                                                        channelAvatar(activeChat, profile.id)
+                                                            .avatar_seed
+                                                    }
+                                                    name={activeChat.label}
+                                                    size={34}
+                                                    color={
+                                                        channelAvatar(activeChat, profile.id)
+                                                            .avatar_color
+                                                    }
+                                                />
+                                            )}
                                             <div>
                                                 <p className="panel-chat__thread-name">
                                                     {activeChat.label}
@@ -349,20 +381,18 @@ export function PanelChatPopover({
                                     </header>
 
                                     <div className="panel-chat__members">
-                                        {activeChat.members.map((member) => (
-                                            <span key={member.id} className="panel-chat__member">
-                                                <UserAvatar
-                                                    seed={member.avatar_seed}
-                                                    name={member.name}
-                                                    size={24}
-                                                    color={member.avatar_color}
-                                                />
-                                                <span>{member.name}</span>
-                                            </span>
-                                        ))}
+                                        <AvatarStack
+                                            members={activeChat.members}
+                                            size={28}
+                                            max={8}
+                                        />
                                     </div>
 
-                                    <div className="panel-chat__messages" aria-live="polite">
+                                    <div
+                                        ref={messagesRef}
+                                        className="panel-chat__messages"
+                                        aria-live="polite"
+                                    >
                                         {activeChat.messages.map((message) => {
                                             const author = memberForId(
                                                 activeChat,

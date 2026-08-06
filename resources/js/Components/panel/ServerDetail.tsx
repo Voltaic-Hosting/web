@@ -1,13 +1,25 @@
-import { Download, Pause, Play, RotateCcw, Square, Trash2 } from 'lucide-react';
+import {
+    Check,
+    Download,
+    Pencil,
+    Pause,
+    Play,
+    RotateCcw,
+    Square,
+    Trash2,
+    UserPlus,
+    X,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { FirewallRulesTable } from '@/Components/panel/FirewallRulesTable';
 import { ServerTypeIcon } from '@/Components/panel/icons';
 import {
     KindBadge,
-    LabeledMeter,
     PanelCard,
     PanelSelect,
+    ServerResourceMeter,
     StatusText,
+    ToggleSwitch,
     UptimeChalks,
 } from '@/Components/panel/ui';
 import type { PanelSimulation } from '@/Components/panel/usePanelSimulation';
@@ -29,6 +41,10 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
     const [draft, setDraft] = useState('');
     const [subuserEmail, setSubuserEmail] = useState('');
     const [subuserPerms, setSubuserPerms] = useState<string[]>(['console']);
+    const [subuserFormOpen, setSubuserFormOpen] = useState(false);
+    const [editingSubuserId, setEditingSubuserId] = useState<string | null>(null);
+    const [editSubuserEmail, setEditSubuserEmail] = useState('');
+    const [editSubuserPerms, setEditSubuserPerms] = useState<string[]>([]);
 
     const subuserPermissionOptions = [
         'console',
@@ -142,9 +158,9 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
             </div>
 
             <div className="panel-server__meters panel-detail-meters">
-                <LabeledMeter label="CPU" value={server.cpu} />
-                <LabeledMeter label="RAM" value={server.ram} />
-                <LabeledMeter label="Disk" value={server.disk} />
+                <ServerResourceMeter server={server} kind="cpu" />
+                <ServerResourceMeter server={server} kind="ram" />
+                <ServerResourceMeter server={server} kind="disk" />
                 {server.type === 'Game' || server.type === 'Game Servers' ? (
                     <p className="panel-app__muted">
                         Players{' '}
@@ -302,62 +318,78 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
             ) : null}
 
             {tab === 'subusers' ? (
-                <PanelCard title="Subusers" meta={`${subusers.length} on this server`}>
-                    <form
-                        className="panel-user-form"
-                        onSubmit={(event) => {
-                            event.preventDefault();
-                            if (!subuserEmail.trim()) {
-                                return;
-                            }
-                            sim.addSubuser({
-                                server_id: server.id,
-                                email: subuserEmail.trim(),
-                                perms: subuserPerms,
-                            });
-                            setSubuserEmail('');
-                            setSubuserPerms(['console']);
-                        }}
-                    >
-                        <input
-                            className="panel-search panel-search--wide"
-                            type="email"
-                            value={subuserEmail}
-                            onChange={(event) => setSubuserEmail(event.target.value)}
-                            placeholder="subuser@example.com"
-                            aria-label="Subuser email"
-                        />
-                        <fieldset className="panel-chat__member-fieldset">
-                            <legend>Permissions</legend>
-                            <ul className="panel-chat__member-list">
-                                {subuserPermissionOptions.map((perm) => (
-                                    <li key={perm}>
-                                        <label className="panel-chat__member-option">
-                                            <input
-                                                type="checkbox"
-                                                checked={subuserPerms.includes(perm)}
-                                                onChange={(event) => {
-                                                    setSubuserPerms((current) =>
-                                                        event.target.checked
-                                                            ? [...current, perm]
-                                                            : current.filter(
-                                                                  (item) => item !== perm,
-                                                              ),
-                                                    );
-                                                }}
-                                            />
-                                            <span className="panel-chat__picker-name">{perm}</span>
-                                        </label>
-                                    </li>
-                                ))}
-                            </ul>
-                        </fieldset>
-                        <button type="submit" className="panel-mini-btn">
-                            Add subuser
+                <PanelCard
+                    title="Subusers"
+                    meta={`${subusers.length} on this server`}
+                    actions={
+                        <button
+                            type="button"
+                            className="panel-icon-btn"
+                            aria-label="Add subuser"
+                            onClick={() => setSubuserFormOpen((open) => !open)}
+                        >
+                            <UserPlus size={18} aria-hidden="true" />
                         </button>
-                    </form>
+                    }
+                >
+                    {subuserFormOpen ? (
+                        <form
+                            className="panel-user-form"
+                            onSubmit={(event) => {
+                                event.preventDefault();
+                                if (!subuserEmail.trim()) {
+                                    return;
+                                }
+                                sim.addSubuser({
+                                    server_id: server.id,
+                                    email: subuserEmail.trim(),
+                                    perms: subuserPerms,
+                                });
+                                setSubuserEmail('');
+                                setSubuserPerms(['console']);
+                                setSubuserFormOpen(false);
+                            }}
+                        >
+                            <input
+                                className="panel-search panel-search--wide"
+                                type="email"
+                                value={subuserEmail}
+                                onChange={(event) => setSubuserEmail(event.target.value)}
+                                placeholder="subuser@example.com"
+                                aria-label="Subuser email"
+                            />
+                            <div className="panel-toggle-list">
+                                {subuserPermissionOptions.map((perm) => (
+                                    <ToggleSwitch
+                                        key={perm}
+                                        label={perm}
+                                        checked={subuserPerms.includes(perm)}
+                                        onChange={() => {
+                                            setSubuserPerms((current) =>
+                                                current.includes(perm)
+                                                    ? current.filter((item) => item !== perm)
+                                                    : [...current, perm],
+                                            );
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                            <div className="panel-action-row">
+                                <button type="submit" className="panel-mini-btn">
+                                    Add subuser
+                                </button>
+                                <button
+                                    type="button"
+                                    className="panel-mini-btn"
+                                    onClick={() => setSubuserFormOpen(false)}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    ) : null}
                     <div className="panel-table-wrap">
-                        <table className="panel-table">
+                        <table className="panel-table panel-table--fw">
                             <thead>
                                 <tr>
                                     <th>Email</th>
@@ -366,24 +398,132 @@ export default function ServerDetail({ panel, server, sim, onBack }: ServerDetai
                                 </tr>
                             </thead>
                             <tbody>
-                                {subusers.map((item) => (
-                                    <tr key={item.id}>
-                                        <td className="panel-mono">{item.email}</td>
-                                        <td>{item.perms.join(', ')}</td>
-                                        <td>
-                                            <div className="panel-table-actions">
-                                                <button
-                                                    type="button"
-                                                    className="panel-icon-btn panel-icon-btn--danger"
-                                                    aria-label={`Remove ${item.email}`}
-                                                    onClick={() => sim.removeSubuser(item.id)}
-                                                >
-                                                    <Trash2 size={15} aria-hidden="true" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {subusers.map((item) => {
+                                    const editing = editingSubuserId === item.id;
+
+                                    return (
+                                        <tr
+                                            key={item.id}
+                                            className={editing ? 'is-editing' : undefined}
+                                        >
+                                            <td className="panel-mono">
+                                                {editing ? (
+                                                    <input
+                                                        className="panel-search panel-search--cell"
+                                                        type="email"
+                                                        value={editSubuserEmail}
+                                                        onChange={(event) =>
+                                                            setEditSubuserEmail(event.target.value)
+                                                        }
+                                                    />
+                                                ) : (
+                                                    item.email
+                                                )}
+                                            </td>
+                                            <td>
+                                                {editing ? (
+                                                    <div className="panel-toggle-list panel-toggle-list--compact">
+                                                        {subuserPermissionOptions.map((perm) => (
+                                                            <ToggleSwitch
+                                                                key={perm}
+                                                                label={perm}
+                                                                checked={editSubuserPerms.includes(
+                                                                    perm,
+                                                                )}
+                                                                onChange={() => {
+                                                                    setEditSubuserPerms(
+                                                                        (current) =>
+                                                                            current.includes(perm)
+                                                                                ? current.filter(
+                                                                                      (entry) =>
+                                                                                          entry !==
+                                                                                          perm,
+                                                                                  )
+                                                                                : [
+                                                                                      ...current,
+                                                                                      perm,
+                                                                                  ],
+                                                                    );
+                                                                }}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    item.perms.join(', ')
+                                                )}
+                                            </td>
+                                            <td>
+                                                <div className="panel-table-actions">
+                                                    {editing ? (
+                                                        <>
+                                                            <button
+                                                                type="button"
+                                                                className="panel-icon-btn"
+                                                                aria-label="Save subuser"
+                                                                onClick={() => {
+                                                                    if (!editSubuserEmail.trim()) {
+                                                                        return;
+                                                                    }
+                                                                    sim.updateSubuser(item.id, {
+                                                                        email: editSubuserEmail.trim(),
+                                                                        perms: editSubuserPerms,
+                                                                    });
+                                                                    setEditingSubuserId(null);
+                                                                }}
+                                                            >
+                                                                <Check
+                                                                    size={15}
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="panel-icon-btn"
+                                                                aria-label="Cancel edit"
+                                                                onClick={() =>
+                                                                    setEditingSubuserId(null)
+                                                                }
+                                                            >
+                                                                <X size={15} aria-hidden="true" />
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <button
+                                                                type="button"
+                                                                className="panel-icon-btn"
+                                                                aria-label={`Edit ${item.email}`}
+                                                                onClick={() => {
+                                                                    setEditingSubuserId(item.id);
+                                                                    setEditSubuserEmail(item.email);
+                                                                    setEditSubuserPerms(item.perms);
+                                                                }}
+                                                            >
+                                                                <Pencil
+                                                                    size={15}
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="panel-icon-btn panel-icon-btn--danger"
+                                                                aria-label={`Remove ${item.email}`}
+                                                                onClick={() =>
+                                                                    sim.removeSubuser(item.id)
+                                                                }
+                                                            >
+                                                                <Trash2
+                                                                    size={15}
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                                 {subusers.length === 0 ? (
                                     <tr>
                                         <td colSpan={3}>No subusers on this server.</td>
