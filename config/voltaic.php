@@ -16,7 +16,6 @@ return [
         ['label' => 'Panel', 'route' => 'panel'],
         ['label' => 'About', 'route' => 'about'],
         ['label' => 'FAQ', 'route' => 'faq'],
-        ['label' => 'Contact', 'route' => 'contact'],
     ],
 
     'footer_nav' => [
