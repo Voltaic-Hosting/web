@@ -49,7 +49,7 @@ export default function Home({ hero_lede, services, values, panel, site }: HomeP
             <Section
                 id="services"
                 title="Services"
-                lede="Panel, game servers, Git website deploys, hardware, network, detection, and facility work under one team."
+                lede="Panel software, servers, networking, and security work. Anything marked Soon is not available yet."
             >
                 <div className="service-grid">
                     {services.map((service) => (
