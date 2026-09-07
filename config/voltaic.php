@@ -68,6 +68,11 @@ return [
             'summary' => 'Encrypted mesh networking built on Reticulum. Gives a site a second path when the primary link goes down.',
         ],
         [
+            'slug' => 'voltaic-net',
+            'title' => 'Voltaic-Net',
+            'summary' => 'Mesh WireGuard plus a reverse proxy so you can reach self-hosted services from your devices without putting them on the public internet.',
+        ],
+        [
             'slug' => 'firewall',
             'title' => 'Firewall Configuration',
             'summary' => 'OPNsense and pfSense installs, hardening, and ongoing rule maintenance for offices and colo racks.',

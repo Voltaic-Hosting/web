@@ -37,6 +37,7 @@ class VoltaicConfigTest extends TestCase
         $this->assertContains('wazuh-xdr', $slugs);
         $this->assertContains('threat-intelligence', $slugs);
         $this->assertContains('anti-bot', $slugs);
+        $this->assertContains('voltaic-net', $slugs);
     }
 
     public function test_panel_services_cover_one_click_games_and_git_deploys(): void
