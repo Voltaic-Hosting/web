@@ -1,20 +1,8 @@
 # Coolify compose for Voltaic Hosting website.
 # Use this file as the Coolify Docker Compose build pack.
-#
-# Traffic: Client -> Coolify TLS -> RavenGuard (:8080) -> web (:8080)
-# Assign the domain ONLY to the ravenguard service (not web).
-# Example Coolify domain mapping: https://voltaic.host -> ravenguard:8080
-#
-# Required Coolify environment variables:
-#   APP_URL - public site URL, e.g. https://voltaic.host
-#   RG_CHALLENGE_SECRET - RavenGuard challenge HMAC secret (min 16 characters)
-#   SERVICE_URL_RAVENGUARD_8080 - set by Coolify when the domain is assigned to ravenguard
-#
-# Optional:
-#   RG_TRUSTED_PROXIES - comma-separated Coolify/proxy CIDRs (defaults cover Docker LAN ranges)
-#
+# Proxy via SERVICE_URL_WEB_8080 (web listens on 8080). No host port publish.
+# Assign the domain ONLY to the web service. Example: https://voltaic.host:8080
 # Do not define custom networks. Coolify creates one per stack and attaches its proxy to it.
-# Docs: https://ravenguard.quad4.io/ https://ravenguard.quad4.io/docs/intro
 
 name: voltaic-website
 
@@ -43,6 +31,8 @@ services:
       - /var/run:uid=101,gid=101,mode=0755,size=16m
     expose:
       - "8080"
+    environment:
+      SERVICE_URL_WEB_8080: ${SERVICE_URL_WEB_8080}
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/"]
       interval: 30s
@@ -63,54 +53,3 @@ services:
         reservations:
           cpus: "0.05"
           memory: 32M
-
-  ravenguard:
-    image: ghcr.io/quad4-software/ravenguard:edge
-    restart: unless-stopped
-    user: "65532:65532"
-    read_only: true
-    privileged: false
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    tmpfs:
-      - /tmp:uid=65532,gid=65532,mode=1777,size=64m
-    volumes:
-      - ./docker/ravenguard/ravenguard.toml:/config/ravenguard.toml:ro
-    environment:
-      SERVICE_URL_RAVENGUARD_8080: ${SERVICE_URL_RAVENGUARD_8080}
-      RG_CHALLENGE_SECRET: ${RG_CHALLENGE_SECRET:?}
-      RG_SITE_PUBLIC_URL: ${APP_URL:?}
-      RG_TRUST_MODE: behind_proxy
-      RG_TRUSTED_PROXIES: ${RG_TRUSTED_PROXIES:-10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,127.0.0.0/8,fc00::/7,::1/128}
-      RG_REAL_IP_HEADER: X-Real-IP
-      RG_PROTO_HEADER: X-Forwarded-Proto
-      RG_UPSTREAM_URL: http://web:8080
-      RG_UPSTREAM_HEALTH_ENABLED: "true"
-      RG_UPSTREAM_HEALTH_PATH: /up
-      RG_TLS_MODE: off
-      RG_SANDBOX_MODE: best_effort
-      RG_UI_BRAND: "Voltaic Hosting"
-      RG_UI_TEST_MODE: "false"
-      RG_ADMIN_ENABLED: "false"
-      RG_LOG_FORMAT: json
-    expose:
-      - "8080"
-    depends_on:
-      web:
-        condition: service_healthy
-    mem_limit: 256m
-    mem_reservation: 64m
-    cpus: 0.50
-    pids_limit: 128
-    oom_score_adj: 100
-    deploy:
-      resources:
-        limits:
-          cpus: "0.50"
-          memory: 256M
-          pids: 128
-        reservations:
-          cpus: "0.05"
-          memory: 64M
