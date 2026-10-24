@@ -35,3 +35,6 @@ minimumReleaseAgeExclude:
 overrides:
   tmp@<0.2.6: ^0.2.6
   uuid@<11.1.1: ^11.1.1
+  fast-uri@<3.1.9: ^3.1.9
+  basic-ftp@<6.2.1: ^6.2.1
+  zod@<4.6.6: ^4.6.6
