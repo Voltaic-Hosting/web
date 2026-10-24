@@ -183,8 +183,8 @@ importers:
         specifier: ^1.59.0
         version: 1.59.0(astro@7.4.0(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1))
       '@lucide/svelte':
-        specifier: ^1.59.0
-        version: 1.59.0(svelte@5.57.2(@typescript-eslint/types@8.71.2))
+        specifier: ^1.61.0
+        version: 1.61.0(svelte@5.57.2(@typescript-eslint/types@8.71.2))
       astro:
         specifier: ^7.4.0
         version: 7.4.0(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)
@@ -837,8 +837,8 @@ packages:
     peerDependencies:
       astro: ^4 || ^5 || ^6 || ^7
 
-  '@lucide/svelte@1.59.0':
-    resolution: {integrity: sha512-ga9IrEsFJBkt/34VnRFcQ2HLs8eOpOovXZ62XzwfC7f0zBfo4y116FBIDroZkD0gInYYY2hSSAcsQEm/Vm+AoA==}
+  '@lucide/svelte@1.61.0':
+    resolution: {integrity: sha512-Vwj4ADoKgVogLFpEbXv2PS2hh2fj+aAqPuiNydI88Zkyb1l7veL4fXgRrOX3tgpESHhIGneNkSSYhHupvCBshg==}
     peerDependencies:
       svelte: ^5
 
@@ -4452,7 +4452,7 @@ snapshots:
     dependencies:
       astro: 7.4.0(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)
 
-  '@lucide/svelte@1.59.0(svelte@5.57.2(@typescript-eslint/types@8.71.2))':
+  '@lucide/svelte@1.61.0(svelte@5.57.2(@typescript-eslint/types@8.71.2))':
     dependencies:
       svelte: 5.57.2(@typescript-eslint/types@8.71.2)
 
