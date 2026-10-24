@@ -180,8 +180,8 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0
       '@lucide/astro':
-        specifier: ^1.59.0
-        version: 1.59.0(astro@7.4.0(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1))
+        specifier: ^1.61.0
+        version: 1.61.0(astro@7.4.0(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1))
       '@lucide/svelte':
         specifier: ^1.59.0
         version: 1.59.0(svelte@5.57.2(@typescript-eslint/types@8.71.2))
@@ -832,8 +832,8 @@ packages:
   '@lhci/utils@0.15.1':
     resolution: {integrity: sha512-WclJnUQJeOMY271JSuaOjCv/aA0pgvuHZS29NFNdIeI14id8eiFsjith85EGKYhljgoQhJ2SiW4PsVfFiakNNw==}
 
-  '@lucide/astro@1.59.0':
-    resolution: {integrity: sha512-vIRK8jLnCEsWuUbtj6xh+U75P4NAiwMhediygpNz4tdQVmjmZqd/oTgrP5F2Va3EoKCnhVvel/ssm66SUgCa1A==}
+  '@lucide/astro@1.61.0':
+    resolution: {integrity: sha512-XoFZGoHjYtnDTuOQ4b105IO+WUCh8rzitIgBIrkOcdC1PRmsvLx+fwnrCRHiZ1JfbA36r/jAMxQL/HeyRqKJjQ==}
     peerDependencies:
       astro: ^4 || ^5 || ^6 || ^7
 
@@ -4448,7 +4448,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@lucide/astro@1.59.0(astro@7.4.0(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1))':
+  '@lucide/astro@1.61.0(astro@7.4.0(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1))':
     dependencies:
       astro: 7.4.0(@types/node@26.6.5)(jiti@2.7.0)(yaml@2.9.1)
 
