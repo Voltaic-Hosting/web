@@ -1,0 +1,88 @@
+---
+import type { BrandingAsset, BrandingFormat } from '@/data/types';
+
+const formatLabels: Record<BrandingFormat, string> = {
+    png: 'PNG',
+    jpg: 'JPG',
+    webp: 'WEBP',
+};
+
+const formats: BrandingFormat[] = ['png', 'jpg', 'webp'];
+
+interface Props {
+    asset: BrandingAsset;
+}
+
+const { asset } = Astro.props;
+const initialFormat: BrandingFormat = 'png';
+---
+
+<article class="branding-card">
+    <div class={`branding-card__preview branding-card__preview--${asset.preview}`}>
+        <img
+            src={asset.formats.png}
+            alt=""
+            class="branding-card__image"
+            loading="lazy"
+            decoding="async"
+        />
+    </div>
+    <div class="branding-card__body">
+        <h2 class="branding-card__title">{asset.label}</h2>
+        <p class="branding-card__description">{asset.description}</p>
+        <p class="branding-card__meta">
+            {formatLabels[initialFormat]} · {asset.dimensions}
+        </p>
+        <div class="branding-format" role="group" aria-label={`${asset.label} format`}>
+            {formats.map((option) => (
+                <button
+                    type="button"
+                    class={`branding-format__btn${initialFormat === option ? ' is-active' : ''}`}
+                    aria-pressed={initialFormat === option}
+                    data-format={option}
+                    data-path={asset.formats[option]}
+                    data-label={formatLabels[option]}
+                >
+                    {formatLabels[option]}
+                </button>
+            ))}
+        </div>
+        <a
+            href={asset.formats[initialFormat]}
+            class="btn btn--ghost branding-card__download"
+            download
+        >
+            Download {formatLabels[initialFormat]}
+        </a>
+    </div>
+</article>
+
+<script>
+    document.querySelectorAll<HTMLElement>('.branding-card').forEach((card) => {
+        const meta = card.querySelector<HTMLElement>('.branding-card__meta');
+        const download = card.querySelector<HTMLAnchorElement>('.branding-card__download');
+        const buttons = card.querySelectorAll<HTMLButtonElement>('.branding-format__btn');
+
+        buttons.forEach((button) => {
+            button.addEventListener('click', () => {
+                buttons.forEach((other) => {
+                    const active = other === button;
+                    other.classList.toggle('is-active', active);
+                    other.setAttribute('aria-pressed', String(active));
+                });
+
+                const label = button.dataset.label ?? '';
+                const path = button.dataset.path ?? '#';
+                const dimensions = meta?.textContent?.split('·')[1]?.trim() ?? '';
+
+                if (meta) {
+                    meta.textContent = `${label} · ${dimensions}`;
+                }
+                if (download) {
+                    download.href = path;
+                    download.textContent = `Download ${label}`;
+                }
+            });
+        });
+    });
+</script>

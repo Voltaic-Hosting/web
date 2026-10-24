@@ -1,0 +1,124 @@
+---
+import '@/styles/app.css';
+import '@fontsource-variable/dm-sans';
+import '@fontsource-variable/jetbrains-mono';
+import { site } from '@/data/site';
+import { absoluteUrl } from '@/lib/url';
+import Footer from '@/components/Footer.astro';
+import Header from '@/components/Header.astro';
+
+interface Props {
+    title?: string;
+    description?: string;
+    path?: string;
+    type?: string;
+    image?: string;
+    noindex?: boolean;
+    jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+    bare?: boolean;
+}
+
+const {
+    title,
+    description,
+    path = '/',
+    type = 'website',
+    image,
+    noindex = false,
+    jsonLd,
+    bare = false,
+} = Astro.props;
+
+const seo = site.seo;
+const pageTitle = title
+    ? `${title}${seo.titleSeparator}${seo.defaultTitle}`
+    : `${seo.defaultTitle}${seo.titleSeparator}${site.tagline}`;
+const metaDescription = description ?? seo.defaultDescription;
+const canonical = absoluteUrl(site.domain, path);
+const ogImage = absoluteUrl(site.domain, image ?? seo.ogImage);
+const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#e7e1d8" />
+        <meta name="color-scheme" content="light dark" />
+        <script is:inline>
+            (function () {
+                var storageKey = 'voltaic-theme';
+                var stored = null;
+
+                try {
+                    stored = localStorage.getItem(storageKey);
+                } catch (e) {}
+
+                var prefersDark =
+                    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var theme =
+                    stored === 'light' || stored === 'dark'
+                        ? stored
+                        : prefersDark
+                          ? 'dark'
+                          : 'light';
+
+                document.documentElement.dataset.theme = theme;
+                document.documentElement.style.colorScheme = theme;
+
+                var themeColor = document.querySelector('meta[name="theme-color"]');
+                if (themeColor) {
+                    themeColor.setAttribute('content', theme === 'dark' ? '#151311' : '#e7e1d8');
+                }
+            })();
+        </script>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/brand/icon-192.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+
+        <title>{pageTitle}</title>
+        <meta name="description" content={metaDescription} />
+        <meta name="keywords" content={seo.keywords} />
+        {noindex ? (
+            <meta name="robots" content="noindex, nofollow" />
+        ) : (
+            <meta name="robots" content="index, follow" />
+        )}
+        <link rel="canonical" href={canonical} />
+
+        <meta property="og:type" content={type} />
+        <meta property="og:site_name" content={site.name} />
+        <meta property="og:locale" content={seo.locale} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:url" content={canonical} />
+        <meta property="og:image" content={ogImage} />
+
+        <meta name="twitter:card" content={seo.twitterCard} />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={metaDescription} />
+        <meta name="twitter:image" content={ogImage} />
+
+        {schemas.map((schema) => (
+            <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+        ))}
+    </head>
+    <body class="antialiased">
+        {bare ? (
+            <slot />
+        ) : (
+            <div class="site-shell">
+                <a href="#main" class="skip-link">
+                    Skip to content
+                </a>
+                <Header />
+                <main id="main">
+                    <slot />
+                </main>
+                <Footer />
+            </div>
+        )}
+    </body>
+</html>

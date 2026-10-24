@@ -1,0 +1,31 @@
+---
+import ErrorPage from '@/components/ErrorPage.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { errors } from '@/data/errors';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = () => {
+    return Object.keys(errors)
+        .filter((status) => status !== 'default' && status !== '404')
+        .map((status) => ({
+            params: { status },
+            props: {
+                status: Number(status),
+                title: errors[status].title,
+                description: errors[status].description,
+            },
+        }));
+};
+
+interface Props {
+    status: number;
+    title: string;
+    description: string;
+}
+
+const { status, title, description } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} path={`/${status}`} noindex>
+    <ErrorPage status={status} title={title} description={description} />
+</BaseLayout>

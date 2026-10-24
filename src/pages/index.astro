@@ -1,0 +1,75 @@
+---
+import Button from '@/components/Button.astro';
+import CtaPanel from '@/components/CtaPanel.astro';
+import PanelShowcase from '@/components/PanelShowcase.astro';
+import Section from '@/components/Section.astro';
+import SectionAnchor from '@/components/SectionAnchor.astro';
+import ServiceCard from '@/components/ServiceCard.astro';
+import ValueCard from '@/components/ValueCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { organizationJsonLd, websiteJsonLd } from '@/lib/seo';
+import { panel } from '@/data/panel';
+import { services } from '@/data/services';
+import { site } from '@/data/site';
+import { values } from '@/data/values';
+---
+
+<BaseLayout path="/" jsonLd={[organizationJsonLd(site), websiteJsonLd(site)]}>
+    <section class="home-hero" id="hero">
+        <div class="site-container home-hero__content">
+            <h1 class="home-hero__title">
+                <span class="section__heading">
+                    <SectionAnchor id="hero" label="Hero" />
+                    {site.tagline}
+                </span>
+            </h1>
+            <p class="home-hero__lede">{site.heroLede}</p>
+            <div class="page-hero__actions">
+                <Button href="/contact">Contact</Button>
+                <Button href="/about" variant="ghost">
+                    About us
+                </Button>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="panel">
+        <div class="site-container">
+            <PanelShowcase panel={panel} />
+        </div>
+    </section>
+
+    <Section
+        id="services"
+        title="Services"
+        lede="Panel software, servers, networking, and security work. Anything marked Soon is not available yet."
+    >
+        <div class="service-grid">
+            {services.map((service) => (
+                <ServiceCard service={service} />
+            ))}
+        </div>
+    </Section>
+
+    <Section
+        id="values"
+        title="Billing, privacy, and exit"
+        lede="Cancel when you want. Pay what was quoted. Keep your data off the sales floor."
+    >
+        <div class="value-grid">
+            {values.map((value) => (
+                <ValueCard value={value} />
+            ))}
+        </div>
+    </Section>
+
+    <section class="section" id="contact">
+        <div class="site-container">
+            <CtaPanel
+                title="Request information"
+                body="Email me with your current environment and requirements. I reply within two business days on weekdays."
+                anchorId="contact"
+            />
+        </div>
+    </section>
+</BaseLayout>

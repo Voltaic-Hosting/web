@@ -3,5 +3,6 @@
     "semi": true,
     "tabWidth": 4,
     "printWidth": 100,
-    "trailingComma": "all"
+    "trailingComma": "all",
+    "plugins": ["prettier-plugin-astro", "prettier-plugin-svelte"]
 }

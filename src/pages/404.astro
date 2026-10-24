@@ -1,0 +1,12 @@
+---
+import ErrorPage from '@/components/ErrorPage.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { errorFor } from '@/data/errors';
+
+const status = 404;
+const error = errorFor(status);
+---
+
+<BaseLayout title={error.title} description={error.description} path="/404" noindex>
+    <ErrorPage status={status} title={error.title} description={error.description} />
+</BaseLayout>

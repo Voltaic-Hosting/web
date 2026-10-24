@@ -1,0 +1,66 @@
+---
+import { site } from '@/data/site';
+import Button from './Button.astro';
+
+interface Props {
+    status: number;
+    title: string;
+    description: string;
+}
+
+const { status, title, description } = Astro.props;
+const siteName = site.name;
+
+const helpfulLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/faq', label: 'FAQ' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
+    { href: '/panel', label: 'Panel' },
+] as const;
+---
+
+<section class="error-page" aria-labelledby="error-title">
+    <div class="site-container site-container--narrow">
+        <p class="error-page__code" aria-hidden="true">
+            {status}
+        </p>
+        <p class="error-page__eyebrow">Error {status}</p>
+        <h1 class="error-page__title" id="error-title">
+            {title}
+        </h1>
+        <p class="error-page__lede">{description}</p>
+
+        <div class="error-page__actions">
+            <Button href="/">Back to home</Button>
+            {status === 419 ? (
+                <button type="button" class="btn btn--ghost" data-reload>
+                    Refresh page
+                </button>
+            ) : (
+                <Button href="/contact" variant="ghost">
+                    Contact {siteName}
+                </Button>
+            )}
+        </div>
+
+        <nav class="error-page__nav" aria-label="Helpful links">
+            <p class="error-page__nav-label">Helpful pages</p>
+            <ul class="error-page__nav-list">
+                {helpfulLinks.map((link) => (
+                    <li>
+                        <a href={link.href} class="error-page__nav-link">
+                            {link.label}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </nav>
+    </div>
+</section>
+
+{status === 419 && <script>
+    document.querySelector('[data-reload]')?.addEventListener('click', () => {
+        window.location.reload();
+    });
+</script>}

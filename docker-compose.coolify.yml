@@ -1,18 +1,17 @@
 # Coolify compose for Voltaic Hosting website.
 # Use this file as the Coolify Docker Compose build pack.
 #
-# Traffic: Client -> Coolify TLS -> RavenGuard (:8080) -> web (:8080) -> app (:9000)
-# Assign the domain ONLY to the ravenguard service (not web or app).
+# Traffic: Client -> Coolify TLS -> RavenGuard (:8080) -> web (:8080)
+# Assign the domain ONLY to the ravenguard service (not web).
 # Example Coolify domain mapping: https://voltaic.host -> ravenguard:8080
 #
 # Required Coolify environment variables:
-#   APP_KEY — output of `php artisan key:generate --show` (must include the base64: prefix)
-#   APP_URL — public site URL, e.g. https://voltaic.host
-#   RG_CHALLENGE_SECRET — RavenGuard challenge HMAC secret (min 16 characters)
-#   SERVICE_URL_RAVENGUARD_8080 — set by Coolify when the domain is assigned to ravenguard
+#   APP_URL - public site URL, e.g. https://voltaic.host
+#   RG_CHALLENGE_SECRET - RavenGuard challenge HMAC secret (min 16 characters)
+#   SERVICE_URL_RAVENGUARD_8080 - set by Coolify when the domain is assigned to ravenguard
 #
 # Optional:
-#   RG_TRUSTED_PROXIES — comma-separated Coolify/proxy CIDRs (defaults cover Docker LAN ranges)
+#   RG_TRUSTED_PROXIES - comma-separated Coolify/proxy CIDRs (defaults cover Docker LAN ranges)
 #
 # Do not define custom networks. Coolify creates one per stack and attaches its proxy to it.
 # Docs: https://ravenguard.quad4.io/ https://ravenguard.quad4.io/docs/intro
@@ -20,70 +19,6 @@
 name: voltaic-website
 
 services:
-  app:
-    build:
-      context: .
-      target: app
-      args:
-        BUILD_DATE: ${BUILD_DATE:-}
-        VCS_REF: ${VCS_REF:-}
-        VERSION: ${VERSION:-0.1.0}
-    image: voltaic-website-app:${VERSION:-0.1.0}
-    init: true
-    restart: unless-stopped
-    user: "82:82"
-    read_only: true
-    privileged: false
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    tmpfs:
-      - /tmp:uid=82,gid=82,mode=1777,size=64m
-      - /var/www/html/storage:uid=82,gid=82,mode=0755,size=64m
-      - /var/www/html/bootstrap/cache:uid=82,gid=82,mode=0755,size=16m
-    environment:
-      APP_NAME: "Voltaic Hosting"
-      APP_ENV: production
-      APP_KEY: ${APP_KEY:?}
-      APP_DEBUG: ${APP_DEBUG:-false}
-      APP_URL: ${APP_URL:?}
-      LOG_CHANNEL: stderr
-      LOG_LEVEL: ${LOG_LEVEL:-warning}
-      DB_CONNECTION: sqlite
-      DB_DATABASE: /var/www/html/storage/database.sqlite
-      SESSION_DRIVER: file
-      CACHE_STORE: file
-      QUEUE_CONNECTION: sync
-      FILESYSTEM_DISK: local
-      BROADCAST_CONNECTION: log
-      MAIL_MAILER: log
-      INERTIA_SSR_ENABLED: "false"
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1",
-        ]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
-    mem_limit: 512m
-    mem_reservation: 128m
-    cpus: 1.0
-    pids_limit: 256
-    oom_score_adj: 200
-    deploy:
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: 512M
-          pids: 256
-        reservations:
-          cpus: "0.10"
-          memory: 128M
-
   web:
     build:
       context: .
@@ -106,11 +41,10 @@ services:
       - /tmp:uid=101,gid=101,mode=1777,size=16m
       - /var/cache/nginx:uid=101,gid=101,mode=0755,size=32m
       - /var/run:uid=101,gid=101,mode=0755,size=16m
-    depends_on:
-      app:
-        condition: service_healthy
+    expose:
+      - "8080"
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/up"]
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/"]
       interval: 30s
       timeout: 5s
       retries: 3

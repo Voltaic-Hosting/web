@@ -1,0 +1,98 @@
+---
+import { Moon, Sun } from '@lucide/astro';
+
+interface Props {
+    class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<button
+    type="button"
+    class={`theme-toggle${className ? ` ${className}` : ''}`}
+    aria-label="Switch to dark mode"
+    aria-pressed="false"
+>
+    <Moon size={18} aria-hidden="true" class="theme-toggle__icon theme-toggle__icon--moon" />
+    <Sun size={18} aria-hidden="true" class="theme-toggle__icon theme-toggle__icon--sun" />
+</button>
+
+<style>
+    .theme-toggle__icon--sun {
+        display: none;
+    }
+
+    :global([data-theme='dark']) .theme-toggle__icon--moon {
+        display: none;
+    }
+
+    :global([data-theme='dark']) .theme-toggle__icon--sun {
+        display: block;
+    }
+</style>
+
+<script>
+    const THEME_STORAGE_KEY = 'voltaic-theme';
+
+    function getStoredTheme(): 'light' | 'dark' | null {
+        try {
+            const value = localStorage.getItem(THEME_STORAGE_KEY);
+            return value === 'light' || value === 'dark' ? value : null;
+        } catch {
+            return null;
+        }
+    }
+
+    function currentTheme(): 'light' | 'dark' {
+        return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme: 'light' | 'dark'): void {
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+            meta.setAttribute('content', theme === 'dark' ? '#151311' : '#e7e1d8');
+        }
+
+        const colorScheme = document.querySelector('meta[name="color-scheme"]');
+        if (colorScheme) {
+            colorScheme.setAttribute('content', theme);
+        }
+    }
+
+    function updateThemeToggles(): void {
+        const isDark = currentTheme() === 'dark';
+        document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach((button) => {
+            button.setAttribute('aria-pressed', String(isDark));
+            button.setAttribute(
+                'aria-label',
+                isDark ? 'Switch to light mode' : 'Switch to dark mode',
+            );
+        });
+    }
+
+    document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach((button) => {
+        button.addEventListener('click', () => {
+            const next = currentTheme() === 'dark' ? 'light' : 'dark';
+            try {
+                localStorage.setItem(THEME_STORAGE_KEY, next);
+            } catch {
+                // localStorage may be unavailable in private browsing
+            }
+            applyTheme(next);
+            updateThemeToggles();
+        });
+    });
+
+    updateThemeToggles();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+        if (!getStoredTheme()) {
+            applyTheme(event.matches ? 'dark' : 'light');
+            updateThemeToggles();
+        }
+    });
+</script>

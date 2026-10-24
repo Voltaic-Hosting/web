@@ -1,4 +1,4 @@
-# pnpm 11+ project settings (auth/registry stay in .npmrc)
+# pnpm 12 project settings (auth/registry stay in .npmrc)
 # Docs: https://pnpm.io/settings
 #
 # Supply chain defaults used here:
@@ -21,7 +21,6 @@ ignoreScripts: true
 verifyDepsBeforeRun: install
 strictPeerDependencies: true
 engineStrict: true
-managePackageManagerVersions: true
 resolvePeersFromWorkspaceRoot: true
 shamefullyHoist: false
 hoist: true
@@ -31,17 +30,6 @@ saveExact: false
 savePrefix: '^'
 auditLevel: moderate
 minimumReleaseAgeExclude:
-  - '@typescript-eslint/eslint-plugin@8.66.0'
-  - '@typescript-eslint/parser@8.66.0'
-  - '@typescript-eslint/project-service@8.66.0'
-  - '@typescript-eslint/scope-manager@8.66.0'
-  - '@typescript-eslint/tsconfig-utils@8.66.0'
-  - '@typescript-eslint/type-utils@8.66.0'
-  - '@typescript-eslint/types@8.66.0'
-  - '@typescript-eslint/typescript-estree@8.66.0'
-  - '@typescript-eslint/utils@8.66.0'
-  - '@typescript-eslint/visitor-keys@8.66.0'
-  - typescript-eslint@8.66.0
   - uuid@11.1.1
   - tmp@0.2.6
 overrides:

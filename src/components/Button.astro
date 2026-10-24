@@ -1,0 +1,14 @@
+---
+type ButtonVariant = 'solid' | 'ghost';
+
+interface Props {
+    href: string;
+    variant?: ButtonVariant;
+}
+
+const { href, variant = 'solid' } = Astro.props;
+---
+
+<a href={href} class={`btn btn--${variant}`}>
+    <slot />
+</a>

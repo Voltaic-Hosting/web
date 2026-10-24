@@ -1,0 +1,69 @@
+---
+import PageHero from '@/components/PageHero.astro';
+import SectionAnchor from '@/components/SectionAnchor.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { services } from '@/data/services';
+import { site } from '@/data/site';
+---
+
+<BaseLayout
+    title="Contact"
+    description={`Contact ${site.name} at ${site.contact.email}.`}
+    path="/contact"
+    jsonLd={{
+        '@context': 'https://schema.org',
+        '@type': 'ContactPage',
+        name: `Contact ${site.name}`,
+        url: `${site.domain}/contact`,
+        mainEntity: {
+            '@type': 'Organization',
+            name: site.name,
+            email: site.contact.email,
+            url: site.domain,
+        },
+    }}
+>
+    <PageHero
+        id="contact"
+        title="Contact"
+        lede="Send email with your requirements, current setup, and timeline. Attach configuration details if they help."
+    />
+
+    <section class="section" id="email">
+        <div class="site-container site-container--narrow">
+            <div class="info-panel">
+                <div class="info-panel__block">
+                    <p class="info-panel__label">Email</p>
+                    <p class="info-panel__value">
+                        <a href={`mailto:${site.contact.email}`} class="info-link">
+                            {site.contact.email}
+                        </a>
+                    </p>
+                    <p class="info-panel__meta">{site.contact.responseTime}</p>
+                </div>
+
+                <div class="info-panel__block" id="services">
+                    <h2 class="section__title section__title--compact">
+                        <span class="section__heading">
+                            <SectionAnchor id="services" label="Services" />
+                            Services
+                        </span>
+                    </h2>
+                    <div class="service-list">
+                        {services.map((service) => (
+                            <div class="service-list__item">
+                                <p class="service-list__title">
+                                    {service.title}
+                                    {service.badge ? (
+                                        <span class="service-list__badge">{service.badge}</span>
+                                    ) : null}
+                                </p>
+                                <p class="service-list__summary">{service.summary}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</BaseLayout>

@@ -1,0 +1,106 @@
+---
+import Button from '@/components/Button.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionAnchor from '@/components/SectionAnchor.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { sectionId } from '@/lib/sectionId';
+import { faqPageJsonLd } from '@/lib/seo';
+import { faq } from '@/data/faq';
+import { site } from '@/data/site';
+
+const items = faq.groups.flatMap((group) => group.items);
+---
+
+<BaseLayout
+    title="FAQ"
+    description={faq.intro}
+    path="/faq"
+    jsonLd={faqPageJsonLd(site, {
+        name: `FAQ · ${site.name}`,
+        path: '/faq',
+        description: faq.intro,
+        items,
+    })}
+>
+    <PageHero id="faq" title="FAQ" lede={faq.intro}>
+        <Button href="/contact">Contact</Button>
+        <Button href="/about" variant="ghost">
+            About
+        </Button>
+    </PageHero>
+
+    <section class="section section--tight" aria-label="FAQ topics">
+        <div class="site-container site-container--narrow">
+            <nav class="faq-toc" aria-label="Jump to a topic">
+                {faq.groups.map((group) => {
+                    const id = sectionId(group.title);
+
+                    return (
+                        <a href={`#${id}`} class="faq-toc__link">
+                            {group.title}
+                        </a>
+                    );
+                })}
+            </nav>
+        </div>
+    </section>
+
+    <div class="faq-page">
+        {faq.groups.map((group) => {
+            const id = sectionId(group.title);
+
+            return (
+                <section class="section section--tight" id={id}>
+                    <div class="site-container site-container--narrow">
+                        <div class="faq-group">
+                            <h2 class="faq-group__title">
+                                <span class="section__heading">
+                                    <SectionAnchor id={id} label={group.title} />
+                                    {group.title}
+                                </span>
+                            </h2>
+
+                            <div class="faq-list">
+                                {group.items.map((item) => (
+                                    <details class="faq-item">
+                                        <summary class="faq-item__question">
+                                            <span class="faq-item__marker" aria-hidden="true" />
+                                            <span class="faq-item__question-text">
+                                                {item.question}
+                                            </span>
+                                        </summary>
+                                        <div class="faq-item__answer">
+                                            {item.answer.map((paragraph) => (
+                                                <p>{paragraph}</p>
+                                            ))}
+                                        </div>
+                                    </details>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        })}
+    </div>
+
+    <section class="section" id="still-need-help">
+        <div class="site-container site-container--narrow">
+            <div class="cta-panel">
+                <h2 class="cta-panel__title">
+                    <span class="section__heading">
+                        <SectionAnchor id="still-need-help" label="Still need help" />
+                        Still need help
+                    </span>
+                </h2>
+                <p class="cta-panel__body">
+                    Send the details that matter and I will reply within two business days, Monday
+                    through Friday.
+                </p>
+                <div class="cta-panel__actions">
+                    <Button href="/contact">Contact</Button>
+                </div>
+            </div>
+        </div>
+    </section>
+</BaseLayout>

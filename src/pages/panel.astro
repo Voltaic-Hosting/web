@@ -1,0 +1,23 @@
+---
+import PanelApp from '@/panel/PanelApp.svelte';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { panel } from '@/data/panel';
+import { site } from '@/data/site';
+---
+
+<BaseLayout title="Voltaic Panel concept" description={panel.lede} path="/panel" noindex bare>
+    <div class="panel-page">
+        <div class="panel-page__banner">
+            <div class="panel-page__banner-inner">
+                <p class="panel-page__note">{panel.conceptNote}</p>
+                <a href="/" class="panel-page__back">
+                    Back to {site.name}
+                </a>
+            </div>
+        </div>
+
+        <div class="panel-page__stage">
+            <PanelApp panel={panel} client:visible />
+        </div>
+    </div>
+</BaseLayout>

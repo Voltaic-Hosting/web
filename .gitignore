@@ -13,32 +13,14 @@ Thumbs.db
 /.vscode
 /.zed
 
-.phpactor.json
-.phpunit.result.cache
-/.phpunit.cache
 .lighthouseci
 
-/auth.json
 /node_modules
-/vendor
+/dist
+/.astro
 package-lock.json
 npm-shrinkwrap.json
-
-/public/build
-/public/hot
-/public/storage
-/public/fonts-manifest.dev.json
-
-/storage/*.key
-/storage/pail
-
-/bootstrap/cache/*
-!/bootstrap/cache/.gitignore
 
 /coverage
 /.eslintcache
 /.prettier-cache
-
-_ide_helper.php
-Homestead.json
-Homestead.yaml

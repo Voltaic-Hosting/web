@@ -1,0 +1,41 @@
+---
+import { sectionId } from '@/lib/sectionId';
+import type { LegalSection } from '@/data/types';
+import SectionAnchor from './SectionAnchor.astro';
+
+interface Props {
+    intro: string;
+    sections: LegalSection[];
+}
+
+const { intro, sections } = Astro.props;
+---
+
+<div class="prose-block">
+    <p>{intro}</p>
+
+    {sections.map((section) => {
+        const id = sectionId(section.title);
+
+        return (
+            <section id={id}>
+                <h2>
+                    <span class="section__heading">
+                        <SectionAnchor id={id} label={section.title} />
+                        {section.title}
+                    </span>
+                </h2>
+                {section.paragraphs.map((paragraph) => (
+                    <p>{paragraph}</p>
+                ))}
+                {section.list.length > 0 ? (
+                    <ul>
+                        {section.list.map((item) => (
+                            <li>{item}</li>
+                        ))}
+                    </ul>
+                ) : null}
+            </section>
+        );
+    })}
+</div>

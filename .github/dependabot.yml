@@ -1,21 +1,5 @@
 version: 2
 updates:
-  - package-ecosystem: composer
-    directory: /
-    schedule:
-      interval: weekly
-      day: monday
-    open-pull-requests-limit: 10
-    groups:
-      laravel:
-        patterns:
-          - laravel/*
-      phpunit:
-        patterns:
-          - phpunit/*
-          - sebastian/*
-          - phar-io/*
-
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -23,21 +7,40 @@ updates:
       day: monday
     open-pull-requests-limit: 10
     groups:
-      vite:
+      astro:
         patterns:
-          - vite
-          - laravel-vite-plugin
-          - '@tailwindcss/*'
+          - astro
+          - '@astrojs/*'
+      svelte:
+        patterns:
+          - svelte
+          - '@lucide/svelte'
+          - svelte-check
+          - prettier-plugin-svelte
+          - eslint-plugin-svelte
+      tailwind-vite:
+        patterns:
           - tailwindcss
-          - '@vitejs/*'
-      react:
+          - '@tailwindcss/*'
+          - vite
+          - vitest
+      lint:
         patterns:
-          - react
-          - react-dom
-          - '@inertiajs/*'
-          - '@types/react*'
+          - eslint*
+          - typescript-eslint
+          - prettier*
+          - typescript
+          - '@eslint/js'
+          - globals
 
   - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly

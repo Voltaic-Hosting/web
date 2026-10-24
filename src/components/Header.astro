@@ -1,0 +1,114 @@
+---
+import { Menu, X } from '@lucide/astro';
+import { site } from '@/data/site';
+import { isActiveRoute } from '@/lib/url';
+import BrandMark from './BrandMark.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+const url = Astro.url.pathname;
+---
+
+<header class="site-header">
+    <div class="site-container site-header__inner">
+        <BrandMark />
+
+        <nav class="site-nav" aria-label="Primary">
+            {site.nav.map((item) => (
+                <a
+                    href={item.href}
+                    class={`nav-link${isActiveRoute(url, item.href) ? ' is-active' : ''}`}
+                    aria-current={isActiveRoute(url, item.href) ? 'page' : undefined}
+                >
+                    {item.label}
+                </a>
+            ))}
+            <a
+                href="/contact"
+                class={`nav-link${isActiveRoute(url, '/contact') ? ' is-active' : ''}`}
+                aria-current={isActiveRoute(url, '/contact') ? 'page' : undefined}
+            >
+                Contact
+            </a>
+        </nav>
+
+        <div class="site-header__actions">
+            <ThemeToggle />
+        </div>
+
+        <button
+            type="button"
+            class="menu-toggle"
+            aria-expanded="false"
+            aria-controls="mobile-nav"
+            aria-label="Open menu"
+        >
+            <Menu size={20} aria-hidden="true" class="menu-toggle__icon menu-toggle__icon--open" />
+            <X size={20} aria-hidden="true" class="menu-toggle__icon menu-toggle__icon--close" />
+        </button>
+    </div>
+
+    <nav id="mobile-nav" class="mobile-nav site-container" aria-label="Mobile">
+        {site.nav.map((item) => (
+            <a
+                href={item.href}
+                class={`nav-link${isActiveRoute(url, item.href) ? ' is-active' : ''}`}
+                aria-current={isActiveRoute(url, item.href) ? 'page' : undefined}
+            >
+                {item.label}
+            </a>
+        ))}
+        <a
+            href="/contact"
+            class={`nav-link${isActiveRoute(url, '/contact') ? ' is-active' : ''}`}
+            aria-current={isActiveRoute(url, '/contact') ? 'page' : undefined}
+        >
+            Contact
+        </a>
+        <div class="mobile-nav__theme">
+            <span class="mobile-nav__theme-label">Theme</span>
+            <ThemeToggle />
+        </div>
+    </nav>
+</header>
+
+<style>
+    .menu-toggle__icon--close {
+        display: none;
+    }
+
+    .site-header[data-menu-open] .menu-toggle__icon--open {
+        display: none;
+    }
+
+    .site-header[data-menu-open] .menu-toggle__icon--close {
+        display: block;
+    }
+</style>
+
+<script>
+    const header = document.querySelector<HTMLElement>('.site-header');
+    const menuToggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    menuToggle?.addEventListener('click', () => {
+        const open = !mobileNav?.classList.contains('is-open');
+
+        mobileNav?.classList.toggle('is-open', open);
+        if (open) {
+            header?.setAttribute('data-menu-open', '');
+        } else {
+            header?.removeAttribute('data-menu-open');
+        }
+        menuToggle.setAttribute('aria-expanded', String(open));
+        menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    });
+
+    mobileNav?.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+            mobileNav.classList.remove('is-open');
+            header?.removeAttribute('data-menu-open');
+            menuToggle?.setAttribute('aria-expanded', 'false');
+            menuToggle?.setAttribute('aria-label', 'Open menu');
+        });
+    });
+</script>

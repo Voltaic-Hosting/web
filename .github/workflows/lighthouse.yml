@@ -1,8 +1,6 @@
 # Pinned action SHAs. Update via Dependabot github-actions PRs, then refresh comments.
 # actions/checkout@v7.0.1 -> 3d3c42e5aac5ba805825da76410c181273ba90b1
 # actions/setup-node@v7.0.0 -> 820762786026740c76f36085b0efc47a31fe5020
-# shivammathur/setup-php@v2 -> f3e473d116dcccaddc5834248c87452386958240
-# ramsey/composer-install@v4.0.0 -> 65e4f84970763564f46a70b8a54b90d033b3bdda
 # actions/upload-artifact@v7.0.1 -> 043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
 # pnpm/action-setup@v6.0.10 -> 0977fd99725f1db4007ccb2928dbb4e90d06cc86
 
@@ -35,18 +33,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
-        with:
-          php-version: '8.5'
-          extensions: dom, mbstring, sqlite3, pdo_sqlite
-          coverage: none
-
-      - name: Install Composer dependencies
-        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # v4.0.0
-        with:
-          composer-options: --no-interaction --prefer-dist --optimize-autoloader
-
       - name: Setup pnpm
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
 
@@ -60,21 +46,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build assets
+      - name: Build site
         run: pnpm run build
-
-      - name: Prepare application
-        run: |
-          cp .env.example .env
-          php artisan key:generate --ansi
-          touch database/database.sqlite
 
       - name: Run Lighthouse CI
         run: pnpm run lighthouse:ci
-        env:
-          APP_ENV: production
-          APP_DEBUG: false
-          APP_URL: http://127.0.0.1:8765
 
       - name: Upload Lighthouse reports
         if: always()

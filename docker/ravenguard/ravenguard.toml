@@ -1,4 +1,4 @@
-# Coolify stack: Client -> Coolify TLS -> RavenGuard -> web -> app
+# Coolify stack: Client -> Coolify TLS -> RavenGuard -> web
 # Docs: https://ravenguard.quad4.io/docs/deployment
 
 [listen]

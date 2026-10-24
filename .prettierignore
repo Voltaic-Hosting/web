@@ -1,5 +1,9 @@
-bootstrap/cache
+dist
+.astro
 node_modules
-public/build
-storage
+public
+resources
+tests/fixtures
+pnpm-lock.yaml
 vendor
+storage

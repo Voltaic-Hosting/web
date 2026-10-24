@@ -1,0 +1,26 @@
+---
+import SectionAnchor from './SectionAnchor.astro';
+
+interface Props {
+    id: string;
+    title: string;
+    lede?: string;
+}
+
+const { id, title, lede } = Astro.props;
+---
+
+<section class="section" id={id}>
+    <div class="site-container">
+        <div class="section__intro">
+            <h2 class="section__title">
+                <span class="section__heading">
+                    <SectionAnchor id={id} label={title} />
+                    {title}
+                </span>
+            </h2>
+            {lede ? <p class="section__lede">{lede}</p> : null}
+        </div>
+        <slot />
+    </div>
+</section>

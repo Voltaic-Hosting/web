@@ -1,0 +1,49 @@
+---
+import Button from '@/components/Button.astro';
+import PageHero from '@/components/PageHero.astro';
+import Prose from '@/components/Prose.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { legal } from '@/data/legal';
+import { site } from '@/data/site';
+
+const content = legal.privacy;
+---
+
+<BaseLayout
+    title="Privacy"
+    description="Voltaic Hosting privacy policy. No ads, no tracking, no telemetry."
+    path="/privacy"
+    jsonLd={{
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: 'Privacy policy',
+        url: `${site.domain}/privacy`,
+        description: 'Voltaic Hosting privacy policy. No ads, no tracking, no telemetry.',
+        datePublished: legal.effectiveDate,
+        isPartOf: {
+            '@type': 'WebSite',
+            name: site.name,
+            url: site.domain,
+        },
+    }}
+>
+    <PageHero
+        id="privacy"
+        align="center"
+        title="Privacy policy"
+        lede={`Effective ${legal.effectiveDate}. Operated by ${legal.operator}.`}
+    />
+
+    <section class="section section--tight">
+        <div class="site-container site-container--narrow legal-doc">
+            <Prose intro={content.intro} sections={content.sections} />
+            <div class="page-hero__actions legal-doc__actions">
+                <Button href="/terms" variant="ghost">
+                    Terms of use
+                </Button>
+                <Button href="/contact">Contact</Button>
+            </div>
+            <p class="site-footer__note legal-doc__note">{site.privacyNote}</p>
+        </div>
+    </section>
+</BaseLayout>

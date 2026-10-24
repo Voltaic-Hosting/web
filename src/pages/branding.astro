@@ -1,0 +1,46 @@
+---
+import BrandingAssetCard from '@/components/BrandingAssetCard.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionAnchor from '@/components/SectionAnchor.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { branding } from '@/data/branding';
+import { site } from '@/data/site';
+---
+
+<BaseLayout
+    title="Branding"
+    description={`${site.name} logo files for press, partners, and documentation.`}
+    path="/branding"
+    jsonLd={{
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: `${site.name} branding`,
+        url: `${site.domain}/branding`,
+        description: branding.intro,
+        isPartOf: {
+            '@type': 'WebSite',
+            name: site.name,
+            url: site.domain,
+        },
+    }}
+>
+    <PageHero id="branding" title="Branding" lede={branding.intro} compact />
+
+    <section class="section section--tight section--flush-top" id="assets">
+        <div class="site-container">
+            <div class="section__intro section__intro--compact">
+                <h2 class="section__title">
+                    <span class="section__heading">
+                        <SectionAnchor id="assets" label="Assets" />
+                        Assets
+                    </span>
+                </h2>
+            </div>
+            <div class="branding-grid">
+                {branding.assets.map((asset) => (
+                    <BrandingAssetCard asset={asset} />
+                ))}
+            </div>
+        </div>
+    </section>
+</BaseLayout>

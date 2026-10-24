@@ -1,0 +1,63 @@
+---
+import PanelApp from '@/panel/PanelApp.svelte';
+import SectionAnchor from './SectionAnchor.astro';
+import type { PanelConcept } from '@/data/types';
+
+interface Props {
+    panel: PanelConcept;
+}
+
+const { panel } = Astro.props;
+---
+
+<div class="panel-showcase">
+    <div class="panel-showcase__copy">
+        <h2 class="panel-showcase__title">
+            <span class="section__heading">
+                <SectionAnchor id="panel" label={panel.title} />
+                {panel.title}
+            </span>
+        </h2>
+        <p class="panel-showcase__lede">{panel.lede}</p>
+        <div class="panel-showcase__actions">
+            <a href="/panel" class="btn btn--solid">
+                Open full concept
+            </a>
+            <a href="/contact" class="btn btn--ghost">
+                Ask about access
+            </a>
+        </div>
+    </div>
+
+    <div class="panel-showcase__frame-wrap">
+        <div class="panel-showcase__frame">
+            <div class="panel-showcase__chrome">
+                <span></span>
+                <span></span>
+                <span></span>
+                <p>panel.voltaic.host</p>
+            </div>
+            <div class="panel-showcase__viewport">
+                <PanelApp panel={panel} compact client:visible />
+            </div>
+        </div>
+
+        <div class="panel-showcase__shots">
+            {panel.shots.map((shot) => (
+                <figure class="panel-showcase__shot">
+                    <a href="/panel" class="panel-showcase__shot-link">
+                        <img
+                            src={shot.src}
+                            alt={shot.alt}
+                            loading="lazy"
+                            decoding="async"
+                            width={1280}
+                            height={800}
+                        />
+                    </a>
+                    <figcaption>{shot.caption}</figcaption>
+                </figure>
+            ))}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,106 @@
+---
+import Button from '@/components/Button.astro';
+import PageHero from '@/components/PageHero.astro';
+import Section from '@/components/Section.astro';
+import SectionAnchor from '@/components/SectionAnchor.astro';
+import ValueCard from '@/components/ValueCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { sectionId } from '@/lib/sectionId';
+import { webPageJsonLd } from '@/lib/seo';
+import { about } from '@/data/about';
+import { site } from '@/data/site';
+import { values } from '@/data/values';
+---
+
+<BaseLayout
+    title="About"
+    description={about.intro}
+    path="/about"
+    jsonLd={webPageJsonLd(site, {
+        name: `About ${site.name}`,
+        path: '/about',
+        description: about.intro,
+        type: 'AboutPage',
+    })}
+>
+    <PageHero id="about" title="About" lede={about.intro}>
+        <Button href="/contact">Contact</Button>
+    </PageHero>
+
+    <section class="section section--tight" id="company">
+        <div class="site-container site-container--narrow">
+            <div class="prose-block about-prose">
+                {about.sections.map((section) => {
+                    const id = sectionId(section.title);
+
+                    return (
+                        <section id={id}>
+                            <h2>
+                                <span class="section__heading">
+                                    <SectionAnchor id={id} label={section.title} />
+                                    {section.title}
+                                </span>
+                            </h2>
+                            {section.paragraphs.map((paragraph) => (
+                                <p>{paragraph}</p>
+                            ))}
+                        </section>
+                    );
+                })}
+            </div>
+        </div>
+    </section>
+
+    <Section
+        id="values"
+        title="Billing, privacy, and exit"
+        lede="Cancel when you want. Pay what was quoted. Keep your data off the sales floor."
+    >
+        <div class="value-grid">
+            {values.map((value) => (
+                <ValueCard value={value} />
+            ))}
+        </div>
+    </Section>
+
+    <section class="section" id="details">
+        <div class="site-container site-container--narrow">
+            <div class="section__intro">
+                <h2 class="section__title">
+                    <span class="section__heading">
+                        <SectionAnchor id="details" label="Details" />
+                        Details
+                    </span>
+                </h2>
+            </div>
+            <div class="info-panel">
+                <div class="info-panel__block">
+                    <p class="info-panel__label">Founder</p>
+                    <p class="info-panel__value">Ivan (Sudo-Ivan)</p>
+                </div>
+
+                <div class="info-panel__block">
+                    <p class="info-panel__label">Company</p>
+                    <p class="info-panel__value">{site.name}</p>
+                    <p class="info-panel__meta">United States · Solo</p>
+                </div>
+
+                <div class="info-panel__block">
+                    <p class="info-panel__label">Payments</p>
+                    <p class="info-panel__value">USD, EUR, Monero</p>
+                    <p class="info-panel__meta">Fiat via Stripe · 30-day refund window</p>
+                </div>
+
+                <div class="info-panel__block">
+                    <p class="info-panel__label">Contact</p>
+                    <p class="info-panel__value">
+                        <a href={`mailto:${site.contact.email}`} class="info-link">
+                            {site.contact.email}
+                        </a>
+                    </p>
+                    <p class="info-panel__meta">{site.contact.responseTime}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</BaseLayout>

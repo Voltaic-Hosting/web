@@ -1,0 +1,14 @@
+---
+import type { Value } from '@/data/types';
+
+interface Props {
+    value: Value;
+}
+
+const { value } = Astro.props;
+---
+
+<article class="value-card">
+    <h3 class="value-card__title">{value.title}</h3>
+    <p class="value-card__body">{value.body}</p>
+</article>

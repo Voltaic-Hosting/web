@@ -1,0 +1,54 @@
+---
+import { site } from '@/data/site';
+import BrandMark from './BrandMark.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+    <div class="site-container">
+        <div class="site-footer__top">
+            <div>
+                <BrandMark class="brand-mark--footer" />
+                <p class="site-footer__tagline">{site.tagline}</p>
+                <p class="site-footer__note">{site.privacyNote}</p>
+            </div>
+
+            <div class="site-footer__columns">
+                <div class="site-footer__links">
+                    <p class="site-footer__heading">Site</p>
+                    {site.nav.map((item) => (
+                        <a href={item.href} class="site-footer__link">
+                            {item.label}
+                        </a>
+                    ))}
+                    <a href="/branding" class="site-footer__link">
+                        Branding
+                    </a>
+                </div>
+
+                <div class="site-footer__links">
+                    <p class="site-footer__heading">Legal</p>
+                    {site.footerNav.map((item) => (
+                        <a href={item.href} class="site-footer__link">
+                            {item.label}
+                        </a>
+                    ))}
+                </div>
+
+                <div class="site-footer__links">
+                    <p class="site-footer__heading">Contact</p>
+                    <a href={`mailto:${site.contact.email}`} class="site-footer__link">
+                        {site.contact.email}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="site-footer__bottom">
+            <p>
+                &copy; {year} {site.name}. All rights reserved.
+            </p>
+        </div>
+    </div>
+</footer>
