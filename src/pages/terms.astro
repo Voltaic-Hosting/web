@@ -34,16 +34,16 @@ const content = legal.terms;
         lede={`Effective ${legal.effectiveDate}. Operated by ${legal.operator}.`}
     />
 
-    <section class="section section--tight">
-        <div class="site-container site-container--narrow legal-doc">
+    <section class="section paper section-gap--hero">
+        <div class="container">
             <Prose intro={content.intro} sections={content.sections} />
-            <div class="page-hero__actions legal-doc__actions">
+            <div class="legal-doc__actions">
                 <Button href="/privacy" variant="ghost">
                     Privacy policy
                 </Button>
                 <Button href="/contact">Contact</Button>
             </div>
-            <p class="site-footer__note legal-doc__note">{site.privacyNote}</p>
+            <p class="legal-doc__note">{site.privacyNote}</p>
         </div>
     </section>
 </BaseLayout>

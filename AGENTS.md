@@ -30,8 +30,8 @@ Stack: Astro 7 static output + Svelte 5 islands + TypeScript 6 + Tailwind CSS 4 
 - `src/layouts/BaseLayout.astro` document shell: SEO meta, JSON-LD, theme init script
 - `src/pages` routes plus `sitemap.xml.ts` and `errors/[status].astro`
 - `src/panel` Svelte 5 panel island (runes only: `$state`, `$derived`, `$effect`, `$props`)
-- `src/styles/app.css` theme tokens and BEM-style components, `src/styles/panel.css` panel styles
-- `public` static assets
+- `src/styles/app.css` site styles for the custom monochrome theme: graphite paper, off-white field and black seal surfaces (dark default plus light mode), Satoshi display and body, surface context classes .field/.seal/.paper, panel uses a monochrome accent, `src/styles/tokens.css` colour/space/type tokens, `src/styles/base.css` element defaults scoped to `.site-shell`, `src/styles/panel.css` panel styles
+- `public` static assets: Satoshi woff2 fonts in `fonts`, photographs in `public/images/photos` (credits printed in the footer)
 - `tests` Vitest data integrity and `dist` smoke tests
 - `docker/nginx/default.conf` static site config for the container image
 

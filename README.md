@@ -56,8 +56,8 @@ pnpm run audit          # Production dependency audit
 - `src/layouts/BaseLayout.astro` document shell, SEO head, theme init script
 - `src/pages` routes, sitemap endpoint, error pages
 - `src/panel` Svelte 5 panel concept island (runes only)
-- `src/styles` Tailwind and component styles
-- `public` static assets (brand, images, icons, robots.txt, site.webmanifest)
+- `src/styles` custom monochrome theme styles: `app.css` site rules with .field/.seal/.paper contexts, `tokens.css` design tokens, `base.css` element defaults, `panel.css` panel styles (yellow accent)
+- `public` static assets (brand, images, icons, robots.txt, site.webmanifest, Satoshi fonts in `fonts`, JetBrains Mono for figures, photographs in `images/photos`)
 - `tests` Vitest data integrity and build smoke tests
 - `docker` nginx config for the static container
 

@@ -1,0 +1,121 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionAnchor from '@/components/SectionAnchor.astro';
+import ServiceCard from '@/components/ServiceCard.astro';
+import CtaPanel from '@/components/CtaPanel.astro';
+import Icon from '@/components/Icon.astro';
+import Button from '@/components/Button.astro';
+import { services } from '@/data/services';
+import { site } from '@/data/site';
+import { servicesJsonLd } from '@/lib/seo';
+import { sectionId } from '@/lib/sectionId';
+import { billingIcons, categoryIcons } from '@/data/icons';
+import type { ServiceCategory, Service } from '@/data/types';
+
+const lede =
+    'Panel software, servers, networking, and security work. Anything marked Soon is not available yet.';
+const categories: ServiceCategory[] = [
+    'Software',
+    'Networking',
+    'Security',
+    'Facilities',
+    'Server AI',
+];
+
+const billing = [
+    {
+        title: 'Fiat and Monero',
+        body: 'Payments are taken in USD, EUR, and Monero. Fiat payments run through Stripe.',
+    },
+    {
+        title: 'Quoted price is the price',
+        body: 'You pay the line items on the order you approved. Fees that are not on the quote do not appear later.',
+    },
+    {
+        title: 'Cancel anytime',
+        body: 'Monthly service stops when you cancel. New service has a 30-day refund window if it does not fit.',
+    },
+];
+---
+
+<BaseLayout
+    title="Services"
+    description={lede}
+    path="/services"
+    jsonLd={servicesJsonLd(site, services)}
+>
+    <PageHero id="services" title="Services" lede={lede}>
+        <Button href="/contact" slot="actions">
+            Contact
+        </Button>
+    </PageHero>
+
+    {categories.map((category) => {
+        const id = sectionId(category);
+        const list = services.filter((service: Service) => service.category === category);
+        return (
+            <section class="section section-gap" id={id}>
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-head__title">
+                            <span class="section__heading">
+                                <SectionAnchor id={id} label={category} />
+                                <Icon name={categoryIcons[category]} size={24} class="icon--head" />
+                                {category}
+                            </span>
+                        </h2>
+                    </div>
+                    <ul class="service-index">
+                        {list.map((service) => (
+                            <ServiceCard service={service} />
+                        ))}
+                    </ul>
+                </div>
+            </section>
+        );
+    })}
+
+    <section class="section section-gap" id="billing">
+        <div class="container">
+            <div class="section-head">
+                <h2 class="section-head__title">
+                    <span class="section__heading">
+                        <SectionAnchor id="billing" label="Billing" />
+                        <Icon name="credit-card" size={24} class="icon--head" />
+                        Billing
+                    </span>
+                </h2>
+            </div>
+            <ul class="service-index">
+                {billing.map((row, index) => (
+                    <li class="service-index__row">
+                        <div class="service-index__inner">
+                            <h3 class="service-index__title">
+                                <Icon
+                                    name={billingIcons[index]}
+                                    size={20}
+                                    class="service-index__icon"
+                                />
+                                {row.title}
+                            </h3>
+                            <p class="service-index__summary">{row.body}</p>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </section>
+
+    <section class="section section-gap" id="contact">
+        <div class="close-band field">
+            <div class="container">
+                <CtaPanel
+                    title="Request information"
+                    body="Email me with your current environment and requirements. I reply within two business days on weekdays."
+                    anchorId="contact"
+                />
+            </div>
+        </div>
+    </section>
+</BaseLayout>

@@ -12,7 +12,7 @@ export const branding: BrandingContent = {
                 jpg: '/brand/logo-dark.jpg',
                 webp: '/brand/logo-dark.webp',
             },
-            dimensions: '512 × 551',
+            dimensions: '512 x 551',
             preview: 'light',
         },
         {
@@ -24,7 +24,7 @@ export const branding: BrandingContent = {
                 jpg: '/brand/logo-light.jpg',
                 webp: '/brand/logo-light.webp',
             },
-            dimensions: '512 × 551',
+            dimensions: '512 x 551',
             preview: 'dark',
         },
         {
@@ -36,8 +36,8 @@ export const branding: BrandingContent = {
                 jpg: '/brand/logo-on-light.jpg',
                 webp: '/brand/logo-on-light.webp',
             },
-            dimensions: '512 × 512',
-            preview: 'light',
+            dimensions: '512 x 512',
+            preview: 'field',
         },
         {
             key: 'logo-on-dark',
@@ -48,8 +48,8 @@ export const branding: BrandingContent = {
                 jpg: '/brand/logo-on-dark.jpg',
                 webp: '/brand/logo-on-dark.webp',
             },
-            dimensions: '512 × 512',
-            preview: 'dark',
+            dimensions: '512 x 512',
+            preview: 'field',
         },
         {
             key: 'icon-512',
@@ -60,7 +60,7 @@ export const branding: BrandingContent = {
                 jpg: '/brand/icon-512.jpg',
                 webp: '/brand/icon-512.webp',
             },
-            dimensions: '512 × 512',
+            dimensions: '512 x 512',
             preview: 'light',
         },
         {
@@ -72,7 +72,7 @@ export const branding: BrandingContent = {
                 jpg: '/brand/icon-192.jpg',
                 webp: '/brand/icon-192.webp',
             },
-            dimensions: '192 × 192',
+            dimensions: '192 x 192',
             preview: 'light',
         },
         {
@@ -85,8 +85,8 @@ export const branding: BrandingContent = {
                 jpg: '/brand/favicon-32.jpg',
                 webp: '/brand/favicon-32.webp',
             },
-            dimensions: '32 × 32',
-            preview: 'dark',
+            dimensions: '32 x 32',
+            preview: 'light',
         },
         {
             key: 'source',
@@ -97,7 +97,7 @@ export const branding: BrandingContent = {
                 jpg: '/logo.jpg',
                 webp: '/logo.webp',
             },
-            dimensions: '512 × 551',
+            dimensions: '512 x 551',
             preview: 'dark',
         },
     ],

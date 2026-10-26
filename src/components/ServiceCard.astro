@@ -1,15 +1,26 @@
 ---
 import type { Service } from '@/data/types';
+import { serviceIcons } from '@/data/icons';
+import Icon from './Icon.astro';
 
 interface Props {
     service: Service;
+    link?: boolean;
 }
 
-const { service } = Astro.props;
+const { service, link = false } = Astro.props;
+const icon = serviceIcons[service.slug];
+const Tag = link ? 'a' : 'div';
+const attrs = link ? { href: `/services#${service.slug}` } : {};
 ---
 
-<article class="service-card">
-    {service.badge ? <span class="service-card__badge">{service.badge}</span> : null}
-    <h3 class="service-card__title">{service.title}</h3>
-    <p class="service-card__summary">{service.summary}</p>
-</article>
+<li class="service-index__row" id={service.slug}>
+    <Tag class="service-index__inner" {...attrs}>
+        <h3 class="service-index__title">
+            {icon ? <Icon name={icon} size={24} class="service-index__icon" /> : null}
+            {service.title}
+        </h3>
+        <p class="service-index__summary">{service.summary}</p>
+        {service.badge ? <span class="service-index__tag">{service.badge}</span> : null}
+    </Tag>
+</li>

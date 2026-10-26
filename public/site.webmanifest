@@ -1,11 +1,11 @@
 {
     "name": "Voltaic Hosting",
     "short_name": "Voltaic",
-    "description": "Hosting, colocation, and infrastructure from Voltaic Hosting.",
+    "description": "Server and data center software, server security, and local AI agents from Voltaic Hosting.",
     "start_url": "/",
     "display": "browser",
-    "background_color": "#e7e1d8",
-    "theme_color": "#e7e1d8",
+    "background_color": "#101013",
+    "theme_color": "#101013",
     "icons": [
         {
             "src": "/brand/icon-192.png",

@@ -1,0 +1,114 @@
+---
+import type { IconName } from '@/data/icons';
+import LayoutDashboard from '@lucide/astro/icons/layout-dashboard';
+import Gamepad2 from '@lucide/astro/icons/gamepad-2';
+import GitBranch from '@lucide/astro/icons/git-branch';
+import CodeXml from '@lucide/astro/icons/code-xml';
+import Server from '@lucide/astro/icons/server';
+import Building from '@lucide/astro/icons/building';
+import Boxes from '@lucide/astro/icons/boxes';
+import Network from '@lucide/astro/icons/network';
+import BrickWallShield from '@lucide/astro/icons/brick-wall-shield';
+import ScanSearch from '@lucide/astro/icons/scan-search';
+import Radar from '@lucide/astro/icons/radar';
+import Crosshair from '@lucide/astro/icons/crosshair';
+import BotOff from '@lucide/astro/icons/bot-off';
+import Cpu from '@lucide/astro/icons/cpu';
+import Warehouse from '@lucide/astro/icons/warehouse';
+import BrainCircuit from '@lucide/astro/icons/brain-circuit';
+import Bot from '@lucide/astro/icons/bot';
+import CreditCard from '@lucide/astro/icons/credit-card';
+import Bitcoin from '@lucide/astro/icons/bitcoin';
+import Undo2 from '@lucide/astro/icons/undo-2';
+import BadgeCheck from '@lucide/astro/icons/badge-check';
+import Shield from '@lucide/astro/icons/shield';
+import ShieldCheck from '@lucide/astro/icons/shield-check';
+import UserRound from '@lucide/astro/icons/user-round';
+import Mail from '@lucide/astro/icons/mail';
+import Copy from '@lucide/astro/icons/copy';
+import ClipboardList from '@lucide/astro/icons/clipboard-list';
+import ListChecks from '@lucide/astro/icons/list-checks';
+import Check from '@lucide/astro/icons/check';
+import Compass from '@lucide/astro/icons/compass';
+import Lock from '@lucide/astro/icons/lock';
+import Key from '@lucide/astro/icons/key';
+import Ban from '@lucide/astro/icons/ban';
+import Timer from '@lucide/astro/icons/timer';
+import RefreshCw from '@lucide/astro/icons/refresh-cw';
+import Gauge from '@lucide/astro/icons/gauge';
+import Hourglass from '@lucide/astro/icons/hourglass';
+import ServerCrash from '@lucide/astro/icons/server-crash';
+import TriangleAlert from '@lucide/astro/icons/triangle-alert';
+import Wrench from '@lucide/astro/icons/wrench';
+import ServerOff from '@lucide/astro/icons/server-off';
+import Download from '@lucide/astro/icons/download';
+import CircleQuestionMark from '@lucide/astro/icons/circle-question-mark';
+import FileSliders from '@lucide/astro/icons/file-sliders';
+import Calendar from '@lucide/astro/icons/calendar';
+
+interface Props {
+    name: IconName;
+    size?: number;
+    class?: string;
+}
+
+const { name, size = 20, class: className = '' } = Astro.props;
+
+const components = {
+    'layout-dashboard': LayoutDashboard,
+    'gamepad-2': Gamepad2,
+    'git-branch': GitBranch,
+    'code-xml': CodeXml,
+    server: Server,
+    building: Building,
+    boxes: Boxes,
+    network: Network,
+    'brick-wall-shield': BrickWallShield,
+    'scan-search': ScanSearch,
+    radar: Radar,
+    crosshair: Crosshair,
+    bot: Bot,
+    'bot-off': BotOff,
+    cpu: Cpu,
+    warehouse: Warehouse,
+    'brain-circuit': BrainCircuit,
+    'credit-card': CreditCard,
+    bitcoin: Bitcoin,
+    'undo-2': Undo2,
+    'badge-check': BadgeCheck,
+    shield: Shield,
+    'shield-check': ShieldCheck,
+    'user-round': UserRound,
+    mail: Mail,
+    copy: Copy,
+    'clipboard-list': ClipboardList,
+    'list-checks': ListChecks,
+    check: Check,
+    compass: Compass,
+    lock: Lock,
+    key: Key,
+    ban: Ban,
+    timer: Timer,
+    'refresh-cw': RefreshCw,
+    gauge: Gauge,
+    hourglass: Hourglass,
+    'server-crash': ServerCrash,
+    'triangle-alert': TriangleAlert,
+    wrench: Wrench,
+    'server-off': ServerOff,
+    download: Download,
+    'circle-question-mark': CircleQuestionMark,
+    'file-sliders': FileSliders,
+    calendar: Calendar,
+} as const;
+
+const Cmp = components[name];
+---
+
+<Cmp
+    size={size}
+    stroke-width={1.75}
+    color="currentColor"
+    aria-hidden="true"
+    class={`icon ${className}`.trim()}
+/>

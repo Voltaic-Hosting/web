@@ -24,8 +24,10 @@ const { title, body, actionHref = '/contact', actionLabel = 'Contact', anchorId 
             title
         )}
     </h2>
-    <p class="cta-panel__body">{body}</p>
-    <div class="cta-panel__actions">
-        <Button href={actionHref}>{actionLabel}</Button>
+    <div class="cta-panel__side">
+        <p class="cta-panel__body">{body}</p>
+        <div class="cta-panel__actions">
+            <Button href={actionHref}>{actionLabel}</Button>
+        </div>
     </div>
 </div>

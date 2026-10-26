@@ -1,7 +1,7 @@
 import type { AboutContent } from './types';
 
 export const about: AboutContent = {
-    intro: 'Voltaic Hosting was created by Ivan (Sudo-Ivan). I build hosting software and work with infrastructure partners so you can run servers, leave when you want, and keep control of your stack.',
+    intro: 'Voltaic Hosting was created by Ivan (Sudo-Ivan). Voltaic Hosting develops server and data center software, secures servers for hosting providers, and builds local server AI for sysadmin tasks and security. I build hosting software and work with infrastructure partners so you can run servers, leave when you want, and keep control of your stack.',
     sections: [
         {
             title: 'How it started',

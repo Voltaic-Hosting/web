@@ -6,6 +6,8 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { sectionId } from '@/lib/sectionId';
 import { faqPageJsonLd } from '@/lib/seo';
 import { faq } from '@/data/faq';
+import Icon from '@/components/Icon.astro';
+import { faqGroupIcons } from '@/data/icons';
 import { site } from '@/data/site';
 
 const items = faq.groups.flatMap((group) => group.items);
@@ -29,8 +31,8 @@ const items = faq.groups.flatMap((group) => group.items);
         </Button>
     </PageHero>
 
-    <section class="section section--tight" aria-label="FAQ topics">
-        <div class="site-container site-container--narrow">
+    <section class="section paper section-gap--hero" aria-label="FAQ topics">
+        <div class="container">
             <nav class="faq-toc" aria-label="Jump to a topic">
                 {faq.groups.map((group) => {
                     const id = sectionId(group.title);
@@ -48,14 +50,18 @@ const items = faq.groups.flatMap((group) => group.items);
     <div class="faq-page">
         {faq.groups.map((group) => {
             const id = sectionId(group.title);
+            const groupIcon = faqGroupIcons[group.title];
 
             return (
-                <section class="section section--tight" id={id}>
-                    <div class="site-container site-container--narrow">
+                <section class="section paper section-gap--s" id={id}>
+                    <div class="container">
                         <div class="faq-group">
                             <h2 class="faq-group__title">
                                 <span class="section__heading">
                                     <SectionAnchor id={id} label={group.title} />
+                                    {groupIcon ? (
+                                        <Icon name={groupIcon} size={22} class="icon--head" />
+                                    ) : null}
                                     {group.title}
                                 </span>
                             </h2>
@@ -84,21 +90,23 @@ const items = faq.groups.flatMap((group) => group.items);
         })}
     </div>
 
-    <section class="section" id="still-need-help">
-        <div class="site-container site-container--narrow">
-            <div class="cta-panel">
+    <section class="section paper section-gap" id="still-need-help">
+        <div class="close-band field">
+            <div class="container cta-panel">
                 <h2 class="cta-panel__title">
                     <span class="section__heading">
                         <SectionAnchor id="still-need-help" label="Still need help" />
                         Still need help
                     </span>
                 </h2>
-                <p class="cta-panel__body">
-                    Send the details that matter and I will reply within two business days, Monday
-                    through Friday.
-                </p>
-                <div class="cta-panel__actions">
-                    <Button href="/contact">Contact</Button>
+                <div class="cta-panel__side">
+                    <p class="cta-panel__body">
+                        Send the details that matter and I will reply within two business days,
+                        Monday through Friday.
+                    </p>
+                    <div class="cta-panel__actions">
+                        <Button href="/contact">Contact</Button>
+                    </div>
                 </div>
             </div>
         </div>

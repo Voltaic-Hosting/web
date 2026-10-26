@@ -38,11 +38,14 @@ export interface SiteConfig {
     heroLede: string;
 }
 
+export type ServiceCategory = 'Software' | 'Networking' | 'Security' | 'Facilities' | 'Server AI';
+
 export interface Service {
     slug: string;
     title: string;
     summary: string;
     badge?: string;
+    category: ServiceCategory;
 }
 
 export interface Value {
@@ -83,7 +86,7 @@ export interface BrandingAsset {
     description: string;
     formats: Record<BrandingFormat, string>;
     dimensions: string;
-    preview: 'light' | 'dark';
+    preview: 'light' | 'dark' | 'neutral' | 'field';
 }
 
 export interface BrandingContent {

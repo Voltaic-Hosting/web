@@ -79,7 +79,6 @@
         </nav>
     </aside>
     <article class="panel-docs-article">
-        <p class="panel-docs-article__eyebrow">{active?.section}</p>
         <h3 class="panel-docs-article__title">{active?.title ?? 'Documentation'}</h3>
         <p class="panel-docs-article__lede">{active?.blurb}</p>
         <div class="panel-docs-article__body">

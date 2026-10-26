@@ -14,6 +14,10 @@ export const site: SiteConfig = {
             href: '/',
         },
         {
+            label: 'Services',
+            href: '/services',
+        },
+        {
             label: 'Panel',
             href: '/panel',
         },
@@ -45,10 +49,10 @@ export const site: SiteConfig = {
         defaultTitle: 'Voltaic Hosting',
         titleSeparator: ' · ',
         defaultDescription:
-            'Hosting, colocation, and infrastructure from Voltaic Hosting. One-click services and game servers. Deploy websites from any Git repository.',
+            'Server and data center software, server security for hosting providers, and local server AI for sysadmin tasks and security from Voltaic Hosting. Hosting, colocation, game servers, and Git deploys.',
         keywords:
-            'voltaic hosting, hosting, colocation, game servers, git deploy, one-click services, server hardware, MicroVMs, Wazuh, firewall, privacy',
-        ogImage: '/brand/logo-on-light.png',
+            'voltaic hosting, hosting, colocation, game servers, git deploy, one-click services, server hardware, MicroVMs, Wazuh, firewall, privacy, server AI, local AI, sysadmin automation, data center software, server security',
+        ogImage: '/brand/og.png',
         twitterCard: 'summary_large_image',
         locale: 'en_US',
         organization: {
@@ -60,12 +64,12 @@ export const site: SiteConfig = {
             sameAs: [],
         },
     },
-    heroLede:
-        'Hosting, colocation, and infrastructure with clear billing, strong privacy, and no lock-in.',
+    heroLede: 'Server and data center software.',
 } satisfies SiteConfig;
 
 export const sitemapPaths: string[] = [
     '/',
+    '/services',
     '/about',
     '/faq',
     '/contact',

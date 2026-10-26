@@ -5,21 +5,23 @@ interface Props {
     id: string;
     title: string;
     lede?: string;
+    gap?: 's' | 'm' | 'l';
 }
 
-const { id, title, lede } = Astro.props;
+const { id, title, lede, gap = 'm' } = Astro.props;
+const gapClass = gap === 's' ? 'section-gap--s' : gap === 'l' ? 'section-gap--l' : 'section-gap';
 ---
 
-<section class="section" id={id}>
-    <div class="site-container">
-        <div class="section__intro">
-            <h2 class="section__title">
+<section class={`section ${gapClass}`} id={id}>
+    <div class="container">
+        <div class="section-head">
+            <h2 class="section-head__title">
                 <span class="section__heading">
                     <SectionAnchor id={id} label={title} />
                     {title}
                 </span>
             </h2>
-            {lede ? <p class="section__lede">{lede}</p> : null}
+            {lede ? <p class="section-head__lede">{lede}</p> : null}
         </div>
         <slot />
     </div>

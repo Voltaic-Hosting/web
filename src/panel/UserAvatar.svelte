@@ -13,7 +13,7 @@
 
     const palette = $derived(palettes[hashSeed(seed || name) % palettes.length]);
     const fg = $derived(color ? color : palette[0]);
-    const bg = $derived(color ? '#1c1916' : palette[1]);
+    const bg = $derived(color ? '#0b0c0f' : palette[1]);
     const initials = $derived(
         name
             .split(/\s+/)
@@ -40,7 +40,7 @@
         style:width="{size}px"
         style:height="{size}px"
         style:background="linear-gradient(135deg, {fg}, {bg})"
-        style:font-size="{Math.max(10, size * 0.36)}px"
+        style:font-size="{Math.max(12, size * 0.36)}px"
         aria-hidden="true"
         title={name}
     >

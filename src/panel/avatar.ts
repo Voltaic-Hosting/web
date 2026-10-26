@@ -8,12 +8,13 @@ export function hashSeed(seed: string): number {
 }
 
 export const palettes = [
-    ['#b45309', '#1c1916'],
-    ['#3f7d4e', '#1c1916'],
-    ['#0f766e', '#1c1916'],
-    ['#9a3412', '#1c1916'],
-    ['#854d0e', '#1c1916'],
-    ['#1d4ed8', '#1c1916'],
+    ['#047857', '#0b0c0f'],
+    ['#0f766e', '#0b0c0f'],
+    ['#1d4ed8', '#0b0c0f'],
+    ['#475569', '#0b0c0f'],
+    ['#92400e', '#0b0c0f'],
+    ['#9f1239', '#0b0c0f'],
+    ['#334155', '#0b0c0f'],
 ] as const;
 
 export const avatarColorOptions = palettes.map(([color]) => color);

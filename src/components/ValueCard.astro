@@ -1,14 +1,21 @@
 ---
 import type { Value } from '@/data/types';
 
+import type { IconName } from '@/data/icons';
+import Icon from './Icon.astro';
+
 interface Props {
     value: Value;
+    icon?: IconName;
 }
 
-const { value } = Astro.props;
+const { value, icon } = Astro.props;
 ---
 
-<article class="value-card">
-    <h3 class="value-card__title">{value.title}</h3>
+<div class="value-card">
+    <h3 class="value-card__title">
+        {icon ? <Icon name={icon} size={20} class="value-card__icon" /> : null}
+        {value.title}
+    </h3>
     <p class="value-card__body">{value.body}</p>
-</article>
+</div>

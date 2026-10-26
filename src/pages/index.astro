@@ -1,75 +1,258 @@
 ---
-import Button from '@/components/Button.astro';
-import CtaPanel from '@/components/CtaPanel.astro';
-import PanelShowcase from '@/components/PanelShowcase.astro';
-import Section from '@/components/Section.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
 import SectionAnchor from '@/components/SectionAnchor.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
 import ServiceCard from '@/components/ServiceCard.astro';
 import ValueCard from '@/components/ValueCard.astro';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { organizationJsonLd, websiteJsonLd } from '@/lib/seo';
+import PanelShowcase from '@/components/PanelShowcase.astro';
+import PanelApp from '@/panel/PanelApp.svelte';
 import { panel } from '@/data/panel';
 import { services } from '@/data/services';
 import { site } from '@/data/site';
 import { values } from '@/data/values';
+import { valueIcons, serviceIcons, categoryIcons } from '@/data/icons';
+import { organizationJsonLd, websiteJsonLd } from '@/lib/seo';
+import type { ServiceCategory } from '@/data/types';
+import type { IconName } from '@/data/icons';
+
+const capCells: [IconName, string][] = [
+    ['layout-dashboard', 'One-click services'],
+    ['gamepad-2', 'Game servers'],
+    ['git-branch', 'Git website deploys'],
+    ['server', 'Bare metal and containers'],
+    ['boxes', 'MicroVMs'],
+    ['brick-wall-shield', 'Firewall rules'],
+    ['download', 'Backups'],
+    ['key', 'API and team accounts'],
+];
+
+const disciplineCopy: Record<string, string> = {
+    Software: 'Server and data center software, from the Voltaic Panel to custom builds.',
+    Security:
+        'Servers secured for hosting providers: firewalls, detection, threat feeds, and bot protection.',
+    'Server AI': 'Local AI for sysadmin tasks and security, running on your own servers.',
+};
+const disciplineOrder: ServiceCategory[] = ['Software', 'Security'];
+const indexOrder: ServiceCategory[] = [
+    'Software',
+    'Networking',
+    'Security',
+    'Facilities',
+    'Server AI',
+];
 ---
 
 <BaseLayout path="/" jsonLd={[organizationJsonLd(site), websiteJsonLd(site)]}>
-    <section class="home-hero" id="hero">
-        <div class="site-container home-hero__content">
+    <section class="home-hero field" id="hero">
+        <div class="container home-hero__head">
             <h1 class="home-hero__title">
                 <span class="section__heading">
                     <SectionAnchor id="hero" label="Hero" />
-                    {site.tagline}
+                    Software and security for server providers
                 </span>
             </h1>
-            <p class="home-hero__lede">{site.heroLede}</p>
-            <div class="page-hero__actions">
-                <Button href="/contact">Contact</Button>
-                <Button href="/about" variant="ghost">
-                    About us
+            <div class="home-hero__side">
+                <p class="home-hero__lede">{site.heroLede}</p>
+                <div class="home-hero__actions">
+                    <Button href="/contact">
+                        <Icon name="mail" size={18} />
+                        Contact
+                    </Button>
+                    <Button href="/about" variant="ghost">
+                        About us
+                    </Button>
+                </div>
+            </div>
+        </div>
+        <div class="container straddle">
+            <div class="panel-frame">
+                <PanelApp panel={panel} compact client:visible />
+            </div>
+        </div>
+    </section>
+
+    <section class="section seal panel-stage" id="panel">
+        <div class="container">
+            <PanelShowcase panel={panel} />
+            <ul class="cap-grid">
+                {capCells.map(([icon, label]) => (
+                    <li>
+                        <a class="cap-cell" href="/panel">
+                            <Icon name={icon} size={20} />
+                            <span>{label}</span>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </section>
+
+    <section class="section field section-gap" id="disciplines">
+        <div class="container">
+            <div class="section-head">
+                <h2 class="section-head__title">
+                    <span class="section__heading">
+                        <SectionAnchor id="disciplines" label="Disciplines" />
+                        Software and security
+                    </span>
+                </h2>
+            </div>
+            <div class="discipline-grid">
+                {disciplineOrder.map((category) => (
+                    <div class="discipline">
+                        <h3 class="discipline__title">
+                            <Icon name={categoryIcons[category]} size={36} />
+                            {category}
+                        </h3>
+                        <p class="discipline__lede">{disciplineCopy[category]}</p>
+                        <ul class="discipline__list">
+                            {services
+                                .filter((service) => service.category === category)
+                                .map((service) => (
+                                    <li class="discipline__item">
+                                        <a
+                                            class="discipline__link"
+                                            href={`/services#${service.slug}`}
+                                        >
+                                            <Icon name={serviceIcons[service.slug]} size={20} />
+                                            {service.title}
+                                        </a>
+                                    </li>
+                                ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <section class="section seal section-gap" id="server-ai">
+        <div class="container server-ai">
+            <div class="server-ai__copy">
+                <h2 class="section-head__title">
+                    <span class="section__heading">
+                        <SectionAnchor id="server-ai" label="Server AI" />
+                        Server AI
+                    </span>
+                </h2>
+                <p class="server-ai__lede">{disciplineCopy['Server AI']}</p>
+                <div class="section-head__actions">
+                    <Button href="/contact">
+                        <Icon name="mail" size={18} />
+                        Contact
+                    </Button>
+                    <Button href="/services#server-ai" variant="ghost">
+                        Server AI service
+                    </Button>
+                </div>
+            </div>
+            <ul class="server-ai__list">
+                <li class="server-ai__item">
+                    <h3 class="server-ai__title">
+                        <Icon name="server" size={24} />
+                        Sysadmin tasks
+                    </h3>
+                    <p>Local AI that runs on your servers and helps with administration.</p>
+                </li>
+                <li class="server-ai__item">
+                    <h3 class="server-ai__title">
+                        <Icon name="shield-check" size={24} />
+                        Security
+                    </h3>
+                    <p>Local AI that runs on your servers and helps with security work.</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="section paper section-gap" id="services">
+        <div class="container">
+            <div class="section-head">
+                <h2 class="section-head__title">
+                    <span class="section__heading">
+                        <SectionAnchor id="services" label="Services" />
+                        Services
+                    </span>
+                </h2>
+                <p class="section-head__lede">
+                    Panel software, servers, networking, and security work. Anything marked Soon is
+                    not available yet.
+                </p>
+            </div>
+            <ul class="service-index">
+                {indexOrder.map((category) =>
+                    services
+                        .filter((service) => service.category === category)
+                        .map((service) => <ServiceCard service={service} link />),
+                )}
+            </ul>
+            <div class="section-foot">
+                <Button href="/services" variant="ghost">
+                    All services
                 </Button>
             </div>
         </div>
     </section>
 
-    <section class="section" id="panel">
-        <div class="site-container">
-            <PanelShowcase panel={panel} />
+    <section class="section seal section-gap section-end" id="values">
+        <div class="container values-split">
+            <div class="values-split__copy">
+                <div class="section-head">
+                    <h2 class="section-head__title">
+                        <span class="section__heading">
+                            <SectionAnchor id="values" label="Billing, privacy, and exit" />
+                            Billing, privacy, and exit
+                        </span>
+                    </h2>
+                    <p class="section-head__lede">
+                        Cancel when you want. Pay what was quoted. Keep your data off the sales
+                        floor.
+                    </p>
+                </div>
+                <ul class="value-list">
+                    {values.map((value, index) => (
+                        <li>
+                            <ValueCard value={value} icon={valueIcons[index]} />
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <figure class="values-split__media mono-photo mono-photo--tall" data-slot="values">
+                <img
+                    src="/images/photos/network-switches-1920.jpg"
+                    alt="Blue and grey ethernet cables plugged into switch ports"
+                    width={1920}
+                    height={1277}
+                    loading="lazy"
+                    decoding="async"
+                />
+            </figure>
         </div>
     </section>
 
-    <Section
-        id="services"
-        title="Services"
-        lede="Panel software, servers, networking, and security work. Anything marked Soon is not available yet."
-    >
-        <div class="service-grid">
-            {services.map((service) => (
-                <ServiceCard service={service} />
-            ))}
-        </div>
-    </Section>
-
-    <Section
-        id="values"
-        title="Billing, privacy, and exit"
-        lede="Cancel when you want. Pay what was quoted. Keep your data off the sales floor."
-    >
-        <div class="value-grid">
-            {values.map((value) => (
-                <ValueCard value={value} />
-            ))}
-        </div>
-    </Section>
-
-    <section class="section" id="contact">
-        <div class="site-container">
-            <CtaPanel
-                title="Request information"
-                body="Email me with your current environment and requirements. I reply within two business days on weekdays."
-                anchorId="contact"
-            />
+    <section class="section field" id="contact">
+        <div class="close-band">
+            <div class="container cta-panel">
+                <h2 class="cta-panel__title">
+                    <span class="section__heading">
+                        <SectionAnchor id="contact" label="Request information" />
+                        Request information
+                    </span>
+                </h2>
+                <div class="cta-panel__side">
+                    <p class="cta-panel__body">
+                        Email me with your current environment and requirements. I reply within two
+                        business days on weekdays.
+                    </p>
+                    <div class="cta-panel__actions">
+                        <Button href="/contact">
+                            <Icon name="mail" size={18} />
+                            Contact
+                        </Button>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </BaseLayout>

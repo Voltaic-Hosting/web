@@ -56,6 +56,7 @@ describe('site data', () => {
             '/about',
             '/faq',
             '/contact',
+            '/services',
             '/branding',
             '/panel',
             '/privacy',

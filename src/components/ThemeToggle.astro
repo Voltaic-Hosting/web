@@ -11,7 +11,7 @@ const { class: className = '' } = Astro.props;
 <button
     type="button"
     class={`theme-toggle${className ? ` ${className}` : ''}`}
-    aria-label="Switch to dark mode"
+    aria-label="Switch to light mode"
     aria-pressed="false"
 >
     <Moon size={18} aria-hidden="true" class="theme-toggle__icon theme-toggle__icon--moon" />
@@ -19,30 +19,21 @@ const { class: className = '' } = Astro.props;
 </button>
 
 <style>
-    .theme-toggle__icon--sun {
+    .theme-toggle__icon--moon {
         display: none;
     }
 
-    :global([data-theme='dark']) .theme-toggle__icon--moon {
+    :global([data-theme='light']) .theme-toggle__icon--sun {
         display: none;
     }
 
-    :global([data-theme='dark']) .theme-toggle__icon--sun {
+    :global([data-theme='light']) .theme-toggle__icon--moon {
         display: block;
     }
 </style>
 
 <script>
     const THEME_STORAGE_KEY = 'voltaic-theme';
-
-    function getStoredTheme(): 'light' | 'dark' | null {
-        try {
-            const value = localStorage.getItem(THEME_STORAGE_KEY);
-            return value === 'light' || value === 'dark' ? value : null;
-        } catch {
-            return null;
-        }
-    }
 
     function currentTheme(): 'light' | 'dark' {
         return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
@@ -54,7 +45,7 @@ const { class: className = '' } = Astro.props;
 
         const meta = document.querySelector('meta[name="theme-color"]');
         if (meta) {
-            meta.setAttribute('content', theme === 'dark' ? '#151311' : '#e7e1d8');
+            meta.setAttribute('content', theme === 'dark' ? '#101013' : '#fafafa');
         }
 
         const colorScheme = document.querySelector('meta[name="color-scheme"]');
@@ -88,11 +79,4 @@ const { class: className = '' } = Astro.props;
     });
 
     updateThemeToggles();
-
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-        if (!getStoredTheme()) {
-            applyTheme(event.matches ? 'dark' : 'light');
-            updateThemeToggles();
-        }
-    });
 </script>

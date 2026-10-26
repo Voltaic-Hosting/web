@@ -1,6 +1,5 @@
 ---
 import '@/styles/app.css';
-import '@fontsource-variable/dm-sans';
 import '@fontsource-variable/jetbrains-mono';
 import { site } from '@/data/site';
 import { absoluteUrl } from '@/lib/url';
@@ -44,8 +43,8 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#e7e1d8" />
-        <meta name="color-scheme" content="light dark" />
+        <meta name="theme-color" content="#101013" />
+        <meta name="color-scheme" content="dark light" />
         <script is:inline>
             (function () {
                 var storageKey = 'voltaic-theme';
@@ -55,24 +54,31 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
                     stored = localStorage.getItem(storageKey);
                 } catch (e) {}
 
-                var prefersDark =
-                    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                var theme =
-                    stored === 'light' || stored === 'dark'
-                        ? stored
-                        : prefersDark
-                          ? 'dark'
-                          : 'light';
+                var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
 
                 document.documentElement.dataset.theme = theme;
                 document.documentElement.style.colorScheme = theme;
 
                 var themeColor = document.querySelector('meta[name="theme-color"]');
                 if (themeColor) {
-                    themeColor.setAttribute('content', theme === 'dark' ? '#151311' : '#e7e1d8');
+                    themeColor.setAttribute('content', theme === 'dark' ? '#101013' : '#fafafa');
                 }
             })();
         </script>
+        <link
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            crossorigin
+            href="/fonts/satoshi-500.woff2"
+        />
+        <link
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            crossorigin
+            href="/fonts/satoshi-700.woff2"
+        />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/brand/icon-192.png" />
@@ -95,6 +101,9 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
         <meta property="og:description" content={metaDescription} />
         <meta property="og:url" content={canonical} />
         <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={`${site.name} logo and tagline`} />
 
         <meta name="twitter:card" content={seo.twitterCard} />
         <meta name="twitter:title" content={pageTitle} />
@@ -104,6 +113,12 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
         {schemas.map((schema) => (
             <script type="application/ld+json" set:html={JSON.stringify(schema)} />
         ))}
+        <style is:global>
+            html,
+            body {
+                overflow-x: clip;
+            }
+        </style>
     </head>
     <body class="antialiased">
         {bare ? (

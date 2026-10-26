@@ -337,7 +337,6 @@
         {/if}
         <header class="panel-app__topbar">
             <div>
-                <p class="panel-app__eyebrow">Control panel</p>
                 <h2 class="panel-app__heading">{heading}</h2>
             </div>
             <div class="panel-app__topbar-actions">

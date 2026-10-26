@@ -1,17 +1,20 @@
 ---
 import { site } from '@/data/site';
 import BrandMark from './BrandMark.astro';
+import Icon from './Icon.astro';
 
 const year = new Date().getFullYear();
 ---
 
-<footer class="site-footer">
-    <div class="site-container">
+<footer class="site-footer seal">
+    <div class="container">
         <div class="site-footer__top">
-            <div>
-                <BrandMark class="brand-mark--footer" />
-                <p class="site-footer__tagline">{site.tagline}</p>
-                <p class="site-footer__note">{site.privacyNote}</p>
+            <div class="site-footer__brand">
+                <BrandMark class="brand-mark--footer" href="/" aria-label={site.name} />
+                <div>
+                    <p class="site-footer__statement">{site.tagline}</p>
+                    <p class="site-footer__note">{site.privacyNote}</p>
+                </div>
             </div>
 
             <div class="site-footer__columns">
@@ -39,6 +42,7 @@ const year = new Date().getFullYear();
                 <div class="site-footer__links">
                     <p class="site-footer__heading">Contact</p>
                     <a href={`mailto:${site.contact.email}`} class="site-footer__link">
+                        <Icon name="mail" size={16} class="site-footer__icon" />
                         {site.contact.email}
                     </a>
                 </div>
@@ -48,6 +52,17 @@ const year = new Date().getFullYear();
         <div class="site-footer__bottom">
             <p>
                 &copy; {year} {site.name}. All rights reserved.
+            </p>
+            <p class="site-footer__credits" data-credits>
+                Photographs:{' '}
+                <a href="https://commons.wikimedia.org/wiki/File:NOIRLab_HQ_Server_Racks_(6V6A0395-CC).jpg">
+                    NOIRLab/NSF/AURA/T. Slovinský
+                </a>{' '}
+                (CC BY 4.0),{' '}
+                <a href="https://commons.wikimedia.org/wiki/File:Network_switches.jpg">
+                    ShakataGaNai
+                </a>{' '}
+                (CC BY-SA 3.0), Wikimedia Commons.
             </p>
         </div>
     </div>

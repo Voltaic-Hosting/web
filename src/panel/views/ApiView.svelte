@@ -74,7 +74,7 @@
                             </div>
                             <div class="panel-setting">
                                 <p class="panel-setting__label">Scopes</p>
-                                <p>{key.scopes.join(', ')}</p>
+                                <p class="panel-mono">{key.scopes.join(', ')}</p>
                             </div>
                         </div>
                         <div class="panel-action-row" style="margin-top: 0.75rem">
@@ -119,7 +119,8 @@
             </table>
         </div>
         <p class="panel-app__muted" style="margin-top: 0.85rem">
-            Authenticate with `Authorization: Bearer vt_live_…`. Concept docs only.
+            Authenticate with <span class="panel-mono">Authorization: Bearer vt_live_…</span>.
+            Concept docs only.
         </p>
     </PanelCard>
 </div>

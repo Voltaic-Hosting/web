@@ -1,5 +1,6 @@
 ---
 import type { BrandingAsset, BrandingFormat } from '@/data/types';
+import Icon from './Icon.astro';
 
 const formatLabels: Record<BrandingFormat, string> = {
     png: 'PNG',
@@ -18,7 +19,7 @@ const initialFormat: BrandingFormat = 'png';
 ---
 
 <article class="branding-card">
-    <div class={`branding-card__preview branding-card__preview--${asset.preview}`}>
+    <div class={`branding-card__preview branding-card__preview--${asset.preview} ticks`}>
         <img
             src={asset.formats.png}
             alt=""
@@ -31,7 +32,7 @@ const initialFormat: BrandingFormat = 'png';
         <h2 class="branding-card__title">{asset.label}</h2>
         <p class="branding-card__description">{asset.description}</p>
         <p class="branding-card__meta">
-            {formatLabels[initialFormat]} · {asset.dimensions}
+            {formatLabels[initialFormat]}, {asset.dimensions}
         </p>
         <div class="branding-format" role="group" aria-label={`${asset.label} format`}>
             {formats.map((option) => (
@@ -52,11 +53,11 @@ const initialFormat: BrandingFormat = 'png';
             class="btn btn--ghost branding-card__download"
             download
         >
+            <Icon name="download" size={16} />
             Download {formatLabels[initialFormat]}
         </a>
     </div>
 </article>
-
 <script>
     document.querySelectorAll<HTMLElement>('.branding-card').forEach((card) => {
         const meta = card.querySelector<HTMLElement>('.branding-card__meta');
@@ -73,10 +74,10 @@ const initialFormat: BrandingFormat = 'png';
 
                 const label = button.dataset.label ?? '';
                 const path = button.dataset.path ?? '#';
-                const dimensions = meta?.textContent?.split('·')[1]?.trim() ?? '';
+                const dimensions = meta?.textContent?.split(',')[1]?.trim() ?? '';
 
                 if (meta) {
-                    meta.textContent = `${label} · ${dimensions}`;
+                    meta.textContent = `${label}, ${dimensions}`;
                 }
                 if (download) {
                     download.href = path;

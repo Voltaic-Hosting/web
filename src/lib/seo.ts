@@ -8,6 +8,11 @@ export function organizationJsonLd(site: SiteConfig): Record<string, unknown> {
         name: site.seo.organization.name,
         url: site.seo.organization.url,
         email: site.seo.organization.email,
+        contactPoint: {
+            '@type': 'ContactPoint',
+            email: site.seo.organization.email,
+            contactType: 'customer support',
+        },
         logo: site.seo.organization.logo,
         description: site.seo.defaultDescription,
         ...(site.seo.organization.sameAs.length > 0
@@ -54,6 +59,39 @@ export function webPageJsonLd(
             url: site.domain,
         },
     };
+}
+
+export function servicesJsonLd(
+    site: SiteConfig,
+    services: { slug: string; title: string; summary: string }[],
+): Record<string, unknown>[] {
+    return [
+        webPageJsonLd(site, {
+            name: 'Services',
+            path: '/services',
+            description:
+                'Panel software, servers, networking, and security work. Anything marked Soon is not available yet.',
+        }),
+        {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            itemListElement: services.map((service, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                item: {
+                    '@type': 'Service',
+                    name: service.title,
+                    description: service.summary,
+                    url: `${site.domain}/services#${service.slug}`,
+                    provider: {
+                        '@type': 'Organization',
+                        name: site.seo.organization.name,
+                        url: site.seo.organization.url,
+                    },
+                },
+            })),
+        },
+    ];
 }
 
 export function faqPageJsonLd(

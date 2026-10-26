@@ -6,10 +6,11 @@ import BrandMark from './BrandMark.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 const url = Astro.url.pathname;
+const isContact = isActiveRoute(url, '/contact');
 ---
 
-<header class="site-header">
-    <div class="site-container site-header__inner">
+<header class="site-header field">
+    <div class="container site-header__inner">
         <BrandMark />
 
         <nav class="site-nav" aria-label="Primary">
@@ -22,32 +23,39 @@ const url = Astro.url.pathname;
                     {item.label}
                 </a>
             ))}
-            <a
-                href="/contact"
-                class={`nav-link${isActiveRoute(url, '/contact') ? ' is-active' : ''}`}
-                aria-current={isActiveRoute(url, '/contact') ? 'page' : undefined}
-            >
-                Contact
-            </a>
         </nav>
 
         <div class="site-header__actions">
+            <a
+                href="/contact"
+                class="btn btn--ghost site-header__contact"
+                aria-current={isContact ? 'page' : undefined}
+            >
+                Contact
+            </a>
             <ThemeToggle />
+            <button
+                type="button"
+                class="menu-toggle"
+                aria-expanded="false"
+                aria-controls="mobile-nav"
+                aria-label="Open menu"
+            >
+                <Menu
+                    size={20}
+                    aria-hidden="true"
+                    class="menu-toggle__icon menu-toggle__icon--open"
+                />
+                <X
+                    size={20}
+                    aria-hidden="true"
+                    class="menu-toggle__icon menu-toggle__icon--close"
+                />
+            </button>
         </div>
-
-        <button
-            type="button"
-            class="menu-toggle"
-            aria-expanded="false"
-            aria-controls="mobile-nav"
-            aria-label="Open menu"
-        >
-            <Menu size={20} aria-hidden="true" class="menu-toggle__icon menu-toggle__icon--open" />
-            <X size={20} aria-hidden="true" class="menu-toggle__icon menu-toggle__icon--close" />
-        </button>
     </div>
 
-    <nav id="mobile-nav" class="mobile-nav site-container" aria-label="Mobile">
+    <nav id="mobile-nav" class="mobile-nav container" aria-label="Mobile">
         {site.nav.map((item) => (
             <a
                 href={item.href}
@@ -59,8 +67,8 @@ const url = Astro.url.pathname;
         ))}
         <a
             href="/contact"
-            class={`nav-link${isActiveRoute(url, '/contact') ? ' is-active' : ''}`}
-            aria-current={isActiveRoute(url, '/contact') ? 'page' : undefined}
+            class={`nav-link${isContact ? ' is-active' : ''}`}
+            aria-current={isContact ? 'page' : undefined}
         >
             Contact
         </a>

@@ -1,6 +1,9 @@
 ---
 import PageHero from '@/components/PageHero.astro';
 import SectionAnchor from '@/components/SectionAnchor.astro';
+import ServiceCard from '@/components/ServiceCard.astro';
+import Icon from '@/components/Icon.astro';
+import { includeIcons } from '@/data/icons';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { services } from '@/data/services';
 import { site } from '@/data/site';
@@ -29,41 +32,93 @@ import { site } from '@/data/site';
         lede="Send email with your requirements, current setup, and timeline. Attach configuration details if they help."
     />
 
-    <section class="section" id="email">
-        <div class="site-container site-container--narrow">
-            <div class="info-panel">
-                <div class="info-panel__block">
-                    <p class="info-panel__label">Email</p>
-                    <p class="info-panel__value">
-                        <a href={`mailto:${site.contact.email}`} class="info-link">
-                            {site.contact.email}
-                        </a>
-                    </p>
-                    <p class="info-panel__meta">{site.contact.responseTime}</p>
-                </div>
-
-                <div class="info-panel__block" id="services">
-                    <h2 class="section__title section__title--compact">
-                        <span class="section__heading">
-                            <SectionAnchor id="services" label="Services" />
-                            Services
-                        </span>
-                    </h2>
-                    <div class="service-list">
-                        {services.map((service) => (
-                            <div class="service-list__item">
-                                <p class="service-list__title">
-                                    {service.title}
-                                    {service.badge ? (
-                                        <span class="service-list__badge">{service.badge}</span>
-                                    ) : null}
-                                </p>
-                                <p class="service-list__summary">{service.summary}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+    <section class="section field section-gap--hero section-end" id="email">
+        <div class="container">
+            <p class="contact-email-row">
+                <Icon name="mail" size={32} class="contact-email__icon" />
+                <a href={`mailto:${site.contact.email}`} class="contact-email">
+                    {site.contact.email}
+                </a>
+                <button
+                    type="button"
+                    class="btn btn--ghost contact-copy"
+                    data-copy={site.contact.email}
+                    hidden
+                >
+                    Copy address
+                </button>
+            </p>
+            <p class="contact-meta">{site.contact.responseTime}</p>
+            <p class="contact-copied" role="status" aria-live="polite" hidden>
+                Copied
+            </p>
         </div>
     </section>
+
+    <section class="section section-gap--hero" id="include">
+        <div class="container">
+            <div class="section-head">
+                <h2 class="section-head__title">What to include</h2>
+            </div>
+            <ul class="service-index">
+                {[
+                    'Your requirements',
+                    'Your current setup',
+                    'Your timeline',
+                    'Configuration details if they help',
+                ].map((item, index) => (
+                    <li class="service-index__row">
+                        <div class="service-index__inner">
+                            <h3 class="service-index__title">
+                                <Icon
+                                    name={includeIcons[index]}
+                                    size={20}
+                                    class="service-index__icon"
+                                />
+                                {item}
+                            </h3>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </section>
+
+    <section class="section section-gap" id="services">
+        <div class="container">
+            <div class="section-head">
+                <h2 class="section-head__title">
+                    <span class="section__heading">
+                        <SectionAnchor id="services" label="Services" />
+                        Services
+                    </span>
+                </h2>
+            </div>
+            <ul class="service-index">
+                {services.map((service) => (
+                    <ServiceCard service={service} />
+                ))}
+            </ul>
+        </div>
+    </section>
+    <script>
+        const copyBtn = document.querySelector<HTMLButtonElement>('.contact-copy');
+        const copied = document.querySelector<HTMLElement>('.contact-copied');
+        if (copyBtn && copied && navigator.clipboard?.writeText) {
+            copyBtn.hidden = false;
+            let timer: number | undefined;
+            copyBtn.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(copyBtn.dataset.copy ?? '');
+                    copied.hidden = false;
+                    clearTimeout(timer);
+                    timer = window.setTimeout(() => {
+                        copied.hidden = true;
+                    }, 2000);
+                } catch {
+                    copied.hidden = true;
+                }
+            });
+        }
+    </script>
 </BaseLayout>
