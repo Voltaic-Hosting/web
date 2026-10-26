@@ -10,7 +10,7 @@ export const faq: FaqContent = {
                     question: 'Can I cancel anytime?',
                     answer: [
                         'Yes. Monthly service stops when you cancel. There is no exit fee.',
-                        'If you want the same workloads on hardware you own, I help you migrate off onto your servers. Your data is not stuck in a format only Voltaic can read.',
+                        'If you want the same workloads on hardware you own, we help you migrate off onto your servers. Your data is not stuck in a format only Voltaic can read.',
                     ],
                 },
                 {
@@ -106,7 +106,7 @@ export const faq: FaqContent = {
                 {
                     question: 'Where are you based, and where do you look for facilities?',
                     answer: [
-                        'Voltaic Hosting is based in the United States. Right now I look for data center partners in the US and EU, with Asia planned for later.',
+                        'Voltaic Hosting is based in the United States. Right now we look for data center partners in the US and EU, with Asia planned for later.',
                     ],
                 },
             ],
@@ -118,13 +118,13 @@ export const faq: FaqContent = {
                     question: 'How do I get a quote or ask a question?',
                     answer: [
                         'Email team@voltaic.host with your requirements, current setup, and timeline. Attach configuration details if they help.',
-                        'I reply within two business days, Monday through Friday.',
+                        'We reply within two business days, Monday through Friday.',
                     ],
                 },
                 {
                     question: 'Who runs Voltaic Hosting?',
                     answer: [
-                        'Ivan (Sudo-Ivan). The company runs solo, so you talk to the person who builds and maintains the stack.',
+                        'Ivan (Sudo-Ivan) founded Voltaic Hosting. You talk to the people who build and maintain the stack.',
                     ],
                 },
             ],

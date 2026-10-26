@@ -17,6 +17,7 @@ export type IconName =
     | 'warehouse'
     | 'brain-circuit'
     | 'credit-card'
+    | 'receipt'
     | 'bitcoin'
     | 'undo-2'
     | 'badge-check'
@@ -69,7 +70,7 @@ export const categoryIcons: Record<string, IconName> = {
     'Server AI': 'brain-circuit',
 };
 
-export const valueIcons: IconName[] = ['undo-2', 'badge-check', 'shield'];
+export const valueIcons: IconName[] = ['undo-2', 'receipt', 'shield'];
 
 export const detailIcons: Record<string, IconName> = {
     Founder: 'user-round',
@@ -96,6 +97,6 @@ export const statusIcons: Record<number, IconName> = {
     503: 'wrench',
 };
 
-export const billingIcons: IconName[] = ['credit-card', 'bitcoin', 'undo-2'];
+export const billingIcons: IconName[] = ['credit-card', 'receipt', 'undo-2'];
 
 export const includeIcons: IconName[] = ['clipboard-list', 'server', 'calendar', 'file-sliders'];

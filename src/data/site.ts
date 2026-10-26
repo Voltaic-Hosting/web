@@ -6,7 +6,7 @@ export const site: SiteConfig = {
     domain: 'https://voltaic.host',
     contact: {
         email: 'team@voltaic.host',
-        responseTime: 'I reply within two business days, Monday through Friday.',
+        responseTime: 'We reply within two business days, Monday through Friday.',
     },
     nav: [
         {
@@ -31,10 +31,6 @@ export const site: SiteConfig = {
         },
     ],
     footerNav: [
-        {
-            label: 'FAQ',
-            href: '/faq',
-        },
         {
             label: 'Privacy',
             href: '/privacy',

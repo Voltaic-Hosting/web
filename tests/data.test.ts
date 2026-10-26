@@ -117,7 +117,7 @@ describe('site data', () => {
 
         expect(body).toContain('2013');
         expect(body).toContain('2022');
-        expect(body).toContain('solo');
+        expect(body).toContain('founder');
         expect(body).toContain('United States');
         expect(body).toContain('Monero');
         expect(body).toContain('30-day refund');

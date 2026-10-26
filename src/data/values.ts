@@ -3,7 +3,7 @@ import type { Value } from './types';
 export const values: Value[] = [
     {
         title: 'Cancel anytime',
-        body: 'Monthly service stops when you cancel. There is no exit fee and no proprietary format that traps your data in the panel. If you want the same workloads on hardware you own, I help you migrate off onto your servers.',
+        body: 'Monthly service stops when you cancel. There is no exit fee and no proprietary format that traps your data in the panel. If you want the same workloads on hardware you own, we help you migrate off onto your servers.',
     },
     {
         title: 'Quoted price is the price',
@@ -11,6 +11,6 @@ export const values: Value[] = [
     },
     {
         title: 'Privacy stays with the customer',
-        body: 'I do not sell or profile customer data. The public site has no ads, tracking pixels, or product telemetry. Real human support, no AI.',
+        body: 'We do not sell or profile customer data. The public site has no ads, tracking pixels, or product telemetry. Real human support, no AI.',
     },
 ];

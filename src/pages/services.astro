@@ -1,8 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import PageHero from '@/components/PageHero.astro';
 import SectionAnchor from '@/components/SectionAnchor.astro';
-import ServiceCard from '@/components/ServiceCard.astro';
 import CtaPanel from '@/components/CtaPanel.astro';
 import Icon from '@/components/Icon.astro';
 import Button from '@/components/Button.astro';
@@ -10,18 +8,30 @@ import { services } from '@/data/services';
 import { site } from '@/data/site';
 import { servicesJsonLd } from '@/lib/seo';
 import { sectionId } from '@/lib/sectionId';
-import { billingIcons, categoryIcons } from '@/data/icons';
+import { billingIcons, categoryIcons, serviceIcons } from '@/data/icons';
 import type { ServiceCategory, Service } from '@/data/types';
 
 const lede =
     'Panel software, servers, networking, and security work. Anything marked Soon is not available yet.';
 const categories: ServiceCategory[] = [
     'Software',
-    'Networking',
     'Security',
+    'Networking',
     'Facilities',
     'Server AI',
 ];
+const byCategory = (category: ServiceCategory) =>
+    services.filter((service: Service) => service.category === category);
+const ask = (title: string) => `mailto:${site.contact.email}?subject=${encodeURIComponent(title)}`;
+const countLine = (n: number) => `${n} ${n === 1 ? 'service' : 'services'}`;
+
+const software = byCategory('Software');
+const security = byCategory('Security');
+const networking = byCategory('Networking');
+const facilities = byCategory('Facilities');
+const serverAi = byCategory('Server AI');
+const lead = software.find((service) => service.slug === 'voltaic-panel')!;
+const softwareTiles = software.filter((service) => service.slug !== 'voltaic-panel');
 
 const billing = [
     {
@@ -45,44 +55,226 @@ const billing = [
     path="/services"
     jsonLd={servicesJsonLd(site, services)}
 >
-    <PageHero id="services" title="Services" lede={lede}>
-        <Button href="/contact" slot="actions">
-            Contact
-        </Button>
-    </PageHero>
-
-    {categories.map((category) => {
-        const id = sectionId(category);
-        const list = services.filter((service: Service) => service.category === category);
-        return (
-            <section class="section section-gap" id={id}>
-                <div class="container">
-                    <div class="section-head">
-                        <h2 class="section-head__title">
-                            <span class="section__heading">
-                                <SectionAnchor id={id} label={category} />
-                                <Icon name={categoryIcons[category]} size={24} class="icon--head" />
-                                {category}
-                            </span>
-                        </h2>
-                    </div>
-                    <ul class="service-index">
-                        {list.map((service) => (
-                            <ServiceCard service={service} />
-                        ))}
-                    </ul>
+    <section class="page-hero field">
+        <div class="container page-hero__head">
+            <div class="page-hero__title-col">
+                <h1 class="page-hero__title">
+                    <span class="section__heading">
+                        <SectionAnchor id="services" label="Services" />
+                        Services
+                    </span>
+                </h1>
+                <p class="page-hero__lede">{lede}</p>
+                <div class="page-hero__actions">
+                    <Button href="/contact">Contact</Button>
                 </div>
-            </section>
-        );
-    })}
+            </div>
+            <nav class="jump-index" aria-label="Service categories">
+                {categories.map((category) => (
+                    <a class="jump-index__cell" href={`#c-${sectionId(category)}`}>
+                        <Icon name={categoryIcons[category]} size={28} />
+                        <span class="jump-index__name">{category}</span>
+                        <span class="jump-index__count">
+                            {countLine(byCategory(category).length)}
+                        </span>
+                    </a>
+                ))}
+            </nav>
+        </div>
+    </section>
 
-    <section class="section section-gap" id="billing">
+    <section class="section paper section-gap" id={`c-${sectionId('Software')}`}>
+        <div class="container">
+            <div class="section-head">
+                <h2 class="section-head__title">
+                    <span class="section__heading">
+                        <SectionAnchor id={`c-${sectionId('Software')}`} label="Software" />
+                        <Icon name={categoryIcons.Software} size={36} class="icon--head" />
+                        Software
+                    </span>
+                </h2>
+            </div>
+            <div class="bento">
+                <article class="bento__lead seal" id={lead.slug}>
+                    <h3 class="bento__lead-title">
+                        <Icon name={serviceIcons[lead.slug]} size={28} class="icon" />
+                        {lead.title}
+                    </h3>
+                    <p class="bento__lead-summary">{lead.summary}</p>
+                    <img
+                        src="/images/panel/overview.png"
+                        alt="Voltaic Panel overview with servers and health"
+                        class="bento__lead-img"
+                        width={1280}
+                        height={800}
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <div class="bento__lead-links">
+                        <a href="/panel" class="bento__link">
+                            <Icon name="layout-dashboard" size={20} />
+                            Open the panel concept
+                        </a>
+                        <a href={ask(lead.title)} class="bento__link">
+                            <Icon name="mail" size={20} />
+                            Ask about Voltaic Panel
+                        </a>
+                    </div>
+                </article>
+                <div class="bento__tiles">
+                    {softwareTiles.map((service) => (
+                        <article class="bento__tile" id={service.slug}>
+                            <h3 class="bento__title">
+                                <Icon name={serviceIcons[service.slug]} size={28} class="icon" />
+                                {service.title}
+                            </h3>
+                            <p class="bento__summary">{service.summary}</p>
+                            <a href={ask(service.title)} class="bento__link">
+                                <Icon name="mail" size={20} />
+                                Ask about {service.title}
+                            </a>
+                        </article>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section field section-gap section-end" id={`c-${sectionId('Security')}`}>
+        <div class="container">
+            <div class="section-head">
+                <h2 class="section-head__title">
+                    <span class="section__heading">
+                        <SectionAnchor id={`c-${sectionId('Security')}`} label="Security" />
+                        <Icon name={categoryIcons.Security} size={36} class="icon--head" />
+                        Security
+                    </span>
+                </h2>
+            </div>
+            <div class="security-cols">
+                {security.map((service) => (
+                    <article class="security-col" id={service.slug}>
+                        <h3 class="security-col__title">
+                            <Icon name={serviceIcons[service.slug]} size={28} class="icon" />
+                            {service.title}
+                            {service.badge ? (
+                                <span class="service-index__tag">{service.badge}</span>
+                            ) : null}
+                        </h3>
+                        <p class="security-col__summary">{service.summary}</p>
+                        <a href={ask(service.title)} class="bento__link">
+                            <Icon name="mail" size={20} />
+                            Ask about {service.title}
+                        </a>
+                    </article>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <section class="section seal section-gap section-end">
+        <div class="container split-cols">
+            <div class="split-cols__col" id={`c-${sectionId('Networking')}`}>
+                <h2 class="section-head__title section-head__title--s">
+                    <span class="section__heading">
+                        <SectionAnchor id={`c-${sectionId('Networking')}`} label="Networking" />
+                        <Icon name={categoryIcons.Networking} size={36} class="icon--head" />
+                        Networking
+                    </span>
+                </h2>
+                <ul class="split-list">
+                    {networking.map((service) => (
+                        <li class="split-list__row" id={service.slug}>
+                            <h3 class="split-list__title">
+                                <Icon name={serviceIcons[service.slug]} size={28} class="icon" />
+                                {service.title}
+                                {service.badge ? (
+                                    <span class="service-index__tag">{service.badge}</span>
+                                ) : null}
+                            </h3>
+                            <p class="split-list__summary">{service.summary}</p>
+                            <a href={ask(service.title)} class="bento__link">
+                                <Icon name="mail" size={20} />
+                                Ask about {service.title}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div class="split-cols__col" id={`c-${sectionId('Facilities')}`}>
+                <h2 class="section-head__title section-head__title--s">
+                    <span class="section__heading">
+                        <SectionAnchor id={`c-${sectionId('Facilities')}`} label="Facilities" />
+                        <Icon name={categoryIcons.Facilities} size={36} class="icon--head" />
+                        Facilities
+                    </span>
+                </h2>
+                <ul class="split-list">
+                    {facilities.map((service) => (
+                        <li class="split-list__row" id={service.slug}>
+                            <h3 class="split-list__title">
+                                <Icon name={serviceIcons[service.slug]} size={28} class="icon" />
+                                {service.title}
+                                {service.badge ? (
+                                    <span class="service-index__tag">{service.badge}</span>
+                                ) : null}
+                            </h3>
+                            <p class="split-list__summary">{service.summary}</p>
+                            <a href={ask(service.title)} class="bento__link">
+                                <Icon name="mail" size={20} />
+                                Ask about {service.title}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="section paper section-gap section-end" id={`c-${sectionId('Server AI')}`}>
+        <div class="container ai-split" id={serverAi[0]?.slug ?? 'server-ai'}>
+            <div class="ai-split__copy">
+                <h2 class="section-head__title">
+                    <span class="section__heading">
+                        <SectionAnchor id={`c-${sectionId('Server AI')}`} label="Server AI" />
+                        <Icon name={categoryIcons['Server AI']} size={36} class="icon--head" />
+                        Server AI
+                    </span>
+                </h2>
+                <p class="ai-statement">{serverAi[0]?.summary}</p>
+                <div class="section-head__actions">
+                    <Button href={ask('Server AI')}>
+                        <Icon name="mail" size={18} />
+                        Email about Server AI
+                    </Button>
+                </div>
+            </div>
+            <ul class="ai-list">
+                <li class="ai-item">
+                    <h3 class="ai-item__title">
+                        <Icon name="server" size={24} class="icon" />
+                        Sysadmin tasks
+                    </h3>
+                    <p>Local AI that runs on your servers and helps with administration.</p>
+                </li>
+                <li class="ai-item">
+                    <h3 class="ai-item__title">
+                        <Icon name="shield-check" size={24} class="icon" />
+                        Security
+                    </h3>
+                    <p>Local AI that runs on your servers and helps with security work.</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="section seal section-gap section-end" id="billing">
         <div class="container">
             <div class="section-head">
                 <h2 class="section-head__title">
                     <span class="section__heading">
                         <SectionAnchor id="billing" label="Billing" />
-                        <Icon name="credit-card" size={24} class="icon--head" />
+                        <Icon name="credit-card" size={36} class="icon--head" />
                         Billing
                     </span>
                 </h2>
@@ -94,7 +286,7 @@ const billing = [
                             <h3 class="service-index__title">
                                 <Icon
                                     name={billingIcons[index]}
-                                    size={20}
+                                    size={24}
                                     class="service-index__icon"
                                 />
                                 {row.title}
@@ -107,12 +299,12 @@ const billing = [
         </div>
     </section>
 
-    <section class="section section-gap" id="contact">
+    <section class="section" id="contact">
         <div class="close-band field">
             <div class="container">
                 <CtaPanel
                     title="Request information"
-                    body="Email me with your current environment and requirements. I reply within two business days on weekdays."
+                    body="Email us with your current environment and requirements. We reply within two business days on weekdays."
                     anchorId="contact"
                 />
             </div>
