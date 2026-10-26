@@ -3,8 +3,8 @@
 # Voltaic Hosting website
 # Multi-stage, rootless, digest-pinned images
 
-ARG NODE_IMAGE=node:22-alpine@sha256:ce8d97f7cfc7c5386421eb932df20a29df99b1a7f469f6157d5c9956702ffadc
-ARG NGINX_IMAGE=docker.io/nginxinc/nginx-unprivileged:1.29-alpine@sha256:0c79d56aee561a1d81c63f00eee5fb5fe29279560cdc55e91425133104c7fbe6
+ARG NODE_IMAGE=node:24-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53
+ARG NGINX_IMAGE=docker.io/nginxinc/nginx-unprivileged:1.31-alpine@sha256:b5047b9b76845eac124358373c6852377c52e4b05834a47647e955dd91cb8f1e
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -22,7 +22,7 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     PATH="/pnpm:$PATH"
 
 RUN corepack enable \
-    && corepack prepare pnpm@12.14.0 --activate
+    && corepack prepare pnpm@12.15.0 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
@@ -54,8 +54,8 @@ LABEL org.opencontainers.image.title="Voltaic Hosting Website" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.revision="${VCS_REF}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.base.name="nginxinc/nginx-unprivileged:1.29-alpine" \
-      org.opencontainers.image.base.digest="sha256:0c79d56aee561a1d81c63f00eee5fb5fe29279560cdc55e91425133104c7fbe6"
+      org.opencontainers.image.base.name="nginxinc/nginx-unprivileged:1.31-alpine" \
+      org.opencontainers.image.base.digest="sha256:b5047b9b76845eac124358373c6852377c52e4b05834a47647e955dd91cb8f1e"
 
 USER root
 
