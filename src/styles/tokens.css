@@ -62,11 +62,13 @@
         --color-rule: oklch(24.1% 0.009 286);
         --color-rule-2: oklch(20.2% 0.008 286);
         --color-rule-strong: oklch(28.8% 0.013 286);
-        --color-field: oklch(96.7% 0.001 286);
-        --color-field-2: oklch(92% 0.005 286);
-        --color-field-ink: oklch(14.5% 0.002 286);
-        --color-field-ink-2: oklch(27.4% 0.005 286);
-        --color-field-rule: oklch(14.5% 0.002 286);
+        --color-light: oklch(96.7% 0.001 286);
+        --color-light-ink: oklch(14.5% 0.002 286);
+        --color-field: oklch(22.5% 0.008 286);
+        --color-field-2: oklch(26.5% 0.009 286);
+        --color-field-ink: oklch(95% 0.003 286);
+        --color-field-ink-2: oklch(84% 0.007 286);
+        --color-field-rule: oklch(50% 0.014 286);
         --color-accent: var(--color-ink);
         --color-accent-ink: var(--color-paper);
         --color-focus: var(--color-ink);

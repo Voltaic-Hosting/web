@@ -70,7 +70,7 @@
         --color-surface-muted: var(--color-seal-muted);
         --color-surface-rule: var(--color-seal-rule);
         --color-surface-well: var(--color-seal-2);
-        --color-focus: var(--color-field);
+        --color-focus: var(--color-light);
         background: var(--color-seal);
         color: var(--color-seal-ink);
     }
@@ -134,24 +134,22 @@
         border-color: transparent;
     }
 
-    .field .btn--solid,
-    .btn--seal {
-        background: var(--color-seal);
-        color: var(--color-field);
-        border-color: var(--color-seal);
-    }
-
-    .field .btn--solid:hover,
-    .btn--seal:hover {
+    .field .btn--solid {
         background: var(--color-field-ink);
         color: var(--color-field);
         border-color: var(--color-field-ink);
     }
 
+    .field .btn--solid:hover {
+        background: var(--color-field-ink-2);
+        color: var(--color-field);
+        border-color: var(--color-field-ink-2);
+    }
+
     .seal .btn--solid {
-        background: var(--color-field);
-        color: var(--color-field-ink);
-        border-color: var(--color-field);
+        background: var(--color-light);
+        color: var(--color-light-ink);
+        border-color: var(--color-light);
     }
 
     .seal .btn--solid:hover {
@@ -208,7 +206,7 @@
         position: sticky;
         top: 0;
         z-index: var(--z-sticky-nav);
-        border-bottom: var(--rule-heavy) solid var(--color-field-ink);
+        border-bottom: var(--rule-heavy) solid var(--color-field-rule);
     }
 
     .site-header__inner {
@@ -287,7 +285,7 @@
         justify-content: center;
         width: 44px;
         height: 44px;
-        border: var(--rule-heavy) solid var(--color-field-ink);
+        border: var(--rule-heavy) solid var(--color-field-rule);
         background: transparent;
         color: var(--color-field-ink);
         cursor: pointer;
@@ -317,7 +315,7 @@
 
     .mobile-nav {
         display: none;
-        border-top: var(--rule-heavy) solid var(--color-field-ink);
+        border-top: var(--rule-heavy) solid var(--color-field-rule);
     }
 
     .mobile-nav.is-open {
@@ -327,7 +325,7 @@
     .mobile-nav__link {
         display: block;
         padding: var(--space-md) var(--gutter);
-        border-bottom: var(--rule-heavy) solid var(--color-field-ink);
+        border-bottom: var(--rule-heavy) solid var(--color-field-rule);
         color: var(--color-field-ink);
         font-size: var(--text-lg);
         font-weight: 600;
@@ -441,7 +439,7 @@
 
     /* ============ PageHero ============ */
     .page-hero {
-        border-bottom: var(--rule-heavy) solid var(--color-field-ink);
+        border-bottom: var(--rule-heavy) solid var(--color-field-rule);
         padding-block: var(--space-3xl) var(--space-2xl);
     }
 
@@ -534,7 +532,7 @@
         outline: var(--rule-heavy) solid var(--color-field);
         outline-offset: 0;
         height: var(--panel-h);
-        border: var(--rule-heavy) solid var(--color-field-ink);
+        border: var(--rule-heavy) solid var(--color-field-rule);
         background: var(--color-seal);
         overflow: hidden;
     }
@@ -589,7 +587,7 @@
     }
 
     .cap-cell .icon {
-        color: var(--color-field);
+        color: var(--color-light);
     }
 
     /* ============ Showcase shots ============ */
@@ -1359,7 +1357,7 @@
     /* ============ Duotone ============ */
     .mono-photo {
         margin: 0;
-        background: var(--color-field);
+        background: var(--color-paper-3);
         border: 1px solid var(--color-rule);
         border-radius: var(--radius-card);
         aspect-ratio: 3 / 2;
@@ -1392,7 +1390,7 @@
     /* ============ Close band ============ */
     .close-band {
         padding-block: var(--space-3xl);
-        border-block: var(--rule-heavy) solid var(--color-field-ink);
+        border-block: var(--rule-heavy) solid var(--color-field-rule);
     }
 
     .cta-panel {
@@ -1511,7 +1509,7 @@
         align-items: center;
         min-height: 52px;
         padding: var(--space-sm) var(--space-lg);
-        border: var(--rule-heavy) solid var(--color-field-ink);
+        border: var(--rule-heavy) solid var(--color-field-rule);
         color: var(--color-field-ink);
         font-weight: 600;
         text-decoration: none;
@@ -1761,8 +1759,8 @@
     }
 
     .branding-card__preview--field {
-        color: var(--color-field-ink);
-        background: var(--color-field);
+        color: var(--color-light-ink);
+        background: var(--color-light);
     }
 
     /* ============ Prose (legal) ============ */
@@ -1843,7 +1841,7 @@
 
     .error-page__nav {
         margin-top: var(--space-2xl);
-        border-top: var(--rule-heavy) solid var(--color-field-ink);
+        border-top: var(--rule-heavy) solid var(--color-field-rule);
         padding-top: var(--space-lg);
     }
 
@@ -1871,7 +1869,7 @@
     /* ============ Footer ============ */
     .site-footer {
         margin-top: auto;
-        border-top: var(--rule-heavy) solid var(--color-field);
+        border-top: var(--rule-heavy) solid var(--color-seal-rule);
     }
 
     .site-footer__top {
@@ -1940,7 +1938,7 @@
         justify-content: space-between;
         gap: var(--space-sm) var(--space-xl);
         padding-block: var(--space-lg);
-        border-top: var(--rule-heavy) solid var(--color-field);
+        border-top: var(--rule-heavy) solid var(--color-seal-rule);
         font-size: var(--text-sm);
     }
 

@@ -43,7 +43,7 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#101013" />
+        <meta name="theme-color" content="#1b1b1f" />
         <meta name="color-scheme" content="dark light" />
         <script is:inline>
             (function () {
@@ -61,7 +61,7 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
                 var themeColor = document.querySelector('meta[name="theme-color"]');
                 if (themeColor) {
-                    themeColor.setAttribute('content', theme === 'dark' ? '#101013' : '#fafafa');
+                    themeColor.setAttribute('content', theme === 'dark' ? '#1b1b1f' : '#e4e4e8');
                 }
             })();
         </script>
