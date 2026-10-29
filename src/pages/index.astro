@@ -219,14 +219,21 @@ const indexOrder: ServiceCategory[] = [
                 </ul>
             </div>
             <figure class="values-split__media mono-photo mono-photo--tall" data-slot="values">
-                <img
-                    src="/images/photos/network-switches-1920.jpg"
-                    alt="Blue and grey ethernet cables plugged into switch ports"
-                    width={1920}
-                    height={1277}
-                    loading="lazy"
-                    decoding="async"
-                />
+                <picture>
+                    <source
+                        type="image/webp"
+                        srcset="/images/photos/network-switches-960.webp 960w, /images/photos/network-switches-1440.webp 1440w, /images/photos/network-switches-1920.webp 1920w"
+                        sizes="(max-width: 60rem) calc(100vw - 32px), (max-width: 1440px) calc((100vw - 128px) / 2), 640px"
+                    />
+                    <img
+                        src="/images/photos/network-switches-1920.jpg"
+                        alt="Blue and grey ethernet cables plugged into switch ports"
+                        width={1920}
+                        height={1277}
+                        loading="lazy"
+                        decoding="async"
+                    />
+                </picture>
             </figure>
         </div>
     </section>

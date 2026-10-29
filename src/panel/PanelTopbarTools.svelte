@@ -59,7 +59,7 @@
         class="panel-app__clock panel-mono"
         aria-label="Current time in {timezone}. Open to change timezone."
     >
-        {timeIn(timezone)}
+        <span class="panel-app__clock-time">{timeIn(timezone)}</span>
     </summary>
     <div class="panel-clock-menu__panel" role="listbox" aria-label="Timezone">
         {#each timezones as zone (zone)}

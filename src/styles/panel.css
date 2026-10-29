@@ -19,6 +19,7 @@
     .panel-app__nav,
     .panel-raw-log,
     .panel-table-wrap {
+        overflow-x: auto;
         scrollbar-width: thin;
         scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
     }
@@ -89,6 +90,7 @@
     }
 
     .panel-app {
+        container-type: inline-size;
         display: grid;
         grid-template-columns: 17rem minmax(0, 1fr);
         position: relative;
@@ -444,6 +446,11 @@
         display: grid;
         gap: 1rem;
         overflow: visible;
+        min-width: 0;
+    }
+
+    .panel-uptime-detail > * {
+        min-width: 0;
     }
 
     .panel-uptime-detail__grid {
@@ -686,7 +693,12 @@
 
     .panel-stack {
         display: grid;
+        grid-template-columns: minmax(0, 1fr);
         gap: 1rem;
+    }
+
+    .panel-stack > * {
+        min-width: 0;
     }
 
     .panel-stat-grid {
@@ -723,9 +735,15 @@
     .panel-split {
         display: grid;
         gap: 0.85rem;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .panel-split > * {
+        min-width: 0;
     }
 
     .panel-card {
+        min-width: 0;
         padding: 1rem;
         border: 1px solid color-mix(in oklab, var(--panel-line) 18%, transparent);
         border-radius: 0.55rem;
@@ -746,6 +764,7 @@
     }
 
     .panel-table-wrap {
+        overflow-x: auto;
         overflow-x: auto;
     }
 
@@ -1307,13 +1326,20 @@
     }
 
     .panel-filter-row {
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
         display: flex;
         flex-wrap: wrap;
         gap: 0.4rem;
     }
 
     .panel-filter {
-        min-height: 2rem;
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 2.75rem;
         padding: 0.3rem 0.7rem;
         border: 1px solid color-mix(in oklab, var(--panel-line) 22%, transparent);
         border-radius: 0.3rem;
@@ -2976,6 +3002,7 @@
         }
 
         .panel-table-wrap {
+            overflow-x: auto;
             margin-inline: -0.15rem;
             -webkit-overflow-scrolling: touch;
         }
@@ -2991,6 +3018,7 @@
         }
 
         .panel-filter-row {
+            min-width: 0;
             overflow-x: auto;
             flex-wrap: nowrap;
             -webkit-overflow-scrolling: touch;
@@ -3035,7 +3063,22 @@
         }
     }
 
+    @media (max-width: 860px) {
+        .panel-uptime-layout,
+        .panel-files-layout,
+        .panel-locations-layout,
+        .panel-docs-shell,
+        .panel-filter-row {
+            min-width: 0;
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
     @media (max-width: 480px) {
+        .panel-uptime-detail__grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
         .panel-app__mobile-bar {
             padding-inline: 0.65rem;
             gap: 0.4rem;
@@ -3055,6 +3098,24 @@
             padding-inline: 0.45rem;
         }
 
+        .panel-clock-menu__zone {
+            min-width: 0;
+            max-width: 100%;
+            min-height: 2.75rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .panel-clock-menu__panel,
+        .panel-chat-convo,
+        .panel-chat-convo__body,
+        .panel-chat-convo__row {
+            max-width: 100%;
+            min-width: 0;
+            overflow: hidden;
+        }
+
         .panel-app__heading {
             font-size: 1.05rem;
         }
@@ -3072,7 +3133,7 @@
         }
 
         .panel-mini-btn {
-            min-height: 2.4rem;
+            min-height: 2.75rem;
         }
 
         .panel-popover__panel,
@@ -3081,6 +3142,86 @@
             left: 0.5rem;
             right: 0.5rem;
             bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+        }
+    }
+
+    @container (max-width: 420px) {
+        .panel-app__topbar {
+            gap: 0.5rem;
+        }
+
+        .panel-app__topbar > div:first-child {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        .panel-app__heading {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .panel-app__topbar-actions {
+            flex-shrink: 0;
+            gap: 0.5rem;
+        }
+
+        .panel-app__clock {
+            width: 2.75rem;
+            min-width: 2.75rem;
+            height: 2.75rem;
+            padding: 0;
+            display: grid;
+            place-items: center;
+        }
+
+        .panel-app__clock-time {
+            display: none;
+        }
+
+        .panel-app__clock::before {
+            content: 'TZ';
+            font-size: var(--panel-text-xs);
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .panel-icon-btn {
+            flex-shrink: 0;
+            min-width: 2.75rem;
+            min-height: 2.75rem;
+        }
+    }
+
+    @container (max-width: 380px) {
+        .panel-app__mobile-bar {
+            gap: 0.375rem;
+        }
+
+        .panel-app__mark {
+            display: none;
+        }
+
+        .panel-app__mobile-brand {
+            gap: 0.375rem;
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        .panel-app__mobile-brand > div {
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .panel-app__mobile-brand .panel-app__brand-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .panel-app__mobile-tools {
+            flex-shrink: 0;
+            gap: 0.375rem;
         }
     }
 }

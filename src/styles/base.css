@@ -12,7 +12,7 @@
 
     html {
         scrollbar-color: var(--color-muted) var(--color-paper);
-        scroll-padding-top: var(--space-3xl);
+        scroll-padding-top: var(--header-h);
     }
 
     body {
@@ -108,19 +108,27 @@
     @media (max-width: 60rem) {
         :root {
             --gutter: 24px;
-            --section-gap-s: 80px;
-            --section-gap: 96px;
-            --section-gap-l: 120px;
+            --section-gap-s: 64px;
+            --section-gap: 72px;
+            --section-gap-l: 88px;
         }
     }
 
     @media (max-width: 40rem) {
         :root {
-            --gutter: 16px;
-            --section-gap-s: 56px;
-            --section-gap: 72px;
-            --section-gap-l: 96px;
+            --gutter: 24px;
+            --section-gap-s: 48px;
+            --section-gap: 56px;
+            --section-gap-l: 64px;
             --gap-columns: 16px;
+            --space-3xl: 48px;
+            --space-4xl: 64px;
+        }
+    }
+
+    @media (max-width: 22.5rem) {
+        :root {
+            --gutter: 20px;
         }
     }
 

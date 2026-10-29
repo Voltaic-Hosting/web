@@ -33,7 +33,7 @@ const isContact = isActiveRoute(url, '/contact');
             >
                 Contact
             </a>
-            <ThemeToggle />
+            <ThemeToggle class="site-header__toggle" />
             <button
                 type="button"
                 class="menu-toggle"
@@ -42,12 +42,12 @@ const isContact = isActiveRoute(url, '/contact');
                 aria-label="Open menu"
             >
                 <Menu
-                    size={20}
+                    size={22}
                     aria-hidden="true"
                     class="menu-toggle__icon menu-toggle__icon--open"
                 />
                 <X
-                    size={20}
+                    size={22}
                     aria-hidden="true"
                     class="menu-toggle__icon menu-toggle__icon--close"
                 />
@@ -55,26 +55,28 @@ const isContact = isActiveRoute(url, '/contact');
         </div>
     </div>
 
-    <nav id="mobile-nav" class="mobile-nav container" aria-label="Mobile">
-        {site.nav.map((item) => (
+    <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile" hidden>
+        <div class="mobile-nav__inner">
+            {site.nav.map((item) => (
+                <a
+                    href={item.href}
+                    class={`mobile-nav__link${isActiveRoute(url, item.href) ? ' is-active' : ''}`}
+                    aria-current={isActiveRoute(url, item.href) ? 'page' : undefined}
+                >
+                    {item.label}
+                </a>
+            ))}
             <a
-                href={item.href}
-                class={`nav-link${isActiveRoute(url, item.href) ? ' is-active' : ''}`}
-                aria-current={isActiveRoute(url, item.href) ? 'page' : undefined}
+                href="/contact"
+                class="btn btn--seal mobile-nav__contact"
+                aria-current={isContact ? 'page' : undefined}
             >
-                {item.label}
+                Contact
             </a>
-        ))}
-        <a
-            href="/contact"
-            class={`nav-link${isContact ? ' is-active' : ''}`}
-            aria-current={isContact ? 'page' : undefined}
-        >
-            Contact
-        </a>
-        <div class="mobile-nav__theme">
-            <span class="mobile-nav__theme-label">Theme</span>
-            <ThemeToggle />
+            <div class="mobile-nav__theme">
+                <span class="mobile-nav__theme-label">Theme</span>
+                <ThemeToggle />
+            </div>
         </div>
     </nav>
 </header>
@@ -97,26 +99,64 @@ const isContact = isActiveRoute(url, '/contact');
     const header = document.querySelector<HTMLElement>('.site-header');
     const menuToggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
     const mobileNav = document.getElementById('mobile-nav');
+    const main = document.querySelector('main');
+    const footer = document.querySelector('footer');
 
-    menuToggle?.addEventListener('click', () => {
-        const open = !mobileNav?.classList.contains('is-open');
+    function setOpen(open: boolean): void {
+        if (!mobileNav || !menuToggle || !header) return;
 
-        mobileNav?.classList.toggle('is-open', open);
-        if (open) {
-            header?.setAttribute('data-menu-open', '');
-        } else {
-            header?.removeAttribute('data-menu-open');
-        }
+        mobileNav.classList.toggle('is-open', open);
+        mobileNav.hidden = !open;
+        header.toggleAttribute('data-menu-open', open);
         menuToggle.setAttribute('aria-expanded', String(open));
         menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        document.documentElement.classList.toggle('menu-open', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+        main?.toggleAttribute('inert', open);
+        footer?.toggleAttribute('inert', open);
+
+        if (open) {
+            mobileNav.querySelector<HTMLElement>('a, button')?.focus();
+        } else {
+            menuToggle.focus();
+        }
+    }
+
+    menuToggle?.addEventListener('click', () => {
+        setOpen(mobileNav?.hidden !== false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && mobileNav?.classList.contains('is-open')) {
+            setOpen(false);
+            return;
+        }
+
+        if (event.key === 'Tab' && mobileNav?.classList.contains('is-open')) {
+            const focusable = mobileNav.querySelectorAll<HTMLElement>(
+                'a[href], button:not([disabled])',
+            );
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (!first || !last) return;
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        }
     });
 
     mobileNav?.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', () => {
-            mobileNav.classList.remove('is-open');
-            header?.removeAttribute('data-menu-open');
-            menuToggle?.setAttribute('aria-expanded', 'false');
-            menuToggle?.setAttribute('aria-label', 'Open menu');
-        });
+        link.addEventListener('click', () => setOpen(false));
+    });
+
+    const mq = window.matchMedia('(min-width: 60rem)');
+    mq.addEventListener('change', (event) => {
+        if (event.matches && mobileNav?.classList.contains('is-open')) {
+            setOpen(false);
+        }
     });
 </script>
