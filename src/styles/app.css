@@ -2119,6 +2119,10 @@
             display: inline-flex;
         }
 
+        .site-nav + .site-header__actions {
+            margin-inline-start: auto;
+        }
+
         .site-header__contact,
         .site-header__toggle {
             display: none;
