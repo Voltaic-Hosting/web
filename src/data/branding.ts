@@ -79,7 +79,7 @@ export const branding: BrandingContent = {
             key: 'favicon-32',
             label: 'Favicon 32',
             description:
-                'Browser tab icon with a transparent background. Same mark as the source logo.',
+                'Browser tab icon on the light field. Readable on light and dark browser chrome.',
             formats: {
                 png: '/brand/favicon-32.png',
                 jpg: '/brand/favicon-32.jpg',

@@ -1,21 +1,28 @@
 import type { AboutContent } from './types';
 
 export const about: AboutContent = {
-    intro: 'Voltaic Hosting was created by Ivan (Sudo-Ivan). Voltaic Hosting develops server and data center software, secures servers for hosting providers, and builds local server AI for sysadmin tasks and security. We build hosting software and work with infrastructure partners so you can run servers, leave when you want, and keep control of your stack.',
+    intro: 'Voltaic Hosting was created by Ivan (Sudo-Ivan). We build the software and run the servers behind game server hosting, website hosting, and private server panels, plus infrastructure software for hosting providers and data centers. You can rent from us or run the server agent on your own hardware.',
     sections: [
         {
             title: 'How it started',
             paragraphs: [
                 'We have wanted to host servers for other people since 2013, when our founder was a kid trying to run Minecraft servers. Even then the job was the same: keep the machine online, make sure backups actually restore, and give the people using the server a real person to talk to when something breaks instead of a support queue that never answers.',
                 'That early work turned into years of learning systems and software development. Networking, firewalls, virtualization, and the quiet routines that keep machines healthy became the foundation. Voltaic Hosting became a real project in 2022. We run it directly, which means you talk to the people who build and maintain the stack.',
-                'We write hosting software for paying customers and for open-source community projects. The same tools should work for a hosting provider, a data center operator, or a community running gear on a budget. If the software only works when you stay locked into one vendor, it is not good enough.',
+                'We write hosting software for paying customers and for open-source community projects. The same tools should work for a weekend Minecraft group, a small business site, or a hosting provider running hundreds of customers. If the software only works when you stay locked into one vendor, it is not good enough.',
+            ],
+        },
+        {
+            title: 'What we build',
+            paragraphs: [
+                'For players and site owners, that means game servers, website hosting, and the Voltaic Panel: one dashboard for consoles, files, backups, firewall rules, and team access. For businesses and infrastructure teams, it means custom software, MicroVMs, Moonbase private networking, firewall and security work, and local server AI for sysadmin tasks.',
+                "Everything runs on the same foundation. Your game server and a hosting provider's fleet are managed by the same panel, backed up the same way, and supported by the same people.",
             ],
         },
         {
             title: 'Infrastructure partners',
             paragraphs: [
                 'Voltaic Hosting is based in the United States. Right now we look for data center partners in the US and EU, with Asia planned for later. We care about facilities that treat power, physical access, and customer data with the same seriousness as rack space. Sustainable, secure, and private servers are the bar, not a marketing line.',
-                'There is no vendor lock-in. You can migrate off at any time onto your own hardware or to another provider. You can also bring your own servers and run them with the panel. If you leave, we help you move, and your workloads are not stuck in a format only we can read. Staying should be a choice, not a trap.',
+                'There is no vendor lock-in. You can migrate off at any time onto your own hardware or to another provider. You can also bring your own servers and run them with the server agent. If you leave, we help you move, and your workloads are not stuck in a format only we can read. Staying should be a choice, not a trap.',
             ],
         },
         {

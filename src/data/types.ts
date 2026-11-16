@@ -6,6 +6,8 @@ export interface NavItem {
 export interface ContactInfo {
     email: string;
     responseTime: string;
+    /** Formbricks link-survey URL embedded on /contact. Empty hides the form. */
+    formSurveyUrl?: string;
 }
 
 export interface SiteSeo {
@@ -35,7 +37,6 @@ export interface SiteConfig {
     footerNav: NavItem[];
     privacyNote: string;
     seo: SiteSeo;
-    heroLede: string;
 }
 
 export type ServiceCategory = 'Software' | 'Networking' | 'Security' | 'Facilities' | 'Server AI';
@@ -46,6 +47,34 @@ export interface Service {
     summary: string;
     badge?: string;
     category: ServiceCategory;
+}
+
+export interface ProductFeature {
+    icon: string;
+    title: string;
+    body: string;
+}
+
+export interface ProductStep {
+    title: string;
+    body: string;
+}
+
+export interface Product {
+    slug: string;
+    title: string;
+    navLabel: string;
+    href: string;
+    icon: string;
+    headline: string;
+    lede: string;
+    metaDescription: string;
+    cardSummary: string;
+    cardPoints: string[];
+    features: ProductFeature[];
+    included: string[];
+    steps: ProductStep[];
+    games?: string[];
 }
 
 export interface Value {

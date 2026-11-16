@@ -2,10 +2,13 @@ export type IconName =
     | 'layout-dashboard'
     | 'gamepad-2'
     | 'git-branch'
+    | 'folder-git-2'
+    | 'globe'
     | 'code-xml'
     | 'server'
     | 'building'
     | 'boxes'
+    | 'container'
     | 'network'
     | 'brick-wall-shield'
     | 'radar'
@@ -24,6 +27,7 @@ export type IconName =
     | 'shield'
     | 'shield-check'
     | 'user-round'
+    | 'users'
     | 'mail'
     | 'copy'
     | 'clipboard-list'
@@ -44,17 +48,32 @@ export type IconName =
     | 'download'
     | 'circle-question-mark'
     | 'file-sliders'
-    | 'calendar';
+    | 'calendar'
+    | 'square-terminal'
+    | 'database'
+    | 'zap'
+    | 'hard-drive'
+    | 'rocket'
+    | 'life-buoy'
+    | 'message-circle'
+    | 'arrow-right'
+    | 'arrow-up-right'
+    | 'infinity'
+    | 'chevron-down';
+
+export const productIcons: Record<string, IconName> = {
+    'game-servers': 'gamepad-2',
+    websites: 'globe',
+    servers: 'server',
+};
 
 export const serviceIcons: Record<string, IconName> = {
     'voltaic-panel': 'layout-dashboard',
-    'game-servers': 'gamepad-2',
-    'git-websites': 'git-branch',
     'custom-software': 'code-xml',
     'server-hardware': 'cpu',
     'data-centers': 'warehouse',
     microvms: 'boxes',
-    'voltaic-net': 'network',
+    moonbase: 'network',
     firewall: 'brick-wall-shield',
     'wazuh-xdr': 'scan-search',
     'threat-intelligence': 'radar',
@@ -80,11 +99,11 @@ export const detailIcons: Record<string, IconName> = {
 };
 
 export const faqGroupIcons: Record<string, IconName> = {
-    'Billing and exit': 'credit-card',
-    'Panel and software': 'layout-dashboard',
-    'Privacy and security': 'shield-check',
-    'Hosting and content': 'server',
-    'Getting started': 'compass',
+    'Getting started': 'rocket',
+    'Game servers': 'gamepad-2',
+    Websites: 'globe',
+    'Your own server': 'server',
+    'Billing and privacy': 'shield-check',
 };
 
 export const statusIcons: Record<number, IconName> = {

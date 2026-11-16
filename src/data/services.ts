@@ -6,21 +6,7 @@ export const services: Service[] = [
         category: 'Software' as const,
         title: 'Voltaic Panel',
         summary:
-            'Run bare metal, containers, and MicroVMs from one interface. One-click services, game servers, website deploys from any Git repository, firewall rules, backups, an API, and team accounts.',
-    },
-    {
-        slug: 'game-servers',
-        category: 'Software' as const,
-        title: 'Game Servers',
-        summary:
-            'Install a game server from the catalog in one click. Each server has a console, file access, scheduled backups, and player controls.',
-    },
-    {
-        slug: 'git-websites',
-        category: 'Software' as const,
-        title: 'Git Website Deploys',
-        summary:
-            'Connect a Git repository and the panel builds and publishes the site. Deploys run on push or when you trigger one.',
+            'The control panel behind every Voltaic service. Bare metal, containers, MicroVMs, one-click services, game servers, Git website deploys, firewall rules, backups, an API, and team accounts. Older major versions are open source.',
     },
     {
         slug: 'custom-software',
@@ -28,6 +14,13 @@ export const services: Service[] = [
         title: 'Custom Software',
         summary:
             'Hosting and infrastructure software written for data centers, hosting providers, and open-source communities.',
+    },
+    {
+        slug: 'microvms',
+        category: 'Software' as const,
+        title: 'MicroVMs',
+        summary:
+            'Virtual machines that each run their own kernel. Workloads stay isolated without a full hypervisor stack to maintain.',
     },
     {
         slug: 'server-hardware',
@@ -45,18 +38,11 @@ export const services: Service[] = [
             'Colocation planning, rack installs, and coordination with the facility for equipment that lives outside your office.',
     },
     {
-        slug: 'microvms',
-        category: 'Software' as const,
-        title: 'MicroVMs',
-        summary:
-            'Virtual machines that each run their own kernel. Workloads stay isolated without a full hypervisor stack to maintain.',
-    },
-    {
-        slug: 'voltaic-net',
+        slug: 'moonbase',
         category: 'Networking' as const,
-        title: 'Voltaic-Net',
+        title: 'Moonbase',
         summary:
-            'Mesh WireGuard plus a reverse proxy so you can reach self-hosted services from your devices without putting them on the public internet.',
+            'A custom QUIC-based overlay network for reaching your own services and game servers without exposing them to the public internet.',
     },
     {
         slug: 'firewall',

@@ -11,6 +11,6 @@ export const values: Value[] = [
     },
     {
         title: 'Privacy stays with the customer',
-        body: 'We do not sell or profile customer data. The public site has no ads, tracking pixels, or product telemetry. Real human support, no AI.',
+        body: 'We do not sell or profile customer data. The public site has no ads, tracking pixels, or product telemetry. Human first, no AI.',
     },
 ];

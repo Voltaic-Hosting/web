@@ -2,28 +2,31 @@ import type { SiteConfig } from './types';
 
 export const site: SiteConfig = {
     name: 'Voltaic Hosting',
-    tagline: 'Sustainable. Secure. Private.',
+    tagline: 'Hosting that just works.',
     domain: 'https://voltaic.host',
     contact: {
         email: 'team@voltaic.host',
         responseTime: 'We reply within two business days, Monday through Friday.',
+        // Paste a Formbricks link-survey URL (https://…/s/…) to embed the
+        // contact form on /contact. Leave empty to show email only.
+        formSurveyUrl: '',
     },
     nav: [
         {
-            label: 'Home',
-            href: '/',
+            label: 'Game Servers',
+            href: '/game-servers',
         },
         {
-            label: 'Services',
-            href: '/services',
+            label: 'Websites',
+            href: '/websites',
         },
         {
-            label: 'Panel',
-            href: '/panel',
+            label: 'Your Server',
+            href: '/servers',
         },
         {
-            label: 'About',
-            href: '/about',
+            label: 'Business',
+            href: '/business',
         },
         {
             label: 'FAQ',
@@ -40,14 +43,14 @@ export const site: SiteConfig = {
             href: '/terms',
         },
     ],
-    privacyNote: 'No ads. No tracking. No telemetry.',
+    privacyNote: "We don't track you, display ads, or collect telemetry.",
     seo: {
         defaultTitle: 'Voltaic Hosting',
         titleSeparator: ' · ',
         defaultDescription:
-            'Server and data center software, server security for hosting providers, and local server AI for sysadmin tasks and security from Voltaic Hosting. Hosting, colocation, game servers, and Git deploys.',
+            'Game servers, website hosting, and your own private server from Voltaic Hosting. One-click setup, scheduled backups, and human-first support. No lock-in.',
         keywords:
-            'voltaic hosting, hosting, colocation, game servers, git deploy, one-click services, server hardware, MicroVMs, Wazuh, firewall, privacy, server AI, local AI, sysadmin automation, data center software, server security',
+            'game server hosting, minecraft server hosting, valheim server hosting, arma reforger, website hosting, git deploys, self hosting, voltaic panel, private server, web hosting, no lock in, data portability',
         ogImage: '/brand/og.png',
         twitterCard: 'summary_large_image',
         locale: 'en_US',
@@ -60,12 +63,14 @@ export const site: SiteConfig = {
             sameAs: [],
         },
     },
-    heroLede: 'Server and data center software.',
 } satisfies SiteConfig;
 
 export const sitemapPaths: string[] = [
     '/',
-    '/services',
+    '/game-servers',
+    '/websites',
+    '/servers',
+    '/business',
     '/about',
     '/faq',
     '/contact',
