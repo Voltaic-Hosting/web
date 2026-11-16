@@ -14,6 +14,7 @@ export default tseslint.config(
             'public/**',
             'resources/**',
             'vendor/**',
+            'docker/**',
             'tests/fixtures/**',
             '*.min.*',
         ],

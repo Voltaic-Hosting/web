@@ -10,18 +10,18 @@ Stack: Astro 7 static output + Svelte 5 islands + TypeScript 6 + Tailwind CSS 4 
 
 ### Surfaces
 
-| Surface | Route(s) | Notes |
-| --- | --- | --- |
-| Home | `/` | Services, panel showcase, values from `src/data` |
-| About | `/about` | Company and operating principles |
-| FAQ | `/faq` | Billing, panel, privacy, hosting, and support answers |
-| Contact | `/contact` | Email and service list, no form yet |
-| Branding | `/branding` | Logo downloads and usage notes |
-| Panel | `/panel` | Voltaic Panel concept UI (noindex, Svelte island) |
-| Privacy | `/privacy` | No ads, tracking, or telemetry |
-| Terms | `/terms` | Website and service terms |
-| Sitemap | `/sitemap.xml` | Public URL list for crawlers |
-| Errors | unmatched routes | `404.html` and `/errors/NNN.html` for 401, 403, 419, 429, 500, 503, wired via nginx `error_page` |
+| Surface  | Route(s)         | Notes                                                                                            |
+| -------- | ---------------- | ------------------------------------------------------------------------------------------------ |
+| Home     | `/`              | Services, panel showcase, values from `src/data`                                                 |
+| About    | `/about`         | Company and operating principles                                                                 |
+| FAQ      | `/faq`           | Billing, panel, privacy, hosting, and support answers                                            |
+| Contact  | `/contact`       | Email and service list, no form yet                                                              |
+| Branding | `/branding`      | Logo downloads and usage notes                                                                   |
+| Panel    | `/panel`         | Voltaic Panel concept UI (noindex, Svelte island)                                                |
+| Privacy  | `/privacy`       | No ads, tracking, or telemetry                                                                   |
+| Terms    | `/terms`         | Website and service terms                                                                        |
+| Sitemap  | `/sitemap.xml`   | Public URL list for crawlers                                                                     |
+| Errors   | unmatched routes | `404.html` and `/errors/NNN.html` for 401, 403, 419, 429, 500, 503, wired via nginx `error_page` |
 
 ### Layout
 
@@ -33,7 +33,7 @@ Stack: Astro 7 static output + Svelte 5 islands + TypeScript 6 + Tailwind CSS 4 
 - `src/styles/app.css` site styles for the custom monochrome theme: graphite paper, off-white field and black seal surfaces (dark default plus light mode), Satoshi display and body, surface context classes .field/.seal/.paper, panel uses a monochrome accent, `src/styles/tokens.css` colour/space/type tokens, `src/styles/base.css` element defaults scoped to `.site-shell`, `src/styles/panel.css` panel styles
 - `public` static assets: Satoshi woff2 fonts in `fonts`, photographs in `public/images/photos` (credits printed in the footer)
 - `tests` Vitest data integrity and `dist` smoke tests
-- `docker/nginx/default.conf` static site config for the container image
+- `docker/nginx/nginx.conf` static site config for the container image
 
 ## Commands
 
@@ -76,12 +76,12 @@ Reference: [no_ai_slop_writing_rules](https://github.com/realrossmanngroup/no_ai
 
 GitHub Actions workflows live in `.github/workflows/`. Actions are pinned to full commit SHAs. Dependabot opens update PRs for npm (pnpm lockfile), Docker base images, and Actions.
 
-| Workflow | Purpose |
-| --- | --- |
-| `ci.yml` | pnpm install, audit, lint, build, Vitest, dist artifact |
-| `lighthouse.yml` | Lighthouse CI (performance, accessibility, best practices, SEO) on public pages |
-| `codeql.yml` | CodeQL for JavaScript/TypeScript and workflow files (advanced setup) |
-| `dependency-review.yml` | Blocks PRs that add moderate+ severity dependency issues |
+| Workflow                | Purpose                                                                         |
+| ----------------------- | ------------------------------------------------------------------------------- |
+| `ci.yml`                | pnpm install, audit, lint, build, Vitest, dist artifact                         |
+| `lighthouse.yml`        | Lighthouse CI (performance, accessibility, best practices, SEO) on public pages |
+| `codeql.yml`            | CodeQL for JavaScript/TypeScript and workflow files (advanced setup)            |
+| `dependency-review.yml` | Blocks PRs that add moderate+ severity dependency issues                        |
 
 Workflow defaults follow GitHub's [secure use](https://docs.github.com/en/actions/reference/security/secure-use) guidance: least-privilege `permissions`, concurrency groups, and pinned third-party actions.
 

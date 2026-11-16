@@ -8,17 +8,17 @@ The site has no server-side runtime. Pages are rendered to static HTML at build 
 
 ## Pages
 
-| Route | Purpose |
-| --- | --- |
-| `/` | Home, panel showcase, services, operating principles |
-| `/about` | Company background and contact details |
-| `/faq` | Billing, panel, privacy, hosting, and support answers |
-| `/contact` | Email and service list |
-| `/branding` | Logo downloads and usage notes |
-| `/panel` | Voltaic Panel concept UI (noindex) |
-| `/privacy` | Privacy policy |
-| `/terms` | Terms of use |
-| `/sitemap.xml` | Sitemap for crawlers |
+| Route          | Purpose                                                                                              |
+| -------------- | ---------------------------------------------------------------------------------------------------- |
+| `/`            | Home, panel showcase, services, operating principles                                                 |
+| `/about`       | Company background and contact details                                                               |
+| `/faq`         | Billing, panel, privacy, hosting, and support answers                                                |
+| `/contact`     | Email and service list                                                                               |
+| `/branding`    | Logo downloads and usage notes                                                                       |
+| `/panel`       | Voltaic Panel concept UI (noindex)                                                                   |
+| `/privacy`     | Privacy policy                                                                                       |
+| `/terms`       | Terms of use                                                                                         |
+| `/sitemap.xml` | Sitemap for crawlers                                                                                 |
 | unmatched URLs | `404.html` plus `/errors/NNN.html` pages (401, 403, 419, 429, 500, 503) wired via nginx `error_page` |
 
 Site copy and navigation live in `src/data`. Pages live under `src/pages`.
@@ -59,11 +59,11 @@ pnpm run audit          # Production dependency audit
 - `src/styles` custom monochrome theme styles: `app.css` site rules with .field/.seal/.paper contexts, `tokens.css` design tokens, `base.css` element defaults, `panel.css` panel styles (yellow accent)
 - `public` static assets (brand, images, icons, robots.txt, site.webmanifest, Satoshi fonts in `fonts`, JetBrains Mono for figures, photographs in `images/photos`)
 - `tests` Vitest data integrity and build smoke tests
-- `docker` nginx config for the static container
+- `docker` nginx config and Compose files for the static container
 
 ## Deployment
 
-The `Dockerfile` builds `dist` in a Node stage and serves it with `nginxinc/nginx-unprivileged` on port 8080 as a read-only, non-root container. `docker-compose.yml` runs it locally. `docker-compose.coolify.yml` is the Coolify build pack.
+The `Dockerfile` builds `dist` in a Chainguard Node stage and serves it with `cgr.dev/chainguard/nginx` on port 8080 as a read-only, non-root (uid 65532) distroless container. `docker-compose.yml` runs it locally with Docker or Podman (`podman compose up -d --build`). `docker-compose.coolify.yml` is the Coolify build pack. For native Podman/systemd deployment, copy `deploy/voltaic-website.container` to `~/.config/containers/systemd/` (or `/etc/containers/systemd/`) and run `systemctl --user daemon-reload && systemctl --user start voltaic-website`.
 
 CI runs on push and pull requests via GitHub Actions (install, audit, lint, test, Lighthouse, CodeQL, dependency review). See `AGENTS.md` for workflow details.
 
