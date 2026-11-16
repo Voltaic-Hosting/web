@@ -1,48 +1,99 @@
 ---
+import { products } from '@/data/products';
+import { accessPoints } from '@/data/access';
 import { site } from '@/data/site';
 import BrandMark from './BrandMark.astro';
 import Icon from './Icon.astro';
+import PaymentBadges from './PaymentBadges.astro';
 
 const year = new Date().getFullYear();
+
+const companyLinks = [
+    { label: 'About', href: '/about' },
+    { label: 'FAQ', href: '/faq' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Branding', href: '/branding' },
+];
 ---
 
-<footer class="site-footer seal">
+<footer class="site-footer">
     <div class="container">
         <div class="site-footer__top">
             <div class="site-footer__brand">
-                <BrandMark class="brand-mark--footer" href="/" aria-label={site.name} />
-                <div>
-                    <p class="site-footer__statement">{site.tagline}</p>
-                    <p class="site-footer__note">{site.privacyNote}</p>
-                </div>
+                <BrandMark href="/" />
+                <p class="site-footer__tagline">{site.tagline}</p>
+                <p class="site-footer__note">{site.privacyNote}</p>
             </div>
 
-            <div class="site-footer__columns">
+            <nav class="site-footer__col" aria-label="Products">
+                <p class="site-footer__heading">Products</p>
                 <div class="site-footer__links">
-                    <p class="site-footer__heading">Site</p>
-                    {site.nav.map((item) => (
+                    {products.map((product) => (
+                        <a href={product.href} class="site-footer__link">
+                            {product.navLabel}
+                        </a>
+                    ))}
+                    <a href="/business" class="site-footer__link">
+                        Business services
+                    </a>
+                    <a href="/panel" class="site-footer__link">
+                        Panel demo
+                    </a>
+                </div>
+            </nav>
+
+            <nav class="site-footer__col" aria-label="Private access">
+                <p class="site-footer__heading">Private access</p>
+                <div class="site-footer__links">
+                    {accessPoints.map((point) => (
+                        <div
+                            class="access-item"
+                            data-access-id={point.id}
+                            title={point.description}
+                        >
+                            <span class="access-item__text">
+                                <span class="access-item__name">{point.name}</span>
+                                <span class="access-item__network">{point.network}</span>
+                                <span class="access-item__status" data-access-status>
+                                    {point.status === 'active' && point.address
+                                        ? point.address
+                                        : point.status === 'active' && point.url
+                                          ? point.url
+                                          : 'Address coming soon'}
+                                </span>
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            </nav>
+
+            <nav class="site-footer__col" aria-label="Company">
+                <p class="site-footer__heading">Company</p>
+                <div class="site-footer__links">
+                    {companyLinks.map((item) => (
                         <a href={item.href} class="site-footer__link">
                             {item.label}
                         </a>
                     ))}
-                    <a href="/branding" class="site-footer__link">
-                        Branding
-                    </a>
                 </div>
+            </nav>
 
+            <nav class="site-footer__col" aria-label="Legal">
+                <p class="site-footer__heading">Legal</p>
                 <div class="site-footer__links">
-                    <p class="site-footer__heading">Legal</p>
                     {site.footerNav.map((item) => (
                         <a href={item.href} class="site-footer__link">
                             {item.label}
                         </a>
                     ))}
                 </div>
+            </nav>
 
+            <div class="site-footer__col">
+                <p class="site-footer__heading">Contact</p>
                 <div class="site-footer__links">
-                    <p class="site-footer__heading">Contact</p>
                     <a href={`mailto:${site.contact.email}`} class="site-footer__link">
-                        <Icon name="mail" size={18} class="site-footer__icon" />
+                        <Icon name="mail" size={16} />
                         {site.contact.email}
                     </a>
                 </div>
@@ -53,17 +104,33 @@ const year = new Date().getFullYear();
             <p>
                 &copy; {year} {site.name}. All rights reserved.
             </p>
-            <p class="site-footer__credits" data-credits>
-                Photographs:{' '}
-                <a href="https://commons.wikimedia.org/wiki/File:NOIRLab_HQ_Server_Racks_(6V6A0395-CC).jpg">
-                    NOIRLab/NSF/AURA/T. Slovinský
-                </a>{' '}
-                (CC BY 4.0),{' '}
-                <a href="https://commons.wikimedia.org/wiki/File:Network_switches.jpg">
-                    ShakataGaNai
-                </a>{' '}
-                (CC BY-SA 3.0), Wikimedia Commons.
-            </p>
+            <PaymentBadges />
+            <p>Made in the USA. Run by humans.</p>
         </div>
     </div>
 </footer>
+
+<script>
+    // Fill in private-access addresses when /access.json has them.
+    // The footer renders correctly without this script.
+    fetch('/access.json')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+            if (!data || !Array.isArray(data.access)) return;
+            for (const point of data.access) {
+                const el = document.querySelector(`[data-access-id="${point.id}"]`);
+                const status = el?.querySelector('[data-access-status]');
+                if (!el || !status) continue;
+                const address = point.address ?? point.url;
+                if (point.status === 'active' && address) {
+                    status.textContent = address;
+                    const link = document.createElement('a');
+                    link.href = point.url ?? address;
+                    link.textContent = address;
+                    link.className = 'access-item__status';
+                    status.replaceWith(link);
+                }
+            }
+        })
+        .catch(() => {});
+</script>

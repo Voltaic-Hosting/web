@@ -1,20 +1,49 @@
 ---
 import { Menu, X } from '@lucide/astro';
-import { site } from '@/data/site';
+import { products } from '@/data/products';
 import { isActiveRoute } from '@/lib/url';
+import { productIcons } from '@/data/icons';
 import BrandMark from './BrandMark.astro';
+import Icon from './Icon.astro';
 import ThemeToggle from './ThemeToggle.astro';
+import type { IconName } from '@/data/icons';
 
 const url = Astro.url.pathname;
 const isContact = isActiveRoute(url, '/contact');
+const companyLinks = [
+    { label: 'Business', href: '/business' },
+    { label: 'About', href: '/about' },
+    { label: 'FAQ', href: '/faq' },
+];
 ---
 
-<header class="site-header field">
+<header class="site-header">
     <div class="container site-header__inner">
         <BrandMark />
 
         <nav class="site-nav" aria-label="Primary">
-            {site.nav.map((item) => (
+            <details class="nav-dropdown">
+                <summary class="nav-link nav-dropdown__summary">
+                    Products
+                    <Icon name="chevron-down" size={16} class="nav-dropdown__chevron" />
+                </summary>
+                <div class="nav-dropdown__menu">
+                    {products.map((product) => (
+                        <a href={product.href} class="nav-dropdown__link">
+                            <Icon
+                                name={productIcons[product.slug] as IconName}
+                                size={18}
+                                class="nav-dropdown__icon"
+                            />
+                            <span>
+                                <span class="nav-dropdown__label">{product.navLabel}</span>
+                                <span class="nav-dropdown__desc">{product.cardSummary}</span>
+                            </span>
+                        </a>
+                    ))}
+                </div>
+            </details>
+            {companyLinks.map((item) => (
                 <a
                     href={item.href}
                     class={`nav-link${isActiveRoute(url, item.href) ? ' is-active' : ''}`}
@@ -28,135 +57,95 @@ const isContact = isActiveRoute(url, '/contact');
         <div class="site-header__actions">
             <a
                 href="/contact"
-                class="btn btn--ghost site-header__contact"
+                class="btn btn--primary btn--sm site-header__contact"
                 aria-current={isContact ? 'page' : undefined}
             >
+                <Icon name="mail" size={16} />
                 Contact
             </a>
             <ThemeToggle class="site-header__toggle" />
-            <button
-                type="button"
-                class="menu-toggle"
-                aria-expanded="false"
-                aria-controls="mobile-nav"
-                aria-label="Open menu"
-            >
-                <Menu
-                    size={22}
-                    aria-hidden="true"
-                    class="menu-toggle__icon menu-toggle__icon--open"
-                />
-                <X
-                    size={22}
-                    aria-hidden="true"
-                    class="menu-toggle__icon menu-toggle__icon--close"
-                />
-            </button>
+            <details class="mobile-menu">
+                <summary class="icon-btn menu-toggle" aria-label="Menu">
+                    <Menu size={22} aria-hidden="true" class="menu-icon menu-icon--open" />
+                    <X size={22} aria-hidden="true" class="menu-icon menu-icon--close" />
+                </summary>
+                <nav class="mobile-nav" aria-label="Mobile">
+                    <div class="mobile-nav__inner">
+                        <p class="mobile-nav__label">Products</p>
+                        {products.map((product) => (
+                            <a
+                                href={product.href}
+                                class={`mobile-nav__link${isActiveRoute(url, product.href) ? ' is-active' : ''}`}
+                                aria-current={isActiveRoute(url, product.href) ? 'page' : undefined}
+                            >
+                                <Icon
+                                    name={productIcons[product.slug] as IconName}
+                                    size={20}
+                                    class="mobile-nav__icon"
+                                />
+                                {product.navLabel}
+                            </a>
+                        ))}
+                        <p class="mobile-nav__label">Company</p>
+                        {companyLinks.map((item) => (
+                            <a
+                                href={item.href}
+                                class={`mobile-nav__link${isActiveRoute(url, item.href) ? ' is-active' : ''}`}
+                                aria-current={isActiveRoute(url, item.href) ? 'page' : undefined}
+                            >
+                                {item.label}
+                            </a>
+                        ))}
+                        <a
+                            href="/contact"
+                            class="btn btn--primary mobile-nav__cta"
+                            aria-current={isContact ? 'page' : undefined}
+                        >
+                            <Icon name="mail" size={18} />
+                            Contact us
+                        </a>
+                        <div class="mobile-nav__theme">
+                            <span>Theme</span>
+                            <ThemeToggle />
+                        </div>
+                    </div>
+                </nav>
+            </details>
         </div>
     </div>
-
-    <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile" hidden>
-        <div class="mobile-nav__inner">
-            {site.nav.map((item) => (
-                <a
-                    href={item.href}
-                    class={`mobile-nav__link${isActiveRoute(url, item.href) ? ' is-active' : ''}`}
-                    aria-current={isActiveRoute(url, item.href) ? 'page' : undefined}
-                >
-                    {item.label}
-                </a>
-            ))}
-            <a
-                href="/contact"
-                class="btn btn--seal mobile-nav__contact"
-                aria-current={isContact ? 'page' : undefined}
-            >
-                Contact
-            </a>
-            <div class="mobile-nav__theme">
-                <span class="mobile-nav__theme-label">Theme</span>
-                <ThemeToggle />
-            </div>
-        </div>
-    </nav>
 </header>
 
-<style>
-    .menu-toggle__icon--close {
-        display: none;
-    }
-
-    .site-header[data-menu-open] .menu-toggle__icon--open {
-        display: none;
-    }
-
-    .site-header[data-menu-open] .menu-toggle__icon--close {
-        display: block;
-    }
-</style>
-
 <script>
+    // Progressive enhancement only. The details/summary menus work without JS.
     const header = document.querySelector<HTMLElement>('.site-header');
-    const menuToggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
-    const mobileNav = document.getElementById('mobile-nav');
-    const main = document.querySelector('main');
-    const footer = document.querySelector('footer');
+    if (header) {
+        const details = header.querySelectorAll<HTMLDetailsElement>('details');
 
-    function setOpen(open: boolean): void {
-        if (!mobileNav || !menuToggle || !header) return;
+        const closeAll = (except?: HTMLDetailsElement) => {
+            details.forEach((d) => {
+                if (d !== except) d.open = false;
+            });
+        };
 
-        mobileNav.classList.toggle('is-open', open);
-        mobileNav.hidden = !open;
-        header.toggleAttribute('data-menu-open', open);
-        menuToggle.setAttribute('aria-expanded', String(open));
-        menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-        document.documentElement.classList.toggle('menu-open', open);
-        document.body.style.overflow = open ? 'hidden' : '';
-        main?.toggleAttribute('inert', open);
-        footer?.toggleAttribute('inert', open);
+        details.forEach((d) => {
+            d.addEventListener('toggle', () => {
+                if (d.open) closeAll(d);
+            });
+        });
 
-        if (open) {
-            mobileNav.querySelector<HTMLElement>('a, button')?.focus();
-        } else {
-            menuToggle.focus();
-        }
-    }
-
-    menuToggle?.addEventListener('click', () => {
-        setOpen(mobileNav?.hidden !== false);
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && mobileNav?.classList.contains('is-open')) {
-            setOpen(false);
-            return;
-        }
-
-        if (event.key === 'Tab' && mobileNav?.classList.contains('is-open')) {
-            const focusable = mobileNav.querySelectorAll<HTMLElement>(
-                'a[href], button:not([disabled])',
-            );
-            const first = focusable[0];
-            const last = focusable[focusable.length - 1];
-            if (!first || !last) return;
-            if (event.shiftKey && document.activeElement === first) {
-                event.preventDefault();
-                last.focus();
-            } else if (!event.shiftKey && document.activeElement === last) {
-                event.preventDefault();
-                first.focus();
+        document.addEventListener('pointerdown', (event) => {
+            if (!(event.target instanceof Element) || !header.contains(event.target)) {
+                closeAll();
             }
-        }
-    });
+        });
 
-    mobileNav?.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', () => setOpen(false));
-    });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') closeAll();
+        });
 
-    const mq = window.matchMedia('(min-width: 60rem)');
-    mq.addEventListener('change', (event) => {
-        if (event.matches && mobileNav?.classList.contains('is-open')) {
-            setOpen(false);
-        }
-    });
+        const mq = window.matchMedia('(min-width: 60rem)');
+        mq.addEventListener('change', (event) => {
+            if (event.matches) closeAll();
+        });
+    }
 </script>

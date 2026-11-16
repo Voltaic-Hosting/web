@@ -3,10 +3,13 @@ import type { IconName } from '@/data/icons';
 import LayoutDashboard from '@lucide/astro/icons/layout-dashboard';
 import Gamepad2 from '@lucide/astro/icons/gamepad-2';
 import GitBranch from '@lucide/astro/icons/git-branch';
+import FolderGit2 from '@lucide/astro/icons/folder-git-2';
+import Globe from '@lucide/astro/icons/globe';
 import CodeXml from '@lucide/astro/icons/code-xml';
 import Server from '@lucide/astro/icons/server';
 import Building from '@lucide/astro/icons/building';
 import Boxes from '@lucide/astro/icons/boxes';
+import Container from '@lucide/astro/icons/container';
 import Network from '@lucide/astro/icons/network';
 import BrickWallShield from '@lucide/astro/icons/brick-wall-shield';
 import ScanSearch from '@lucide/astro/icons/scan-search';
@@ -25,6 +28,7 @@ import BadgeCheck from '@lucide/astro/icons/badge-check';
 import Shield from '@lucide/astro/icons/shield';
 import ShieldCheck from '@lucide/astro/icons/shield-check';
 import UserRound from '@lucide/astro/icons/user-round';
+import Users from '@lucide/astro/icons/users';
 import Mail from '@lucide/astro/icons/mail';
 import Copy from '@lucide/astro/icons/copy';
 import ClipboardList from '@lucide/astro/icons/clipboard-list';
@@ -46,6 +50,17 @@ import Download from '@lucide/astro/icons/download';
 import CircleQuestionMark from '@lucide/astro/icons/circle-question-mark';
 import FileSliders from '@lucide/astro/icons/file-sliders';
 import Calendar from '@lucide/astro/icons/calendar';
+import SquareTerminal from '@lucide/astro/icons/square-terminal';
+import Database from '@lucide/astro/icons/database';
+import Zap from '@lucide/astro/icons/zap';
+import HardDrive from '@lucide/astro/icons/hard-drive';
+import Rocket from '@lucide/astro/icons/rocket';
+import LifeBuoy from '@lucide/astro/icons/life-buoy';
+import MessageCircle from '@lucide/astro/icons/message-circle';
+import ArrowRight from '@lucide/astro/icons/arrow-right';
+import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
+import InfinityIcon from '@lucide/astro/icons/infinity';
+import ChevronDown from '@lucide/astro/icons/chevron-down';
 
 interface Props {
     name: IconName;
@@ -59,10 +74,13 @@ const components = {
     'layout-dashboard': LayoutDashboard,
     'gamepad-2': Gamepad2,
     'git-branch': GitBranch,
+    'folder-git-2': FolderGit2,
+    globe: Globe,
     'code-xml': CodeXml,
     server: Server,
     building: Building,
     boxes: Boxes,
+    container: Container,
     network: Network,
     'brick-wall-shield': BrickWallShield,
     'scan-search': ScanSearch,
@@ -81,6 +99,7 @@ const components = {
     shield: Shield,
     'shield-check': ShieldCheck,
     'user-round': UserRound,
+    users: Users,
     mail: Mail,
     copy: Copy,
     'clipboard-list': ClipboardList,
@@ -102,6 +121,17 @@ const components = {
     'circle-question-mark': CircleQuestionMark,
     'file-sliders': FileSliders,
     calendar: Calendar,
+    'square-terminal': SquareTerminal,
+    database: Database,
+    zap: Zap,
+    'hard-drive': HardDrive,
+    rocket: Rocket,
+    'life-buoy': LifeBuoy,
+    'message-circle': MessageCircle,
+    'arrow-right': ArrowRight,
+    'arrow-up-right': ArrowUpRight,
+    infinity: InfinityIcon,
+    'chevron-down': ChevronDown,
 } as const;
 
 const Cmp = components[name];

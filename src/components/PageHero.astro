@@ -1,43 +1,20 @@
 ---
-import SectionAnchor from './SectionAnchor.astro';
-
 interface Props {
-    id?: string;
     title: string;
     lede?: string;
-    align?: 'start' | 'center';
-    compact?: boolean;
 }
 
-const { id, title, lede, compact = false } = Astro.props;
-
-const className = ['page-hero', 'field', compact ? 'page-hero--compact' : '']
-    .filter(Boolean)
-    .join(' ');
-const anchorId = id ?? undefined;
+const { title, lede } = Astro.props;
 ---
 
-<section class={className} id={anchorId}>
+<section class="page-hero">
     <div class="container">
-        <div class="page-hero__head">
-            <h1 class="page-hero__title">
-                {anchorId ? (
-                    <span class="section__heading">
-                        <SectionAnchor id={anchorId} label={title} />
-                        {title}
-                    </span>
-                ) : (
-                    title
-                )}
-            </h1>
-            {lede || Astro.slots.has('default') ? (
-                <div class="page-hero__side">
-                    {lede ? <p class="page-hero__lede">{lede}</p> : null}
-                    {Astro.slots.has('default') ? (
-                        <div class="page-hero__actions">
-                            <slot />
-                        </div>
-                    ) : null}
+        <div class="page-hero__inner">
+            <h1 class="page-hero__title">{title}</h1>
+            {lede ? <p class="page-hero__lede">{lede}</p> : null}
+            {Astro.slots.has('default') ? (
+                <div class="page-hero__actions">
+                    <slot />
                 </div>
             ) : null}
         </div>

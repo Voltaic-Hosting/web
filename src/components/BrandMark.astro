@@ -7,10 +7,10 @@ interface Props {
 }
 
 const { href = '/', class: className = '' } = Astro.props;
-const classes = ['brand-mark', className].filter(Boolean).join(' ');
+const classes = ['brand', className].filter(Boolean).join(' ');
 ---
 
-<a href={href} class={classes}>
-    <span class="brand-mark__img" aria-hidden="true"></span>
-    <span class="brand-mark__text">{site.name}</span>
+<a href={href} class={classes} aria-label={site.name}>
+    <span class="brand__mark" aria-hidden="true"></span>
+    <span class="brand__name">{site.name}</span>
 </a>

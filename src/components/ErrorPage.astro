@@ -11,63 +11,46 @@ interface Props {
 }
 
 const { status, title, description } = Astro.props;
-const siteName = site.name;
 
 const helpfulLinks = [
     { href: '/', label: 'Home' },
     { href: '/faq', label: 'FAQ' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
-    { href: '/panel', label: 'Panel' },
 ] as const;
 ---
 
-<section class="error-page field" aria-labelledby="error-title">
+<section class="error-page" aria-labelledby="error-title">
     <div class="container">
         <p class="error-page__code" aria-hidden="true">
-            <Icon
-                name={statusIcons[status] ?? 'triangle-alert'}
-                size={48}
-                class="error-page__icon"
-            />
+            <Icon name={statusIcons[status] ?? 'triangle-alert'} size={40} />
             {status}
         </p>
         <h1 class="error-page__title" id="error-title">
             <span class="visually-hidden">Error {status}: </span>
             {title}
         </h1>
-        <p class="error-page__lede">{description}</p>
+        <p class="error-page__desc">{description}</p>
 
         <div class="error-page__actions">
             <Button href="/">Back to home</Button>
             {status === 419 ? (
-                <button type="button" class="btn btn--ghost" data-reload>
+                <a href={Astro.url.pathname} class="btn btn--secondary">
                     Refresh page
-                </button>
+                </a>
             ) : (
-                <Button href="/contact" variant="ghost">
-                    Contact {siteName}
+                <Button href="/contact" variant="secondary">
+                    Contact {site.name}
                 </Button>
             )}
         </div>
 
         <nav class="error-page__nav" aria-label="Helpful links">
-            <p class="error-page__nav-label">Helpful pages</p>
-            <ul class="error-page__nav-list">
-                {helpfulLinks.map((link) => (
-                    <li>
-                        <a href={link.href} class="error-page__nav-link">
-                            {link.label}
-                        </a>
-                    </li>
-                ))}
-            </ul>
+            {helpfulLinks.map((link) => (
+                <a href={link.href} class="site-footer__link">
+                    {link.label}
+                </a>
+            ))}
         </nav>
     </div>
 </section>
-
-{status === 419 && <script>
-    document.querySelector('[data-reload]')?.addEventListener('click', () => {
-        window.location.reload();
-    });
-</script>}
