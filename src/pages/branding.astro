@@ -1,7 +1,6 @@
 ---
-import BrandingAssetCard from '@/components/BrandingAssetCard.astro';
 import PageHero from '@/components/PageHero.astro';
-import SectionAnchor from '@/components/SectionAnchor.astro';
+import BrandingAssetCard from '@/components/BrandingAssetCard.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { branding } from '@/data/branding';
 import { site } from '@/data/site';
@@ -24,18 +23,10 @@ import { site } from '@/data/site';
         },
     }}
 >
-    <PageHero id="branding" title="Branding" lede={branding.intro} compact />
+    <PageHero title="Logo files" lede={branding.intro} />
 
-    <section class="section paper section-gap--hero" id="assets">
+    <section class="section section--s" id="assets">
         <div class="container">
-            <div class="section-head">
-                <h2 class="section-head__title">
-                    <span class="section__heading">
-                        <SectionAnchor id="assets" label="Assets" />
-                        Assets
-                    </span>
-                </h2>
-            </div>
             <div class="branding-grid">
                 {branding.assets.map((asset) => (
                     <BrandingAssetCard asset={asset} />

@@ -1,0 +1,144 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import PanelApp from '@/panel/PanelApp.svelte';
+import { products } from '@/data/products';
+import { panel } from '@/data/panel';
+import { site } from '@/data/site';
+import { webPageJsonLd } from '@/lib/seo';
+import type { GetStaticPaths } from 'astro';
+import type { IconName } from '@/data/icons';
+
+export const getStaticPaths: GetStaticPaths = () => {
+    return products.map((product) => ({
+        params: { product: product.slug },
+        props: { product },
+    }));
+};
+
+interface Props {
+    product: (typeof products)[number];
+}
+
+const { product } = Astro.props;
+const isGame = product.slug === 'game-servers';
+const isServers = product.slug === 'servers';
+---
+
+<BaseLayout
+    title={product.title}
+    description={product.metaDescription}
+    path={product.href}
+    jsonLd={webPageJsonLd(site, {
+        name: product.title,
+        path: product.href,
+        description: product.metaDescription,
+    })}
+>
+    <PageHero title={product.headline} lede={product.lede}>
+        <Button href="/contact">
+            <Icon name="mail" size={18} />
+            Get started
+        </Button>
+        <Button href="/faq" variant="secondary">
+            <Icon name="circle-question-mark" size={18} />
+            Read the FAQ
+        </Button>
+    </PageHero>
+
+    <section class="section section--s" aria-label="Features">
+        <div class="container">
+            <div class="card-grid">
+                {product.features.map((feature) => (
+                    <div class="card">
+                        <span class="card__icon">
+                            <Icon name={feature.icon as IconName} size={24} />
+                        </span>
+                        <h2 class="card__title">{feature.title}</h2>
+                        <p class="card__body">{feature.body}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    {isGame && product.games ? (
+        <section class="section section--s section--surface" aria-label="Supported games">
+            <div class="container">
+                <div class="section-head">
+                    <div class="section-head__title">
+                        <h2 class="section-title">Games in the catalog</h2>
+                    </div>
+                </div>
+                <div class="game-strip">
+                    {product.games.map((game) => (
+                        <span class="game-chip">
+                            <Icon name="gamepad-2" size={18} />
+                            {game}
+                        </span>
+                    ))}
+                </div>
+            </div>
+        </section>
+    ) : null}
+
+    <section class="section section--s" aria-label="What's included">
+        <div class="container">
+            <div class="split">
+                <div class="split__copy">
+                    <h2 class="split__title">What's included</h2>
+                    <ul class="feature-list">
+                        {product.included.map((item) => (
+                            <li>
+                                <Icon name="check" size={18} />
+                                <span>{item}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div class="split__media">
+                    <h2 class="split__title">How it works</h2>
+                    <div class="steps steps--compact">
+                        {product.steps.map((step, index) => (
+                            <div class="step">
+                                <span class="step__num">{index + 1}</span>
+                                <h3 class="step__title">{step.title}</h3>
+                                <p class="step__body">{step.body}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {isServers ? (
+        <section class="section section--s section--surface" id="demo" aria-label="Panel demo">
+            <div class="container">
+                <div class="section-head">
+                    <div class="section-head__title">
+                        <h2 class="section-title">See the panel in action</h2>
+                    </div>
+                    <p class="section-head__lede">
+                        A working concept of the dashboard your servers, sites, and services live
+                        in. Click around. It is a preview, not a live account.
+                    </p>
+                </div>
+                <div class="panel-frame">
+                    <PanelApp panel={panel} client:visible />
+                </div>
+            </div>
+        </section>
+    ) : null}
+
+    <CtaBand
+        title={`Ready for your ${product.navLabel.toLowerCase()}?`}
+        body="Email us what you want and we will reply within two business days with a setup and a monthly price."
+        actionLabel="Contact us"
+        secondaryHref="/faq"
+        secondaryLabel="Read the FAQ"
+    />
+</BaseLayout>

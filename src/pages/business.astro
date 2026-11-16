@@ -1,0 +1,163 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { services } from '@/data/services';
+import { site } from '@/data/site';
+import { servicesJsonLd } from '@/lib/seo';
+import { sectionId } from '@/lib/sectionId';
+import { categoryIcons, serviceIcons } from '@/data/icons';
+import type { ServiceCategory, Service } from '@/data/types';
+import type { IconName } from '@/data/icons';
+
+const lede =
+    'Panel software, custom builds, colocation, and security services for hosting providers, data centers, and infrastructure teams.';
+const categories: ServiceCategory[] = [
+    'Software',
+    'Security',
+    'Networking',
+    'Facilities',
+    'Server AI',
+];
+const byCategory = (category: ServiceCategory) =>
+    services.filter((service: Service) => service.category === category);
+const ask = (title: string) => `mailto:${site.contact.email}?subject=${encodeURIComponent(title)}`;
+
+const billing = [
+    {
+        icon: 'credit-card' as IconName,
+        title: 'Fiat and Monero',
+        body: 'Payments are taken in USD, EUR, and Monero. Fiat payments run through Stripe.',
+    },
+    {
+        icon: 'receipt' as IconName,
+        title: 'Quoted price is the price',
+        body: 'You pay the line items on the order you approved. Fees that are not on the quote do not appear later.',
+    },
+    {
+        icon: 'undo-2' as IconName,
+        title: 'Cancel anytime',
+        body: 'Monthly service stops when you cancel. New service has a 30-day refund window if it does not fit.',
+    },
+];
+---
+
+<BaseLayout
+    title="Business"
+    description={lede}
+    path="/business"
+    jsonLd={servicesJsonLd(site, services)}
+>
+    <PageHero title="Software and services for infrastructure teams" lede={lede}>
+        <Button href="/contact">
+            <Icon name="mail" size={18} />
+            Contact
+        </Button>
+    </PageHero>
+
+    <section class="section section--s" aria-label="Service categories">
+        <div class="container">
+            <div class="item-rows">
+                {categories.map((category) => {
+                    const items = byCategory(category);
+                    const id = `c-${sectionId(category)}`;
+                    return (
+                        <a href={`#${id}`} class="item-row">
+                            <span class="item-row__icon">
+                                <Icon name={categoryIcons[category]} size={20} />
+                            </span>
+                            <span class="item-row__body">
+                                <span class="item-row__title">{category}</span>
+                                <span class="item-row__summary">
+                                    {items.length} {items.length === 1 ? 'service' : 'services'}
+                                </span>
+                            </span>
+                            <span class="item-row__action">
+                                Browse
+                                <Icon name="arrow-right" size={16} />
+                            </span>
+                        </a>
+                    );
+                })}
+            </div>
+        </div>
+    </section>
+
+    {categories.map((category, index) => {
+        const items = byCategory(category);
+        const id = `c-${sectionId(category)}`;
+        return (
+            <section
+                class={`section section--s ${index % 2 === 1 ? 'section--surface' : ''}`}
+                id={id}
+                aria-label={category}
+            >
+                <div class="container">
+                    <div class="section-head">
+                        <div class="section-head__title">
+                            <h2 class="section-title">
+                                <span class="heading-icon">
+                                    <Icon name={categoryIcons[category]} size={28} />
+                                </span>
+                                {category}
+                            </h2>
+                        </div>
+                    </div>
+                    <div class="item-rows">
+                        {items.map((service) => (
+                            <article class="item-row" id={service.slug}>
+                                <span class="item-row__icon">
+                                    <Icon name={serviceIcons[service.slug]} size={20} />
+                                </span>
+                                <span class="item-row__body">
+                                    <span class="item-row__title">
+                                        {service.title}
+                                        {service.badge ? (
+                                            <span class="badge">{service.badge}</span>
+                                        ) : null}
+                                    </span>
+                                    <span class="item-row__summary">{service.summary}</span>
+                                </span>
+                                <a href={ask(service.title)} class="item-row__action">
+                                    Ask us
+                                    <Icon name="arrow-right" size={16} />
+                                </a>
+                            </article>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    })}
+
+    <section class="section section--s" id="billing" aria-label="Billing">
+        <div class="container">
+            <div class="section-head">
+                <div class="section-head__title">
+                    <h2 class="section-title">How we charge</h2>
+                </div>
+            </div>
+            <div class="item-grid">
+                {billing.map((row) => (
+                    <div class="item-cell">
+                        <span class="item-cell__icon">
+                            <Icon name={row.icon} size={22} />
+                        </span>
+                        <h3 class="item-cell__title">{row.title}</h3>
+                        <p class="item-cell__body">{row.body}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <CtaBand
+        title="Tell us about your infrastructure."
+        body="Email us your environment, requirements, and timeline. We reply within two business days on weekdays."
+        actionLabel="Contact us"
+        secondaryHref="/about"
+        secondaryLabel="About Voltaic"
+    />
+</BaseLayout>

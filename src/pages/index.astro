@@ -1,265 +1,261 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import SectionAnchor from '@/components/SectionAnchor.astro';
 import Button from '@/components/Button.astro';
 import Icon from '@/components/Icon.astro';
-import ServiceCard from '@/components/ServiceCard.astro';
-import ValueCard from '@/components/ValueCard.astro';
-import PanelShowcase from '@/components/PanelShowcase.astro';
-import PanelApp from '@/panel/PanelApp.svelte';
-import { panel } from '@/data/panel';
-import { services } from '@/data/services';
+import HeroMock from '@/components/HeroMock.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { products } from '@/data/products';
+import { productIcons } from '@/data/icons';
 import { site } from '@/data/site';
 import { values } from '@/data/values';
-import { valueIcons, serviceIcons, categoryIcons } from '@/data/icons';
-import { organizationJsonLd, websiteJsonLd } from '@/lib/seo';
-import type { ServiceCategory } from '@/data/types';
+import { valueIcons } from '@/data/icons';
+import { organizationJsonLd, websiteJsonLd, productsJsonLd } from '@/lib/seo';
 import type { IconName } from '@/data/icons';
 
-const capCells: [IconName, string][] = [
-    ['layout-dashboard', 'One-click services'],
-    ['gamepad-2', 'Game servers'],
-    ['git-branch', 'Git website deploys'],
-    ['server', 'Bare metal and containers'],
-    ['boxes', 'MicroVMs'],
-    ['brick-wall-shield', 'Firewall rules'],
-    ['download', 'Backups'],
-    ['key', 'API and team accounts'],
+const heroMeta: [IconName, string][] = [
+    ['check', 'No lock-in'],
+    ['users', 'Human first'],
+    ['undo-2', 'Cancel anytime'],
 ];
 
-const disciplineCopy: Record<string, string> = {
-    Software: 'Server and data center software, from the Voltaic Panel to custom builds.',
-    Security:
-        'Servers secured for hosting providers: firewalls, detection, threat feeds, and bot protection.',
-    'Server AI': 'Local AI for sysadmin tasks and security, running on your own servers.',
-};
-const disciplineOrder: ServiceCategory[] = ['Software', 'Security'];
-const indexOrder: ServiceCategory[] = [
-    'Software',
-    'Networking',
-    'Security',
-    'Facilities',
-    'Server AI',
+const steps: [string, string][] = [
+    ['Tell us what you want', 'Game, site, or server. Tell us in plain language what you need.'],
+    ['We build it', 'We handle install, config, DNS, and SSL. You get a working setup.'],
+    ['You manage it', 'Console, backups, and controls live in one dashboard.'],
+];
+
+const panelPoints: [IconName, string][] = [
+    ['square-terminal', 'Live console and file manager'],
+    ['download', 'Scheduled backups with one-click restore'],
+    ['brick-wall-shield', 'Firewall rules per server'],
+    ['users', 'Team and sub-user access'],
+    ['network', 'Moonbase private access'],
+    ['key', 'API and automation'],
+];
+
+const homeFaq = [
+    {
+        question: 'Do I need technical skills?',
+        answer: 'No. Tell us what you want in plain language. A human will handle the install, configuration, DNS, and SSL.',
+    },
+    {
+        question: 'Which games can I host?',
+        answer: 'Minecraft, Valheim, Rust, Palworld, Project Zomboid, Arma Reforger, CS2, and 7 Days to Die are popular picks. Ask about others and we will tell you honestly if one is feasible.',
+    },
+    {
+        question: 'Can I cancel anytime?',
+        answer: 'Yes. Monthly service stops when you cancel. There is no exit fee, and new service has a 30-day refund window.',
+    },
+    {
+        question: 'Do you track visitors on this site?',
+        answer: 'No. The public site has no ads, tracking pixels, or product telemetry.',
+    },
 ];
 ---
 
-<BaseLayout path="/" jsonLd={[organizationJsonLd(site), websiteJsonLd(site)]}>
-    <section class="home-hero field" id="hero">
-        <div class="container home-hero__head">
-            <h1 class="home-hero__title">
-                <span class="section__heading">
-                    <SectionAnchor id="hero" label="Hero" />
-                    Software and security for server providers
-                </span>
-            </h1>
-            <div class="home-hero__side">
-                <p class="home-hero__lede">{site.heroLede}</p>
-                <div class="home-hero__actions">
-                    <Button href="/contact">
-                        <Icon name="mail" size={18} />
-                        Contact
+<BaseLayout
+    path="/"
+    jsonLd={[organizationJsonLd(site), websiteJsonLd(site), ...productsJsonLd(site, products)]}
+>
+    <section class="hero">
+        <div class="container hero__inner">
+            <div class="hero__copy">
+                <h1 class="hero__title">
+                    Sustainable, secure, and <span class="accent-word">private</span> hosting.
+                </h1>
+                <p class="hero__lede">
+                    Game servers, websites, and your own private server from one panel. Tell us what
+                    you want, we set it up, you manage it from one dashboard.
+                </p>
+                <div class="hero__actions">
+                    <Button href="/contact" size="lg">
+                        Get started
+                        <Icon name="arrow-right" size={18} />
                     </Button>
-                    <Button href="/about" variant="ghost">
-                        About us
+                    <Button href="/servers" variant="secondary" size="lg">
+                        <Icon name="layout-dashboard" size={18} />
+                        See the panel
                     </Button>
                 </div>
+                <div class="hero__meta">
+                    {heroMeta.map(([icon, label]) => (
+                        <span class="hero__meta-item">
+                            <Icon name={icon} size={16} />
+                            {label}
+                        </span>
+                    ))}
+                </div>
             </div>
-        </div>
-        <div class="container straddle">
-            <div class="panel-frame">
-                <PanelApp panel={panel} compact client:visible />
+            <div class="hero__media">
+                <HeroMock />
             </div>
         </div>
     </section>
 
-    <section class="section seal panel-stage" id="panel">
-        <div class="container">
-            <PanelShowcase panel={panel} />
-            <ul class="cap-grid">
-                {capCells.map(([icon, label]) => (
-                    <li>
-                        <a class="cap-cell" href="/panel">
-                            <Icon name={icon} size={20} />
-                            <span>{label}</span>
-                        </a>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    </section>
-
-    <section class="section field section-gap" id="disciplines">
+    <section class="section section--s" id="products">
         <div class="container">
             <div class="section-head">
-                <h2 class="section-head__title">
-                    <span class="section__heading">
-                        <SectionAnchor id="disciplines" label="Disciplines" />
-                        Software and security
-                    </span>
-                </h2>
+                <div class="section-head__title">
+                    <h2 class="section-title">Three ways to put something online</h2>
+                </div>
+                <p class="section-head__lede">
+                    Same panel, same backups, same human support underneath all of it.
+                </p>
             </div>
-            <div class="discipline-grid">
-                {disciplineOrder.map((category) => (
-                    <div class="discipline">
-                        <h3 class="discipline__title">
-                            <Icon name={categoryIcons[category]} size={36} />
-                            {category}
-                        </h3>
-                        <p class="discipline__lede">{disciplineCopy[category]}</p>
-                        <ul class="discipline__list">
-                            {services
-                                .filter((service) => service.category === category)
-                                .map((service) => (
-                                    <li class="discipline__item">
-                                        <a
-                                            class="discipline__link"
-                                            href={`/services#${service.slug}`}
-                                        >
-                                            <Icon name={serviceIcons[service.slug]} size={20} />
-                                            {service.title}
-                                        </a>
-                                    </li>
-                                ))}
-                        </ul>
+            <div class="item-rows">
+                {products.map((product) => (
+                    <a href={product.href} class="item-row">
+                        <span class="item-row__icon">
+                            <Icon name={productIcons[product.slug] as IconName} size={20} />
+                        </span>
+                        <span class="item-row__body">
+                            <span class="item-row__title">{product.title}</span>
+                            <span class="item-row__summary">{product.cardSummary}</span>
+                            <span class="item-row__points">{product.cardPoints.join(' · ')}</span>
+                        </span>
+                        <span class="item-row__action">
+                            Learn more
+                            <Icon name="arrow-right" size={16} />
+                        </span>
+                    </a>
+                ))}
+            </div>
+            <p class="section-note">
+                Every plan includes scheduled backups, free SSL on custom domains, and human-first
+                support. Monthly billing, cancel anytime.
+            </p>
+        </div>
+    </section>
+
+    <section class="section section--surface section--s" id="how-it-works">
+        <div class="container">
+            <div class="section-head">
+                <div class="section-head__title">
+                    <h2 class="section-title">From email to online in days, not weeks</h2>
+                </div>
+            </div>
+            <div class="steps">
+                {steps.map(([title, body], index) => (
+                    <div class="step">
+                        <span class="step__num">{index + 1}</span>
+                        <h3 class="step__title">{title}</h3>
+                        <p class="step__body">{body}</p>
                     </div>
                 ))}
             </div>
         </div>
     </section>
 
-    <section class="section seal section-gap" id="server-ai">
-        <div class="container server-ai">
-            <div class="server-ai__copy">
-                <h2 class="section-head__title">
-                    <span class="section__heading">
-                        <SectionAnchor id="server-ai" label="Server AI" />
-                        Server AI
-                    </span>
-                </h2>
-                <p class="server-ai__lede">{disciplineCopy['Server AI']}</p>
-                <div class="section-head__actions">
-                    <Button href="/contact">
-                        <Icon name="mail" size={18} />
-                        Contact
-                    </Button>
-                    <Button href="/services#server-ai" variant="ghost">
-                        Server AI service
-                    </Button>
+    <section class="section" id="panel">
+        <div class="container">
+            <div class="split">
+                <div class="split__copy">
+                    <h2 class="split__title">
+                        One dashboard for <span class="accent-word">everything you run</span>
+                    </h2>
+                    <p class="split__lede">
+                        Consoles, files, backups, firewall rules, and team access in a single
+                        interface. It runs on hardware we host or hardware you own, and older panel
+                        versions are open source.
+                    </p>
+                    <ul class="feature-list">
+                        {panelPoints.map(([icon, label]) => (
+                            <li>
+                                <Icon name={icon} size={18} />
+                                <span>{label}</span>
+                            </li>
+                        ))}
+                    </ul>
+                    <div class="split__actions">
+                        <Button href="/servers">Your own server</Button>
+                        <Button href="/panel" variant="ghost">
+                            Open the live demo
+                            <Icon name="arrow-up-right" size={16} />
+                        </Button>
+                    </div>
+                </div>
+                <div class="split__media">
+                    <div class="mock">
+                        <div class="mock__bar">
+                            <div class="mock__dots" aria-hidden="true">
+                                <span class="mock__dot"></span>
+                                <span class="mock__dot"></span>
+                                <span class="mock__dot"></span>
+                            </div>
+                            <span class="mock__url">panel.voltaic.host/servers</span>
+                        </div>
+                        <img
+                            class="mock__shot"
+                            src="/images/panel-servers.png"
+                            alt="Voltaic Panel servers view listing a Minecraft server, Valheim server, website, and Discord bot"
+                            width="1217"
+                            height="929"
+                            loading="lazy"
+                        />
+                    </div>
                 </div>
             </div>
-            <ul class="server-ai__list">
-                <li class="server-ai__item">
-                    <h3 class="server-ai__title">
-                        <Icon name="server" size={24} />
-                        Sysadmin tasks
-                    </h3>
-                    <p>Local AI that runs on your servers and helps with administration.</p>
-                </li>
-                <li class="server-ai__item">
-                    <h3 class="server-ai__title">
-                        <Icon name="shield-check" size={24} />
-                        Security
-                    </h3>
-                    <p>Local AI that runs on your servers and helps with security work.</p>
-                </li>
-            </ul>
         </div>
     </section>
 
-    <section class="section paper section-gap" id="services">
+    <section class="section section--surface section--s" id="values">
         <div class="container">
             <div class="section-head">
-                <h2 class="section-head__title">
-                    <span class="section__heading">
-                        <SectionAnchor id="services" label="Services" />
-                        Services
-                    </span>
-                </h2>
+                <div class="section-head__title">
+                    <h2 class="section-title">Fair terms, written down</h2>
+                </div>
                 <p class="section-head__lede">
-                    Panel software, servers, networking, and security work. Anything marked Soon is
-                    not available yet.
+                    Cancel when you want. Pay what was quoted. Keep your data off the sales floor.
                 </p>
             </div>
-            <ul class="service-index">
-                {indexOrder.map((category) =>
-                    services
-                        .filter((service) => service.category === category)
-                        .map((service) => <ServiceCard service={service} link />),
-                )}
-            </ul>
-            <div class="section-foot">
-                <Button href="/services" variant="ghost">
-                    All services
-                </Button>
-            </div>
-        </div>
-    </section>
-
-    <section class="section seal section-gap section-end" id="values">
-        <div class="container values-split">
-            <div class="values-split__copy">
-                <div class="section-head">
-                    <h2 class="section-head__title">
-                        <span class="section__heading">
-                            <SectionAnchor id="values" label="Billing, privacy, and exit" />
-                            Billing, privacy, and exit
+            <div class="item-grid">
+                {values.map((value, index) => (
+                    <div class="item-cell">
+                        <span class="item-cell__icon">
+                            <Icon name={valueIcons[index]} size={22} />
                         </span>
-                    </h2>
-                    <p class="section-head__lede">
-                        Cancel when you want. Pay what was quoted. Keep your data off the sales
-                        floor.
-                    </p>
-                </div>
-                <ul class="value-list">
-                    {values.map((value, index) => (
-                        <li>
-                            <ValueCard value={value} icon={valueIcons[index]} />
-                        </li>
-                    ))}
-                </ul>
+                        <h3 class="item-cell__title">{value.title}</h3>
+                        <p class="item-cell__body">{value.body}</p>
+                    </div>
+                ))}
             </div>
-            <figure class="values-split__media mono-photo mono-photo--tall" data-slot="values">
-                <picture>
-                    <source
-                        type="image/webp"
-                        srcset="/images/photos/network-switches-960.webp 960w, /images/photos/network-switches-1440.webp 1440w, /images/photos/network-switches-1920.webp 1920w"
-                        sizes="(max-width: 60rem) calc(100vw - 32px), (max-width: 1440px) calc((100vw - 128px) / 2), 640px"
-                    />
-                    <img
-                        src="/images/photos/network-switches-1920.jpg"
-                        alt="Blue and grey ethernet cables plugged into switch ports"
-                        width={1920}
-                        height={1277}
-                        loading="lazy"
-                        decoding="async"
-                    />
-                </picture>
-            </figure>
         </div>
     </section>
 
-    <section class="section field" id="contact">
-        <div class="close-band">
-            <div class="container cta-panel">
-                <h2 class="cta-panel__title">
-                    <span class="section__heading">
-                        <SectionAnchor id="contact" label="Request information" />
-                        Request information
-                    </span>
-                </h2>
-                <div class="cta-panel__side">
-                    <p class="cta-panel__body">
-                        Email us with your current environment and requirements. We reply within two
-                        business days on weekdays.
-                    </p>
-                    <div class="cta-panel__actions">
-                        <Button href="/contact">
-                            <Icon name="mail" size={18} />
-                            Contact
+    <section class="section section--s" id="faq">
+        <div class="container">
+            <div class="section-head">
+                <div class="section-head__title">
+                    <h2 class="section-title">Questions people actually ask</h2>
+                </div>
+                <div class="section-head__lede">
+                    <p>Straight answers about ordering, games, sites, and billing.</p>
+                    <div class="section-head__actions">
+                        <Button href="/faq" variant="ghost" size="sm">
+                            All questions
+                            <Icon name="arrow-right" size={16} />
                         </Button>
                     </div>
                 </div>
             </div>
+            <div class="faq">
+                {homeFaq.map((item) => (
+                    <details class="faq__item">
+                        <summary class="faq__question">{item.question}</summary>
+                        <div class="faq__answer">
+                            <p>{item.answer}</p>
+                        </div>
+                    </details>
+                ))}
+            </div>
         </div>
     </section>
+
+    <CtaBand
+        title="Tell us what you want online."
+        body="Email us the game, the site, or the server you have in mind. We reply within two business days with a setup and a price."
+        actionLabel="Contact us"
+        secondaryHref="/faq"
+        secondaryLabel="Read the FAQ"
+    />
 </BaseLayout>

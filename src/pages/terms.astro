@@ -28,17 +28,15 @@ const content = legal.terms;
     }}
 >
     <PageHero
-        id="terms"
-        align="center"
         title="Terms of use"
         lede={`Effective ${legal.effectiveDate}. Operated by ${legal.operator}.`}
     />
 
-    <section class="section paper section-gap--hero">
-        <div class="container">
+    <section class="section section--s">
+        <div class="container container--narrow">
             <Prose intro={content.intro} sections={content.sections} />
             <div class="legal-doc__actions">
-                <Button href="/privacy" variant="ghost">
+                <Button href="/privacy" variant="secondary">
                     Privacy policy
                 </Button>
                 <Button href="/contact">Contact</Button>

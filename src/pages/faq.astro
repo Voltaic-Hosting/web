@@ -1,14 +1,15 @@
 ---
 import Button from '@/components/Button.astro';
 import PageHero from '@/components/PageHero.astro';
-import SectionAnchor from '@/components/SectionAnchor.astro';
+import Icon from '@/components/Icon.astro';
+import CtaBand from '@/components/CtaBand.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { sectionId } from '@/lib/sectionId';
 import { faqPageJsonLd } from '@/lib/seo';
 import { faq } from '@/data/faq';
-import Icon from '@/components/Icon.astro';
 import { faqGroupIcons } from '@/data/icons';
 import { site } from '@/data/site';
+import type { IconName } from '@/data/icons';
 
 const items = faq.groups.flatMap((group) => group.items);
 ---
@@ -24,91 +25,65 @@ const items = faq.groups.flatMap((group) => group.items);
         items,
     })}
 >
-    <PageHero id="faq" title="FAQ" lede={faq.intro}>
-        <Button href="/contact">Contact</Button>
-        <Button href="/about" variant="ghost">
+    <PageHero title="FAQ" lede={faq.intro}>
+        <Button href="/contact">
+            <Icon name="mail" size={18} />
+            Contact
+        </Button>
+        <Button href="/about" variant="secondary">
             About
         </Button>
     </PageHero>
 
-    <section class="section paper section-gap--hero" aria-label="FAQ topics">
+    <section class="section section--s" aria-label="FAQ topics">
         <div class="container">
-            <nav class="faq-toc" aria-label="Jump to a topic">
+            <div class="game-strip game-strip--start">
                 {faq.groups.map((group) => {
                     const id = sectionId(group.title);
-
+                    const groupIcon = faqGroupIcons[group.title] as IconName | undefined;
                     return (
-                        <a href={`#${id}`} class="faq-toc__link">
+                        <a href={`#${id}`} class="game-chip">
+                            {groupIcon ? <Icon name={groupIcon} size={18} /> : null}
                             {group.title}
                         </a>
                     );
                 })}
-            </nav>
-        </div>
-    </section>
-
-    <div class="faq-page">
-        {faq.groups.map((group) => {
-            const id = sectionId(group.title);
-            const groupIcon = faqGroupIcons[group.title];
-
-            return (
-                <section class="section paper section-gap--s" id={id}>
-                    <div class="container">
-                        <div class="faq-group">
-                            <h2 class="faq-group__title">
-                                <span class="section__heading">
-                                    <SectionAnchor id={id} label={group.title} />
-                                    {groupIcon ? (
-                                        <Icon name={groupIcon} size={24} class="icon--head" />
-                                    ) : null}
-                                    {group.title}
-                                </span>
-                            </h2>
-
-                            <div class="faq-list">
-                                {group.items.map((item) => (
-                                    <details class="faq-item">
-                                        <summary class="faq-item__question">
-                                            <span class="faq-item__marker" aria-hidden="true" />
-                                            <span class="faq-item__question-text">
-                                                {item.question}
-                                            </span>
-                                        </summary>
-                                        <div class="faq-item__answer">
-                                            {item.answer.map((paragraph) => (
-                                                <p>{paragraph}</p>
-                                            ))}
-                                        </div>
-                                    </details>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            );
-        })}
-    </div>
-
-    <section class="section paper section-gap" id="still-need-help">
-        <div class="close-band field">
-            <div class="container cta-panel">
-                <h2 class="cta-panel__title">
-                    <span class="section__heading">
-                        <SectionAnchor id="still-need-help" label="Still need help" />
-                        Still need help
-                    </span>
-                </h2>
-                <div class="cta-panel__side">
-                    <p class="cta-panel__body">
-                        Send the details that matter and we will reply within two business days,
-                        Monday through Friday.
-                    </p>
-                    <div class="cta-panel__actions">
-                        <Button href="/contact">Contact</Button>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
+
+    <section class="section section--s" aria-label="FAQ topics">
+        <div class="container container--narrow">
+            {faq.groups.map((group) => {
+                const id = sectionId(group.title);
+                const groupIcon = faqGroupIcons[group.title] as IconName | undefined;
+                return (
+                    <div class="faq-group" id={id}>
+                        <h2 class="faq-group__title">
+                            {groupIcon ? <Icon name={groupIcon} size={20} /> : null}
+                            {group.title}
+                        </h2>
+                        <div class="faq">
+                            {group.items.map((item) => (
+                                <details class="faq__item">
+                                    <summary class="faq__question">{item.question}</summary>
+                                    <div class="faq__answer">
+                                        {item.answer.map((paragraph) => (
+                                            <p>{paragraph}</p>
+                                        ))}
+                                    </div>
+                                </details>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    </section>
+
+    <CtaBand
+        title="Still need help?"
+        body="Send the details that matter and we will reply within two business days, Monday through Friday."
+        actionLabel="Contact us"
+    />
 </BaseLayout>

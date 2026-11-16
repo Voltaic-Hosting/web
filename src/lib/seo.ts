@@ -64,13 +64,18 @@ export function webPageJsonLd(
 export function servicesJsonLd(
     site: SiteConfig,
     services: { slug: string; title: string; summary: string }[],
+    options: { name?: string; path?: string; description?: string } = {},
 ): Record<string, unknown>[] {
+    const name = options.name ?? 'Business services';
+    const path = options.path ?? '/business';
+    const description =
+        options.description ??
+        'Panel software, custom builds, colocation, and security services for hosting providers, data centers, and infrastructure teams.';
     return [
         webPageJsonLd(site, {
-            name: 'Services',
-            path: '/services',
-            description:
-                'Panel software, servers, networking, and security work. Anything marked Soon is not available yet.',
+            name,
+            path,
+            description,
         }),
         {
             '@context': 'https://schema.org',
@@ -82,7 +87,35 @@ export function servicesJsonLd(
                     '@type': 'Service',
                     name: service.title,
                     description: service.summary,
-                    url: `${site.domain}/services#${service.slug}`,
+                    url: `${site.domain}${path}#${service.slug}`,
+                    provider: {
+                        '@type': 'Organization',
+                        name: site.seo.organization.name,
+                        url: site.seo.organization.url,
+                    },
+                },
+            })),
+        },
+    ];
+}
+
+export function productsJsonLd(
+    site: SiteConfig,
+    products: { slug: string; title: string; metaDescription: string; href: string }[],
+): Record<string, unknown>[] {
+    return [
+        {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: 'Voltaic Hosting products',
+            itemListElement: products.map((product, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                item: {
+                    '@type': 'Service',
+                    name: product.title,
+                    description: product.metaDescription,
+                    url: `${site.domain}${product.href}`,
                     provider: {
                         '@type': 'Organization',
                         name: site.seo.organization.name,

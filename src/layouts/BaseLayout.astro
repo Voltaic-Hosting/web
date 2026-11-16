@@ -43,10 +43,11 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#1b1b1f" />
+        <meta name="theme-color" content="#14161c" />
         <meta name="color-scheme" content="dark light" />
         <script is:inline>
             (function () {
+                document.documentElement.classList.add('js');
                 var storageKey = 'voltaic-theme';
                 var stored = null;
 
@@ -61,7 +62,7 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
                 var themeColor = document.querySelector('meta[name="theme-color"]');
                 if (themeColor) {
-                    themeColor.setAttribute('content', theme === 'dark' ? '#1b1b1f' : '#e4e4e8');
+                    themeColor.setAttribute('content', theme === 'dark' ? '#14161c' : '#f7f6f4');
                 }
             })();
         </script>

@@ -1,12 +1,21 @@
 ---
 import PageHero from '@/components/PageHero.astro';
-import SectionAnchor from '@/components/SectionAnchor.astro';
-import ServiceCard from '@/components/ServiceCard.astro';
 import Icon from '@/components/Icon.astro';
-import { includeIcons } from '@/data/icons';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { services } from '@/data/services';
+import { products } from '@/data/products';
 import { site } from '@/data/site';
+import { productIcons } from '@/data/icons';
+import type { IconName } from '@/data/icons';
+
+const includeItems: [IconName, string][] = [
+    ['gamepad-2', 'The game or site you want'],
+    ['users', 'How many players or visitors'],
+    ['hard-drive', 'Any mods, plugins, or requirements'],
+    ['calendar', 'Your timeline'],
+];
+
+const surveyUrl = site.contact.formSurveyUrl;
+const embedSrc = surveyUrl ? `${surveyUrl}${surveyUrl.includes('?') ? '&' : '?'}embed=true` : '';
 ---
 
 <BaseLayout
@@ -27,98 +36,96 @@ import { site } from '@/data/site';
     }}
 >
     <PageHero
-        id="contact"
-        title="Contact"
-        lede="Send email with your requirements, current setup, and timeline. Attach configuration details if they help."
+        title="Tell us what you want online"
+        lede="Send email or use the form. Plain language is fine, a human reads everything."
     />
 
-    <section class="section field section-gap--hero section-end" id="email">
+    {surveyUrl ? (
+        <section class="section section--s" id="email">
+            <div class="container contact-grid">
+                <div class="contact-info">
+                    <a href={`mailto:${site.contact.email}`} class="contact-email">
+                        <Icon name="mail" size={22} />
+                        {site.contact.email}
+                    </a>
+                    <p class="contact-meta">{site.contact.responseTime}</p>
+                    <p class="contact-info__note">
+                        Prefer email? Send the details and a human will reply. The form goes to the
+                        same inbox.
+                    </p>
+                </div>
+                <div class="contact-form">
+                    <iframe
+                        class="contact-form__frame"
+                        src={embedSrc}
+                        title="Contact form"
+                        loading="lazy"
+                    ></iframe>
+                </div>
+            </div>
+        </section>
+    ) : (
+        <section class="section section--s" id="email">
+            <div class="container contact-hero">
+                <p>
+                    <a href={`mailto:${site.contact.email}`} class="contact-email">
+                        <Icon name="mail" size={22} />
+                        {site.contact.email}
+                    </a>
+                </p>
+                <p class="contact-meta">{site.contact.responseTime}</p>
+            </div>
+        </section>
+    )}
+
+    <section class="section section--s section--surface" id="include">
         <div class="container">
-            <p class="contact-email-row">
-                <Icon name="mail" size={24} class="contact-email__icon" />
-                <a href={`mailto:${site.contact.email}`} class="contact-email">
-                    {site.contact.email}
-                </a>
-                <button
-                    type="button"
-                    class="btn btn--ghost contact-copy"
-                    data-copy={site.contact.email}
-                    hidden
-                >
-                    Copy address
-                </button>
-            </p>
-            <p class="contact-meta">{site.contact.responseTime}</p>
-            <p class="contact-copied" role="status" aria-live="polite" hidden>
-                Copied
-            </p>
+            <div class="section-head">
+                <div class="section-head__title">
+                    <h2 class="section-title">What to include</h2>
+                </div>
+            </div>
+            <div class="include-grid">
+                {includeItems.map(([icon, label]) => (
+                    <div class="include-item">
+                        <Icon name={icon} size={20} />
+                        {label}
+                    </div>
+                ))}
+            </div>
         </div>
     </section>
 
-    <section class="section section-gap--hero" id="include">
+    <section class="section section--s" id="products">
         <div class="container">
             <div class="section-head">
-                <h2 class="section-head__title">What to include</h2>
+                <div class="section-head__title">
+                    <h2 class="section-title">What you can ask for</h2>
+                </div>
+                <p class="section-head__lede">
+                    Not sure which fits? Describe the project and we will point you at the right
+                    one. For infrastructure work, see{' '}
+                    <a href="/business" class="link-arrow">
+                        business services
+                    </a>
+                    .
+                </p>
             </div>
-            <ul class="service-index">
-                {[
-                    'Your requirements',
-                    'Your current setup',
-                    'Your timeline',
-                    'Configuration details if they help',
-                ].map((item, index) => (
-                    <li class="service-index__row">
-                        <div class="service-index__inner">
-                            <h3 class="service-index__title">
-                                <Icon
-                                    name={includeIcons[index]}
-                                    size={20}
-                                    class="service-index__icon"
-                                />
-                                {item}
-                            </h3>
-                        </div>
-                    </li>
+            <div class="card-grid">
+                {products.map((product) => (
+                    <a href={product.href} class="card card--link">
+                        <span class="card__icon">
+                            <Icon name={productIcons[product.slug] as IconName} size={24} />
+                        </span>
+                        <h3 class="card__title">{product.title}</h3>
+                        <p class="card__body">{product.cardSummary}</p>
+                        <span class="card__link">
+                            Learn more
+                            <Icon name="arrow-right" size={16} />
+                        </span>
+                    </a>
                 ))}
-            </ul>
+            </div>
         </div>
     </section>
-
-    <section class="section section-gap" id="services">
-        <div class="container">
-            <div class="section-head">
-                <h2 class="section-head__title">
-                    <span class="section__heading">
-                        <SectionAnchor id="services" label="Services" />
-                        Services
-                    </span>
-                </h2>
-            </div>
-            <ul class="service-index">
-                {services.map((service) => (
-                    <ServiceCard service={service} />
-                ))}
-            </ul>
-        </div>
-    </section>
-    <script>
-        const copyBtn = document.querySelector<HTMLButtonElement>('.contact-copy');
-        const copied = document.querySelector<HTMLElement>('.contact-copied');
-        if (copyBtn && copied && navigator.clipboard?.writeText) {
-            copyBtn.hidden = false;
-            let timer: number | undefined;
-            copyBtn.addEventListener('click', async () => {
-                try {
-                    await navigator.clipboard.writeText(copyBtn.dataset.copy ?? '');
-                    copied.hidden = false;
-                    clearTimeout(timer);
-                    timer = window.setTimeout(() => {
-                        copied.hidden = true;
-                    }, 2000);
-                } catch {
-                    copied.hidden = true;
-                }
-            });
-        }
-    </script>
 </BaseLayout>

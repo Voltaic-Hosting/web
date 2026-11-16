@@ -11,14 +11,15 @@ const content = legal.privacy;
 
 <BaseLayout
     title="Privacy"
-    description="Voltaic Hosting privacy policy. No ads, no tracking, no telemetry."
+    description="Voltaic Hosting privacy policy. We do not track you, display ads, or collect telemetry."
     path="/privacy"
     jsonLd={{
         '@context': 'https://schema.org',
         '@type': 'WebPage',
         name: 'Privacy policy',
         url: `${site.domain}/privacy`,
-        description: 'Voltaic Hosting privacy policy. No ads, no tracking, no telemetry.',
+        description:
+            'Voltaic Hosting privacy policy. We do not track you, display ads, or collect telemetry.',
         datePublished: legal.effectiveDate,
         isPartOf: {
             '@type': 'WebSite',
@@ -28,17 +29,15 @@ const content = legal.privacy;
     }}
 >
     <PageHero
-        id="privacy"
-        align="center"
         title="Privacy policy"
         lede={`Effective ${legal.effectiveDate}. Operated by ${legal.operator}.`}
     />
 
-    <section class="section paper section-gap--hero">
-        <div class="container">
+    <section class="section section--s">
+        <div class="container container--narrow">
             <Prose intro={content.intro} sections={content.sections} />
             <div class="legal-doc__actions">
-                <Button href="/terms" variant="ghost">
+                <Button href="/terms" variant="secondary">
                     Terms of use
                 </Button>
                 <Button href="/contact">Contact</Button>
