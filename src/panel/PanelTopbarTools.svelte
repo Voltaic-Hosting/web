@@ -27,6 +27,7 @@
         onSendChat: (channelId: string, body: string) => void;
         onCreateDirectMessage: (user: PanelUser) => void;
         onCreateGroup: (name: string, memberIds: string[]) => void;
+        showChat?: boolean;
     }
 
     let {
@@ -48,6 +49,7 @@
         onSendChat,
         onCreateDirectMessage,
         onCreateGroup,
+        showChat = true,
     }: Props = $props();
 
     const timeIn = (zone: string) =>
@@ -84,17 +86,19 @@
     </div>
 </details>
 
-<PanelChatPopover
-    {profile}
-    {users}
-    channels={chatChannels}
-    {activeChatId}
-    {unreadChat}
-    onChannelChange={onChatChannelChange}
-    {onSendChat}
-    {onCreateDirectMessage}
-    {onCreateGroup}
-/>
+{#if showChat}
+    <PanelChatPopover
+        {profile}
+        {users}
+        channels={chatChannels}
+        {activeChatId}
+        {unreadChat}
+        onChannelChange={onChatChannelChange}
+        {onSendChat}
+        {onCreateDirectMessage}
+        {onCreateGroup}
+    />
+{/if}
 
 <details class="panel-popover">
     <summary

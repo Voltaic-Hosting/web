@@ -116,9 +116,9 @@
         --panel-text-dim: oklch(88.7% 0.007 286);
         --panel-text-muted: oklch(71.2% 0.013 286);
         --panel-text-faint: oklch(55.2% 0.014 286);
-        --panel-accent: oklch(96.7% 0.001 286);
-        --panel-accent-strong: oklch(88.7% 0.007 286);
-        --panel-accent-ink: oklch(14.5% 0.002 286);
+        --panel-accent: oklch(0.88 0.17 115);
+        --panel-accent-strong: oklch(0.78 0.16 115);
+        --panel-accent-ink: oklch(18% 0.03 265);
         --panel-accent-soft-bg: color-mix(in oklab, var(--panel-accent) 14%, transparent);
         --panel-ok: #4ade80;
         --panel-ok-text: #86efac;
@@ -412,6 +412,38 @@
         font-size: var(--panel-text-xs);
         font-weight: 600;
         cursor: pointer;
+    }
+
+    .panel-mode-switch {
+        display: flex;
+        gap: 2px;
+        margin: 0.5rem 0.45rem 0;
+        padding: 2px;
+        border: 1px solid color-mix(in oklab, var(--panel-line) 22%, transparent);
+        border-radius: 0.35rem;
+        background: color-mix(in oklab, var(--panel-surface-sunken) 60%, transparent);
+    }
+
+    .panel-mode-switch__btn {
+        flex: 1;
+        min-height: 1.7rem;
+        padding: 0.2rem 0.4rem;
+        border: 0;
+        border-radius: 0.25rem;
+        background: transparent;
+        color: var(--panel-text-muted);
+        font: inherit;
+        font-size: var(--panel-text-xs);
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+            background-color 0.15s ease,
+            color 0.15s ease;
+    }
+
+    .panel-mode-switch__btn.is-active {
+        background: color-mix(in oklab, var(--panel-accent) 22%, transparent);
+        color: var(--panel-accent);
     }
 
     .panel-mini-btn:hover:not(:disabled) {

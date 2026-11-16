@@ -31,9 +31,10 @@
         server: PanelServer;
         sim: PanelSimulation;
         onBack: () => void;
+        consumer?: boolean;
     }
 
-    let { panel, server, sim, onBack }: Props = $props();
+    let { panel, server, sim, onBack, consumer = false }: Props = $props();
 
     let tab = $state<DetailTab>('console');
     let logfile = $state(untrack(() => server.logfiles[0]) ?? 'console.log');
@@ -95,6 +96,24 @@
         URL.revokeObjectURL(url);
         sim.pushToast(`Downloaded ${logfile}`);
     };
+
+    const detailTabs = $derived.by(() => {
+        const all: [DetailTab, string][] = [
+            ['console', 'Console / Logs'],
+            ['backups', 'Backups'],
+            ['subusers', 'Subusers'],
+            ['sftp', 'SFTP'],
+            ['files', 'Files'],
+            ['firewall', 'Firewall'],
+        ];
+        return consumer ? all.filter(([id]) => id !== 'subusers' && id !== 'firewall') : all;
+    });
+
+    $effect(() => {
+        if (!detailTabs.some(([id]) => id === tab)) {
+            tab = 'console';
+        }
+    });
 </script>
 
 <div class="panel-stack">
@@ -169,7 +188,7 @@
     </div>
 
     <div class="panel-filter-row" role="tablist" aria-label="Server sections">
-        {#each [['console', 'Console / Logs'], ['backups', 'Backups'], ['subusers', 'Subusers'], ['sftp', 'SFTP'], ['files', 'Files'], ['firewall', 'Firewall']] as const as [id, label] (id)}
+        {#each detailTabs as [id, label] (id)}
             <button
                 type="button"
                 role="tab"

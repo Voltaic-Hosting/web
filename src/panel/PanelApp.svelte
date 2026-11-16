@@ -6,6 +6,7 @@
     import { setPanelSimulation } from './context';
     import { createPanelSimulation } from './simulation.svelte';
     import { SvelteSet } from 'svelte/reactivity';
+    import { CONSUMER_NAV } from './modes';
     import NotificationsView from './NotificationsView.svelte';
     import PanelTopbarTools from './PanelTopbarTools.svelte';
     import ServerDetail from './ServerDetail.svelte';
@@ -60,12 +61,14 @@
     }
 
     const TIMEZONE_STORAGE_KEY = 'voltaic-panel-timezone';
+    const MODE_STORAGE_KEY = 'voltaic-panel-mode';
 
     let view = $state(untrack(() => initialView));
     let query = $state('');
     let selectedServerId = $state<string | null>(null);
     let firewallServerId = $state(untrack(() => panel.servers[0]?.id ?? ''));
     let viewAsUser = $state<PanelUser | null>(null);
+    let panelMode = $state<'consumer' | 'pro'>('consumer');
     let menuOpen = $state(false);
     let timezone = $state('UTC');
     const sim = untrack(() => createPanelSimulation(panel));
@@ -81,7 +84,20 @@
         if (stored) {
             timezone = stored;
         }
+        const storedMode = window.localStorage.getItem(MODE_STORAGE_KEY);
+        if (storedMode === 'pro' || storedMode === 'consumer') {
+            panelMode = storedMode;
+        }
     });
+
+    const setPanelMode = (mode: 'consumer' | 'pro') => {
+        panelMode = mode;
+        window.localStorage.setItem(MODE_STORAGE_KEY, mode);
+        if (mode === 'consumer' && viewAsUser === null && !CONSUMER_NAV.has(view)) {
+            view = 'overview';
+            selectedServerId = null;
+        }
+    };
 
     const navigate = (next: string) => {
         view = next;
@@ -137,19 +153,30 @@
         sim.pushToast('Back to your account');
     };
 
+    const isConsumer = $derived(panelMode === 'consumer' && viewAsUser === null);
+
     const visibleNav = $derived.by(() => {
-        if (!viewAsUser) {
-            return panel.nav;
+        if (viewAsUser) {
+            const allowed = navAllowedForUser(viewAsUser);
+            return panel.nav.filter((item) => allowed.has(item.id));
         }
-        const allowed = navAllowedForUser(viewAsUser);
-        return panel.nav.filter((item) => allowed.has(item.id));
+        if (isConsumer) {
+            return panel.nav.filter((item) => CONSUMER_NAV.has(item.id));
+        }
+        return panel.nav;
     });
 
     const contentView = $derived.by(() => {
-        if (!viewAsUser || view === 'profile') {
-            return view;
+        if (viewAsUser) {
+            if (view === 'profile') {
+                return view;
+            }
+            return navAllowedForUser(viewAsUser).has(view) ? view : 'overview';
         }
-        return navAllowedForUser(viewAsUser).has(view) ? view : 'overview';
+        if (isConsumer && view !== 'profile' && !CONSUMER_NAV.has(view)) {
+            return 'overview';
+        }
+        return view;
     });
 
     const activeAccount = $derived(
@@ -250,6 +277,7 @@
                 onSendChat={sim.sendChatMessage}
                 onCreateDirectMessage={sim.createDirectMessage}
                 onCreateGroup={sim.createGroupChat}
+                showChat={!isConsumer}
             />
         </div>
 
@@ -299,6 +327,27 @@
                 </button>
             {/each}
         </nav>
+
+        <div class="panel-mode-switch" role="group" aria-label="Panel mode">
+            <button
+                type="button"
+                class="panel-mode-switch__btn"
+                class:is-active={panelMode === 'consumer'}
+                aria-pressed={panelMode === 'consumer'}
+                onclick={() => setPanelMode('consumer')}
+            >
+                Consumer
+            </button>
+            <button
+                type="button"
+                class="panel-mode-switch__btn"
+                class:is-active={panelMode === 'pro'}
+                aria-pressed={panelMode === 'pro'}
+                onclick={() => setPanelMode('pro')}
+            >
+                Pro
+            </button>
+        </div>
 
         <div class="panel-app__sidebar-foot">
             <button
@@ -359,6 +408,7 @@
                     onSendChat={sim.sendChatMessage}
                     onCreateDirectMessage={sim.createDirectMessage}
                     onCreateGroup={sim.createGroupChat}
+                    showChat={!isConsumer}
                 />
             </div>
         </header>
@@ -371,6 +421,7 @@
                     audit={sim.audit}
                     onNavigate={navigate}
                     onOpenServer={openServer}
+                    consumer={isConsumer}
                 />
             {/if}
 
@@ -380,6 +431,7 @@
                     server={selectedServer}
                     {sim}
                     onBack={() => (selectedServerId = null)}
+                    consumer={isConsumer}
                 />
             {/if}
 

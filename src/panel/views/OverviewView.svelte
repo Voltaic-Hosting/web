@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { PanelAuditEntry, PanelConcept, PanelServer } from '@/data/types';
+    import { CONSUMER_NAV } from '../modes';
     import ServerTypeIcon from '../ServerTypeIcon.svelte';
     import KindBadge from '../ui/KindBadge.svelte';
     import PanelCard from '../ui/PanelCard.svelte';
@@ -12,16 +13,20 @@
         audit: PanelAuditEntry[];
         onNavigate: (view: string) => void;
         onOpenServer: (server: PanelServer) => void;
+        consumer?: boolean;
     }
 
-    let { panel, servers, audit, onNavigate, onOpenServer }: Props = $props();
+    let { panel, servers, audit, onNavigate, onOpenServer, consumer = false }: Props = $props();
 
     const spotlight = $derived(servers.slice(0, 6));
+    const stats = $derived(
+        consumer ? panel.stats.filter((stat) => CONSUMER_NAV.has(stat.nav)) : panel.stats,
+    );
 </script>
 
 <div class="panel-stack">
     <div class="panel-stat-grid">
-        {#each panel.stats as stat (stat.label)}
+        {#each stats as stat (stat.label)}
             <button
                 type="button"
                 class="panel-stat panel-stat--clickable"

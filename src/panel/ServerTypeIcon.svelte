@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Box, Cpu, Gamepad2, Server } from '@lucide/svelte';
+    import { Box, Cpu, Gamepad2, Globe, Server } from '@lucide/svelte';
 
     interface Props {
         type: string;
@@ -16,6 +16,8 @@
     <Cpu {size} aria-hidden="true" />
 {:else if type === 'Game' || type === 'Game Servers'}
     <Gamepad2 {size} aria-hidden="true" />
+{:else if type === 'Website'}
+    <Globe {size} aria-hidden="true" />
 {:else}
     <Server {size} aria-hidden="true" />
 {/if}
