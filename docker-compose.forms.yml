@@ -1,0 +1,33 @@
+# Formbricks self-hosted stack for the /contact form.
+#
+# The upstream Formbricks compose file is vendored at
+# docker/formbricks/docker-compose.yml (app + Postgres + Redis + SpiceDB +
+# Hub + Cube). Optional AI services stay behind upstream profiles
+# (taxonomy, qwen) and stay off.
+#
+# Setup:
+#   cp docker/formbricks/.env.example docker/formbricks/.env
+#   # set WEBAPP_URL/BETTER_AUTH_URL to your public HTTPS URL and generate
+#   # every "change-me" secret with: openssl rand -hex 32
+#   docker compose --env-file docker/formbricks/.env -f docker-compose.forms.yml up -d
+#
+# Podman note: podman-compose resolves relative volume paths against the
+# directory you run it from, not the included file. Run the vendored file
+# directly instead:
+#   cd docker/formbricks && podman-compose -p voltaic-forms up -d
+# It reads .env from that directory. Set FORMS_PORT in .env to change the
+# published port (default 3000).
+#
+# Put a reverse proxy in front of the formbricks service (port 3000) with
+# HTTPS, create a "contact" link survey in the Formbricks UI, copy its
+# https://<host>/s/<id> URL, and set contact.formSurveyUrl in
+# src/data/site.ts. The site embeds it with ?embed=true.
+#
+# This is a separate compose project (voltaic-forms) so it never touches
+# the static site stack. Upstream images are not Chainguard builds; they
+# are pinned by the vendored file.
+
+name: voltaic-forms
+
+include:
+    - path: docker/formbricks/docker-compose.yml

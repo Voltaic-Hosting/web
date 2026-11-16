@@ -1,0 +1,36 @@
+# Quadlet unit for the Voltaic Hosting website.
+#
+# Build the image first:
+#   podman build --target web -t localhost/voltaic-website-web:0.1.0 .
+#
+# Install for your user:
+#   mkdir -p ~/.config/containers/systemd
+#   cp deploy/voltaic-website.container ~/.config/containers/systemd/
+#   systemctl --user daemon-reload
+#   systemctl --user start voltaic-website
+#   systemctl --user enable voltaic-website   # start on login
+#
+# For a system-wide unit use /etc/containers/systemd/ and change
+# WantedBy=default.target to WantedBy=multi-user.target, then use
+# systemctl (no --user).
+
+[Unit]
+Description=Voltaic Hosting website (static Astro site)
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=localhost/voltaic-website-web:0.1.0
+ContainerName=voltaic-website
+PublishPort=8080:8080
+ReadOnly=true
+CapDrop=ALL
+NoNewPrivileges=true
+Tmpfs=/tmp:rw,noexec,nosuid,size=32m
+PodmanArgs=--init --stop-signal SIGQUIT --memory=128m --memory-reservation=32m --cpus=0.5 --pids-limit=64
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
