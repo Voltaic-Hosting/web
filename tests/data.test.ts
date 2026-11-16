@@ -6,7 +6,6 @@ import { branding } from '../src/data/branding';
 import { errorFor, errors } from '../src/data/errors';
 import { faq } from '../src/data/faq';
 import { legal } from '../src/data/legal';
-import { panel } from '../src/data/panel';
 import { services } from '../src/data/services';
 import { site } from '../src/data/site';
 import { values } from '../src/data/values';
@@ -39,24 +38,42 @@ describe('site data', () => {
     it('panel services cover one-click, games, and git deploys', () => {
         const slugs = services.map((service) => service.slug);
 
-        expect(slugs).toContain('game-servers');
-        expect(slugs).toContain('git-websites');
         expect(slugs).toContain('custom-software');
 
         const voltaicPanel = services.find((service) => service.slug === 'voltaic-panel');
 
-        expect(voltaicPanel?.summary).toContain('One-click');
-        expect(voltaicPanel?.summary).toContain('Git repository');
-        expect(panel.lede).toContain('Git repository');
+        expect(voltaicPanel?.summary).toContain('one-click');
+        expect(voltaicPanel?.summary).toContain('Git website deploys');
+    });
+
+    it('consumer products cover game servers, websites, and own servers', async () => {
+        const { products } = await import('../src/data/products');
+
+        expect(products.map((product) => product.slug)).toEqual([
+            'game-servers',
+            'websites',
+            'servers',
+        ]);
+
+        for (const product of products) {
+            expect(product.title).not.toBe('');
+            expect(product.headline).not.toBe('');
+            expect(product.lede).not.toBe('');
+            expect(product.metaDescription).not.toBe('');
+            expect(product.href.startsWith('/')).toBe(true);
+        }
     });
 
     it('nav items reference known pages', () => {
         const knownPaths = [
             '/',
+            '/game-servers',
+            '/websites',
+            '/servers',
+            '/business',
             '/about',
             '/faq',
             '/contact',
-            '/services',
             '/branding',
             '/panel',
             '/privacy',
@@ -83,7 +100,7 @@ describe('site data', () => {
 
     it('privacy policy states no tracking', () => {
         expect(legal.privacy.intro).toContain('telemetry');
-        expect(site.privacyNote).toBe('No ads. No tracking. No telemetry.');
+        expect(site.privacyNote).toBe("We don't track you, display ads, or collect telemetry.");
     });
 
     it('values cover exit, pricing, and privacy', () => {
@@ -137,12 +154,14 @@ describe('site data', () => {
         expect(body).toContain('daemon');
     });
 
-    it('faq covers billing, panel, and privacy', () => {
+    it('faq covers getting started, products, and billing', () => {
         const titles = faq.groups.map((group) => group.title);
 
-        expect(titles).toContain('Billing and exit');
-        expect(titles).toContain('Panel and software');
-        expect(titles).toContain('Privacy and security');
+        expect(titles).toContain('Getting started');
+        expect(titles).toContain('Game servers');
+        expect(titles).toContain('Websites');
+        expect(titles).toContain('Your own server');
+        expect(titles).toContain('Billing and privacy');
 
         const questions = faq.groups
             .flatMap((group) => group.items)

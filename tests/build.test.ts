@@ -18,6 +18,26 @@ const pages: Array<{ file: string; path: string; title: string }> = [
         title: `${site.seo.defaultTitle}${site.seo.titleSeparator}${site.tagline}`,
     },
     {
+        file: 'game-servers.html',
+        path: '/game-servers',
+        title: `Game Servers${site.seo.titleSeparator}${site.seo.defaultTitle}`,
+    },
+    {
+        file: 'websites.html',
+        path: '/websites',
+        title: `Websites${site.seo.titleSeparator}${site.seo.defaultTitle}`,
+    },
+    {
+        file: 'servers.html',
+        path: '/servers',
+        title: `Your Own Server${site.seo.titleSeparator}${site.seo.defaultTitle}`,
+    },
+    {
+        file: 'business.html',
+        path: '/business',
+        title: `Business${site.seo.titleSeparator}${site.seo.defaultTitle}`,
+    },
+    {
         file: 'about.html',
         path: '/about',
         title: `About${site.seo.titleSeparator}${site.seo.defaultTitle}`,
@@ -50,7 +70,7 @@ const pages: Array<{ file: string; path: string; title: string }> = [
     {
         file: 'panel.html',
         path: '/panel',
-        title: `Voltaic Panel concept${site.seo.titleSeparator}${site.seo.defaultTitle}`,
+        title: `Voltaic Panel demo${site.seo.titleSeparator}${site.seo.defaultTitle}`,
     },
 ];
 
@@ -88,10 +108,10 @@ describe('built site', () => {
         expect(html).toContain('noindex, nofollow');
     });
 
-    it('panel page and home showcase server-render the panel markup', async () => {
+    it('panel page and servers page server-render the panel markup', async () => {
         const { panel } = await import('../src/data/panel');
 
-        for (const file of ['panel.html', 'index.html']) {
+        for (const file of ['panel.html', 'servers.html']) {
             const html = readPage(file);
 
             expect(html, file).toContain('panel-app');
@@ -101,8 +121,8 @@ describe('built site', () => {
         }
     });
 
-    it('home page loads the panel island lazily', () => {
-        const html = readPage('index.html');
+    it('servers page loads the panel island lazily', () => {
+        const html = readPage('servers.html');
 
         const island = html.match(/<astro-island[^>]*PanelApp[^>]*>/)?.[0] ?? '';
         expect(island).toContain('client="visible"');
